@@ -16,10 +16,10 @@ fun main(args: Array<String>) {
 
 @RestController
 @RequestMapping("/api")
-class AuthController {
+class HolaMundoController {
 	@RequestMapping(value = ["/hola"], method = [RequestMethod.GET])
 	fun helloWorld(): ResponseEntity<*> {
-		return ResponseEntity.ok("Hola!")
+		return ResponseEntity.ok("Hola mundo!")
 	}
 
 }
