@@ -23,14 +23,3 @@ class HolaMundoController {
 	}
 
 }
-
-
-@RestController
-@RequestMapping("/opa")
-class QueOndaController {
-	@RequestMapping(value = ["/holis"], method = [RequestMethod.GET])
-	fun todoBien(): ResponseEntity<*> {
-		return ResponseEntity.ok("Que onda?")
-	}
-
-}
