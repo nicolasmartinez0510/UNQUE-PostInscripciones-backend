@@ -19,7 +19,8 @@ services:
         "spring.jpa.hibernate.ddl-auto": "update",
         "spring.jpa.database-platform": "org.hibernate.dialect.MySQL8Dialect",
         "spring.jpa.properties.hibernate.show_sql": true,
-        "spring.jpa.generate-ddl": true,        
+        "spring.jpa.generate-ddl": true,
+        "server.port": ${SPRING_DOCKER_PORT},
         "spring.security.user.password": "${SPRING_SECURITY_PASSWORD}",
         "spring.security.user.name":"${SPRING_SECURITY_USER}",
         "spring.security.user.roles": "admin"
@@ -29,6 +30,8 @@ services:
     restart: always
     ports:
       - ${MYSQLDB_LOCAL_PORT}:${MYSQLDB_DOCKER_PORT}
+    volumes:
+      - ./mysql-volume:/var/lib/mysql
     environment:
       MYSQL_DATABASE: ${MYSQLDB_DATABASE}
       MYSQL_ROOT_PASSWORD: ${MYSQLDB_ROOT_PASSWORD}
