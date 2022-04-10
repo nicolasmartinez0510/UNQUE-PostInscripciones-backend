@@ -28,7 +28,7 @@ open class SwagerConfig {
     private fun metaInfo(): ApiInfo {
         return ApiInfo(
                 "Post Inscripciones API REST",
-                "Made in a 'ideal world' where all streamings platforms uses same API REST for manage reviews from his clients over his contents.",
+                "Proyecto creado para gestionar los formularios de solicitud de sobrecupos",
                 "1.0",
                 "https://www.youtube.com/watch?v=a1i3KkGVF8c",
                 Contact(
