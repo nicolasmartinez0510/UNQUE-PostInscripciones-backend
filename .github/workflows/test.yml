@@ -28,6 +28,7 @@ jobs:
         run: ./gradlew test -i koverVerify koverReport
 
       - name: Upload coverage reports
+        if: success()
         uses: codecov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
