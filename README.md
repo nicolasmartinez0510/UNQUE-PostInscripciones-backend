@@ -1,4 +1,4 @@
-![Actions](https://github.com/fagustin07/UNQUE-PostInscripciones-backend/actions/workflows/test.yml/badge.svg) [![codecov](https://codecov.io/gh/fagustin07/UNQUE-PostInscripciones-backend/branch/dev/graph/badge.svg?token=WXM3P5VQLJ)](https://codecov.io/gh/fagustin07/UNQUE-PostInscripciones-backend)
+![Actions](https://github.com/fagustin07/UNQUE-PostInscripciones-backend/actions/workflows/test.yml/badge.svg) [![Codacy Quality](https://app.codacy.com/project/badge/Grade/ccd053d07812464292cb335c4e7bf2e0)](https://www.codacy.com/gh/fagustin07/UNQUE-PostInscripciones-backend/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=fagustin07/UNQUE-PostInscripciones-backend&amp;utm_campaign=Badge_Grade) [![Codacy Coverage](https://app.codacy.com/project/badge/Coverage/ccd053d07812464292cb335c4e7bf2e0)](https://www.codacy.com/gh/fagustin07/UNQUE-PostInscripciones-backend/dashboard?utm_source=github.com&utm_medium=referral&utm_content=fagustin07/UNQUE-PostInscripciones-backend&utm_campaign=Badge_Coverage)
 
 # UNQUE-PostInscripciones
 
