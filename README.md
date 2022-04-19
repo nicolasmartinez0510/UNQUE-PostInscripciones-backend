@@ -42,4 +42,4 @@ Aplicación para facilitar la asignación de sobre cupos de las materias de una 
     
 ## Diagrama de clases
  
-![MER](https://github.com/fagustin07/UNQUE-PostInscripciones-backend/blob/dev/imagenes/post-inscripciones_relaciones.jpg)
+![MER](imagenes/diagrama_relaciones.jpg)
