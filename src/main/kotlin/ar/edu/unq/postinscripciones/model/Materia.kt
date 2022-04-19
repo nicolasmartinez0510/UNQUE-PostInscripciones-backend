@@ -1,13 +1,11 @@
 package ar.edu.unq.postinscripciones.model
 
 import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
 import javax.persistence.Id
 
 @Entity
-class Materia(val nombre: String = "", val codigo: String = "") {
+class Materia(
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null
-}
+    val codigo: String = "",
+    val nombre: String = "",
+)
