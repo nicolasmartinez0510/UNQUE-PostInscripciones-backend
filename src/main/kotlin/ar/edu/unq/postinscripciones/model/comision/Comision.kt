@@ -1,6 +1,7 @@
 package ar.edu.unq.postinscripciones.model.comision
 
 import ar.edu.unq.postinscripciones.model.Materia
+import ar.edu.unq.postinscripciones.model.cuatrimestre.Cuatrimestre
 import javax.persistence.*
 
 @Entity
@@ -11,6 +12,9 @@ class Comision(
     val materia: Materia,
     @Id
     val numero: Int,
+    @Id
+    @ManyToOne(fetch = FetchType.EAGER)
+    val cuatrimestre: Cuatrimestre,
     @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     val horarios: List<Horario>,
     val cuposTotales: Int = 30,

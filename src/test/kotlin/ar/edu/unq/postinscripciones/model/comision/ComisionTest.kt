@@ -1,10 +1,13 @@
 package ar.edu.unq.postinscripciones.model.comision
 
 import ar.edu.unq.postinscripciones.model.Materia
+import ar.edu.unq.postinscripciones.model.cuatrimestre.Cuatrimestre
+import ar.edu.unq.postinscripciones.model.cuatrimestre.Semestre
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalTime
+import java.time.Year
 
 
 internal class ComisionTest {
@@ -14,12 +17,13 @@ internal class ComisionTest {
     val cuposTotales = 25
     val cuposOcupados = 20
     val sobrecuposTotales = 15
+    val cuatrimestre = Cuatrimestre(Year.of(2022), Semestre.S2)
 
     @BeforeEach
     fun `set up`() {
         val horarios: List<Horario> = horariosBdd()
         bdd = Materia()
-        comisionUnoBdd = Comision(bdd, 1, horarios, cuposTotales, cuposOcupados, sobrecuposTotales)
+        comisionUnoBdd = Comision(bdd, 1, cuatrimestre, horarios, cuposTotales, cuposOcupados, sobrecuposTotales)
     }
 
     @Test
@@ -30,6 +34,11 @@ internal class ComisionTest {
     @Test
     fun `una comision posee un numero de comision`() {
         assertThat(comisionUnoBdd.numero).isEqualTo(1)
+    }
+
+    @Test
+    fun `una comision conoce en que cuatrimestre se dicta`() {
+        assertThat(comisionUnoBdd.cuatrimestre).isEqualTo(cuatrimestre)
     }
 
     @Test
