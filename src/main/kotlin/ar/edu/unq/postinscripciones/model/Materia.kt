@@ -8,4 +8,6 @@ class Materia(
     @Id
     val codigo: String = "",
     val nombre: String = "",
-)
+) {
+    fun esLaMateria(materia: Materia) = this.codigo == materia.codigo
+}

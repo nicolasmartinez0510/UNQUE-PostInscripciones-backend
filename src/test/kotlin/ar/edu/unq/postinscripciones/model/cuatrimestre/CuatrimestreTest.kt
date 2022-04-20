@@ -1,13 +1,11 @@
-package ar.edu.unq.postinscripciones.model.oferta.academica
+package ar.edu.unq.postinscripciones.model.cuatrimestre
 
-import ar.edu.unq.postinscripciones.model.cuatrimestre.Cuatrimestre
-import ar.edu.unq.postinscripciones.model.cuatrimestre.Semestre
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.Year
 
-internal class OfertaAcademicaTest {
+internal class CuatrimestreTest {
     lateinit var cuatrimestre: Cuatrimestre
 
     @BeforeEach
@@ -27,11 +25,11 @@ internal class OfertaAcademicaTest {
 
     @Test
     fun `un cuatrimestre puede decir que es igual a otro`() {
-        assertThat(cuatrimestre.esElCuatrimestre(2009,Semestre.S2)).isTrue
+        assertThat(cuatrimestre.esElCuatrimestre(2009, Semestre.S2)).isTrue
     }
 
     @Test
     fun `un cuatrimestre puede decir que no es igual a otro`() {
-        assertThat(cuatrimestre.esElCuatrimestre(2020,Semestre.S1)).isFalse
+        assertThat(cuatrimestre.esElCuatrimestre(2020, Semestre.S1)).isFalse
     }
 }
