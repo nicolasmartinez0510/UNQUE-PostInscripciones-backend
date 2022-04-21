@@ -19,7 +19,7 @@ class MateriaService {
 
     @Transactional
     fun todas(): List<Materia> {
-        return materiaRepository.findAll().map { it }
+        return materiaRepository.findAll().toList()
     }
 
     @Transactional

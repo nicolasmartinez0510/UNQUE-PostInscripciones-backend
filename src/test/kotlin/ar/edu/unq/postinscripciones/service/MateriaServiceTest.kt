@@ -6,11 +6,9 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 
-@SpringBootTest
+@IntegrationTest
 class MateriaServiceTest {
-
 
     @Autowired
     private lateinit var materiaService: MateriaService
@@ -30,7 +28,6 @@ class MateriaServiceTest {
     @Test
     fun `Se puede crear una materia`() {
         val materia = materiaService.crear("Intro", "IP-102")
-
         assertThat(materia).isNotNull
     }
 
