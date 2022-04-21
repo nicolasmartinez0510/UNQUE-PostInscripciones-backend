@@ -33,4 +33,4 @@ class OfertaController {
     }
 }
 
-data class FormularioOferta(val idMateria: Long, val cuposTotales: Int)
+data class FormularioOferta(val idMateria: String, val cuposTotales: Int)

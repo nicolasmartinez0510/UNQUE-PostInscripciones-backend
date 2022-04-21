@@ -17,8 +17,8 @@ class OfertaService {
     private lateinit var materiaRepository: MateriaRepository
 
     @Transactional
-    fun crearOfertaPara(idMateria: Long, cuposTotales: Int): Oferta {
-        val materiaSolicitada = materiaRepository.findById(idMateria).get()
+    fun crearOfertaPara(idMateria: String, cuposTotales: Int): Oferta {
+        val materiaSolicitada = materiaRepository.findMateriaByCodigo(idMateria).orElseThrow{ MateriaInexistenteException() }
 
         return ofertaRepository.save(Oferta(materiaSolicitada, cuposTotales))
     }
@@ -27,5 +27,11 @@ class OfertaService {
     fun asignarCupo(idOferta: Long) {
         ofertaRepository.findById(idOferta).get().tomarCupo()
     }
+
+    @Transactional
+    fun clearDataSet() {
+        ofertaRepository.deleteAll()
+    }
+
 
 }

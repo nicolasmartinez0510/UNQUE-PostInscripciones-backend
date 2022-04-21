@@ -15,7 +15,8 @@ class DataSeed(@Autowired private val materiaRepository: MateriaRepository,
 
 	@Throws(Exception::class)
 	override fun run(vararg args: String?) {
-		loadData()
+		// Ver como hacer que esto no se corra con los tests
+//		loadData()
 	}
 
 	private fun loadData() {

@@ -4,7 +4,7 @@ import javax.persistence.*
 
 @Entity
 class Oferta(
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = arrayOf(CascadeType.REMOVE))
     val materia: Materia,
     val cuposTotales : Int = 30
 ) {
@@ -15,10 +15,12 @@ class Oferta(
 
     fun tomarCupo() {
         if(cuposOcupados == cuposTotales) {
-            throw RuntimeException("No hay cupos disponibles")
+            throw SinCuposException()
         }
         cuposOcupados++
     }
 
     fun cuposDisponibles() = cuposTotales - cuposOcupados
 }
+
+class SinCuposException: RuntimeException("No hay cupos disponibles")
