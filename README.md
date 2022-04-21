@@ -13,7 +13,7 @@ Aplicación para facilitar la asignación de sobre cupos de las materias de una 
 ## Instalación
 
 1. ### Clonar repositorio:
-    <pre><code>git clone https://github.com/fagustin07/UNQUE-PostInscripciones-backend.git</pre></code>
+    <pre><code>git clone https://github.com/fagustin07/UNQUE-PostInscripciones-backend.git</code></pre>
 2. ### Preparar la APP:
   - Cree un archivo [.env](https://github.com/fagustin07/UNQUE-PostInscripciones-backend/blob/dev/.env.example) 📋 dentro de la carpeta y configurelo utilizando como base el archivo [.env.example](https://github.com/fagustin07/UNQUE-PostInscripciones-backend/blob/dev/.env.example). Luego, asigne los valores correspondientes a cada variable.<br>
     - ```MYSQLDB_USER:``` Usuario de la base de datos. <br>
@@ -40,6 +40,6 @@ Aplicación para facilitar la asignación de sobre cupos de las materias de una 
     ```
     La aplicación se encontrara ejecutandose en el puerto indicado en ```SPRING_LOCAL_PORT:```
     
-## Diagrama de clases
+## Diagrama de relaciones
  
-![MER](imagenes/diagrama_relaciones.jpg)
+![Relaciones](imagenes/relaciones_1.4.jpg)
