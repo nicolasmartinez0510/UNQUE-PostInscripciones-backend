@@ -13,7 +13,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.LocalTime
-import java.time.Year
 
 @IntegrationTest
 class ComisionServiceTest {
@@ -38,7 +37,7 @@ class ComisionServiceTest {
     @BeforeEach
     fun setUp() {
         bdd = materiaService.crear("Base de datos", "BBD-208")
-        c1 = cuatrimestreService.crear(Year.of(2022), Semestre.S1)
+        c1 = cuatrimestreService.crear(2022, Semestre.S1)
 
         horarios = listOf(
                 Horario(Dia.LUNES, LocalTime.of(18, 30, 0),LocalTime.of(21, 30, 0)),
@@ -48,7 +47,7 @@ class ComisionServiceTest {
         val formulario =  FormularioComision(
                 1,
                 bdd.codigo,
-                Year.of(2022),
+                2022,
                 Semestre.S1,
                 35,
                 5,

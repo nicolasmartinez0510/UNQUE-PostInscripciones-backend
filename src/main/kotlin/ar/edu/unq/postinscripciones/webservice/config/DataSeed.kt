@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
-import java.time.Year
 
 @Profile("!test")
 @Component
@@ -32,7 +31,7 @@ class DataSeed(
             val materia4 = Materia("3", "Matemática 1")
             val materia5 = Materia("4", "Estructura de Datos")
 
-            val cuatrimestre = Cuatrimestre(Year.of(2022), Semestre.S1)
+            val cuatrimestre = Cuatrimestre(2022, Semestre.S1)
 
             cuatrimestreRepository.save(cuatrimestre)
             materiaRepository.saveAll(listOf(materia1, materia2, materia3, materia4, materia5))

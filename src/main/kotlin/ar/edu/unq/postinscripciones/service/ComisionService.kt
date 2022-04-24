@@ -10,7 +10,6 @@ import ar.edu.unq.postinscripciones.persistence.HorarioRepository
 import ar.edu.unq.postinscripciones.persistence.MateriaRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import java.time.Year
 import javax.transaction.Transactional
 
 @Service
@@ -53,7 +52,7 @@ class ComisionService {
 data class FormularioComision(
         val numero: Int,
         val codigoMateria: String,
-        val anio: Year,
+        val anio: Int,
         val semestre: Semestre,
         val cuposTotales: Int,
         val sobreCuposTotales: Int,

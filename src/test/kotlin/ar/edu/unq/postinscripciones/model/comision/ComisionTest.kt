@@ -7,8 +7,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalTime
-import java.time.Year
-
 
 internal class ComisionTest {
     lateinit var bdd: Materia
@@ -17,7 +15,7 @@ internal class ComisionTest {
     val cuposTotales = 25
     val cuposOcupados = 20
     val sobrecuposTotales = 15
-    val cuatrimestre = Cuatrimestre(Year.of(2022), Semestre.S2)
+    val cuatrimestre = Cuatrimestre(2022, Semestre.S2)
 
     @BeforeEach
     fun `set up`() {

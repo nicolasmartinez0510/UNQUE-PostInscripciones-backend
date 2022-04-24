@@ -5,7 +5,6 @@ import ar.edu.unq.postinscripciones.model.cuatrimestre.Semestre
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.time.Year
 
 internal class FormularioTest {
     lateinit var cuatrimestre: Cuatrimestre
@@ -14,7 +13,7 @@ internal class FormularioTest {
     @BeforeEach
     fun `set up`() {
         solicitud = SolicitudSobrecupo()
-        cuatrimestre = Cuatrimestre(Year.of(2010), Semestre.S1)
+        cuatrimestre = Cuatrimestre(2010, Semestre.S1)
         formulario = Formulario(cuatrimestre = cuatrimestre, solicitudes = listOf(solicitud))
     }
 

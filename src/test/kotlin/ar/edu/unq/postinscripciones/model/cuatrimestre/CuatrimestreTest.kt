@@ -3,19 +3,18 @@ package ar.edu.unq.postinscripciones.model.cuatrimestre
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.time.Year
 
 internal class CuatrimestreTest {
     lateinit var cuatrimestre: Cuatrimestre
 
     @BeforeEach
     fun setUp() {
-        cuatrimestre = Cuatrimestre(Year.of(2009), Semestre.S2)
+        cuatrimestre = Cuatrimestre(2009, Semestre.S2)
     }
 
     @Test
     fun `un cuatrimestre conoce su anio`() {
-        assertThat(cuatrimestre.anio).isEqualTo(Year.of(2009))
+        assertThat(cuatrimestre.anio).isEqualTo(2009)
     }
 
     @Test
