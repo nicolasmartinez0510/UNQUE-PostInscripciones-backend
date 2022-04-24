@@ -1,11 +1,11 @@
 package ar.edu.unq.postinscripciones.model.comision
 
-import ar.edu.unq.postinscripciones.model.Materia
-import ar.edu.unq.postinscripciones.model.cuatrimestre.Cuatrimestre
+import ar.edu.unq.postinscripciones.model.cuatrimestre.CuatrimestreId
 import java.io.Serializable
+import javax.persistence.*
 
-data class ComisionId(
-    val materia: Materia,
+class ComisionId(
+    val codigoMateria: String,
     val numero: Int,
-    val cuatrimestre: Cuatrimestre
+    val cuatrimestreId: CuatrimestreId
 ): Serializable

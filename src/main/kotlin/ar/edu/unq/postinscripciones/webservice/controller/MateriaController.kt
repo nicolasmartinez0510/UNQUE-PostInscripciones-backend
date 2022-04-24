@@ -26,7 +26,7 @@ class MateriaController {
 
     @ApiOperation(value = "Endpoint usado para listar todas las materias disponibles")
     @RequestMapping(value = ["/todas"], method = [RequestMethod.GET])
-    fun asdasd(): ResponseEntity<*> {
+    fun todas(): ResponseEntity<*> {
         return ResponseEntity(
                 materiaService.todas(),
                 HttpStatus.OK

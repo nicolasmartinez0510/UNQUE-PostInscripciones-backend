@@ -13,9 +13,6 @@ class MateriaServiceTest {
     @Autowired
     private lateinit var materiaService: MateriaService
 
-    @Autowired
-    private lateinit var ofertaService: OfertaService
-
     private lateinit var bdd: Materia
     private lateinit var algo: Materia
 
@@ -46,7 +43,6 @@ class MateriaServiceTest {
 
     @AfterEach
     fun tearDown() {
-        ofertaService.clearDataSet()
         materiaService.clearDataSet()
     }
 }

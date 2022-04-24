@@ -1,5 +1,6 @@
 package ar.edu.unq.postinscripciones.model.cuatrimestre
 
+import java.io.Serializable
 import java.time.Year
 import javax.persistence.*
 
@@ -11,7 +12,7 @@ class Cuatrimestre(
     @Id
     @Enumerated(EnumType.STRING)
     val semestre: Semestre = Semestre.S1
-) {
+): Serializable {
 
     fun esElCuatrimestre(anio: Cuatrimestre) = this.esElCuatrimestre(anio.anio.value, anio.semestre)
 

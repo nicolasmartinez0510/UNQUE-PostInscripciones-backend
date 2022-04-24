@@ -7,14 +7,12 @@ import java.time.Year
 import javax.persistence.*
 
 @Entity
-@IdClass(ComisionId::class)
+// Revisar como poder hacer andar esto, no anda al querer crear una nueva comision
+//@IdClass(ComisionId::class)
 class Comision(
-    @Id
     @ManyToOne(fetch = FetchType.EAGER)
     val materia: Materia = Materia("", ""),
-    @Id
     val numero: Int = 1,
-    @Id
     @ManyToOne(fetch = FetchType.EAGER)
     val cuatrimestre: Cuatrimestre = Cuatrimestre(Year.of(2009), Semestre.S1),
     @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
@@ -24,6 +22,10 @@ class Comision(
     val sobrecuposTotales: Int = 5
 ) {
     private var sobrecuposOcupados = 0
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    var id: Long? = null
 
     fun cuposDisponibles() = (cuposTotales + sobrecuposTotales) - (cuposOcupados + sobrecuposOcupados)
 
