@@ -2,7 +2,6 @@ package ar.edu.unq.postinscripciones.service
 
 import ar.edu.unq.postinscripciones.model.comision.Comision
 import ar.edu.unq.postinscripciones.model.comision.Horario
-import ar.edu.unq.postinscripciones.model.cuatrimestre.Cuatrimestre
 import ar.edu.unq.postinscripciones.model.cuatrimestre.CuatrimestreId
 import ar.edu.unq.postinscripciones.model.cuatrimestre.Semestre
 import ar.edu.unq.postinscripciones.persistence.ComisionRespository
@@ -42,17 +41,12 @@ class ComisionService {
         return comisionRespository.findById(id).get().cuposDisponibles()
     }
 
-//    @Transactional
-//    fun obtenerComisionesMateria(codigoMateria: String): List<Comision> {
-//
-//        return comisionRespository.findAllByMateria(codigoMateria).get()
-//    }
-
     @Transactional
-    fun clearDataSet() {
-        comisionRespository.deleteAll()
-        materiaRepository.deleteAll()
-        cuatrimestreRepository.deleteAll()
+    fun obtenerComisionesMateria(codigoMateria: String): List<Comision> {
+        val materia = materiaRepository.findMateriaByCodigo(codigoMateria).get()
+        val comisiones = comisionRespository.findAllByMateria(materia).get()
+        comisiones.forEach { comision -> comision.horarios.size }
+        return comisiones
     }
 }
 

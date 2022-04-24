@@ -6,6 +6,7 @@ import ar.edu.unq.postinscripciones.model.comision.Dia
 import ar.edu.unq.postinscripciones.model.comision.Horario
 import ar.edu.unq.postinscripciones.model.cuatrimestre.Cuatrimestre
 import ar.edu.unq.postinscripciones.model.cuatrimestre.Semestre
+import ar.edu.unq.postinscripciones.resources.DataService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -25,6 +26,9 @@ class ComisionServiceTest {
 
     @Autowired
     private lateinit var materiaService: MateriaService
+
+    @Autowired
+    private lateinit var dataService: DataService
 
     private lateinit var bdd: Materia
     private lateinit var c1: Cuatrimestre
@@ -58,11 +62,11 @@ class ComisionServiceTest {
         assertThat(comision).isNotNull
     }
 
-//    @Test
-//    fun `Se puede pedir todas las comisiones de una materia`() {
-//        assertThat(comisionService.obtenerComisionesMateria(bdd.codigo).first()).usingRecursiveComparison()
-//                .isEqualTo(comision)
-//    }
+    @Test
+    fun `Se puede pedir todas las comisiones de una materia`() {
+        assertThat(comisionService.obtenerComisionesMateria(bdd.codigo).first()).usingRecursiveComparison()
+                .isEqualTo(comision)
+    }
 //    @Test
 //    fun `Se puede pedir la cantidad de cupos de una comision`() {
 //        val cuposDisponibles =
@@ -70,7 +74,7 @@ class ComisionServiceTest {
 
     @AfterEach
     fun tearDown() {
-        comisionService.clearDataSet()
+        dataService.clearDataSet()
     }
 
 }

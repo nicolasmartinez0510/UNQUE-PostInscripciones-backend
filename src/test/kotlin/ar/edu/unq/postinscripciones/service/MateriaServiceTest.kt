@@ -1,6 +1,7 @@
 package ar.edu.unq.postinscripciones.service
 
 import ar.edu.unq.postinscripciones.model.Materia
+import ar.edu.unq.postinscripciones.resources.DataService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -12,6 +13,9 @@ class MateriaServiceTest {
 
     @Autowired
     private lateinit var materiaService: MateriaService
+
+    @Autowired
+    private lateinit var dataService: DataService
 
     private lateinit var bdd: Materia
     private lateinit var algo: Materia
@@ -43,6 +47,6 @@ class MateriaServiceTest {
 
     @AfterEach
     fun tearDown() {
-        materiaService.clearDataSet()
+        dataService.clearDataSet()
     }
 }

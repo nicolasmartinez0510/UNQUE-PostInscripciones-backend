@@ -27,10 +27,6 @@ class MateriaService {
         return materiaRepository.findMateriaByCodigo(codigo).orElseThrow{ MateriaInexistenteException() }
     }
 
-    fun clearDataSet() {
-        materiaRepository.deleteAll()
-    }
-
 }
 
 class MateriaInexistenteException: RuntimeException("La materia no existe")
