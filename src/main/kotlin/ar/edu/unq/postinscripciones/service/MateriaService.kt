@@ -1,6 +1,7 @@
 package ar.edu.unq.postinscripciones.service
 
 import ar.edu.unq.postinscripciones.model.Materia
+import ar.edu.unq.postinscripciones.model.exception.MateriaNoEncontradaExcepcion
 import ar.edu.unq.postinscripciones.persistence.MateriaRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -24,9 +25,7 @@ class MateriaService {
 
     @Transactional
     fun obtener(codigo: String): Materia {
-        return materiaRepository.findMateriaByCodigo(codigo).orElseThrow{ MateriaInexistenteException() }
+        return materiaRepository.findMateriaByCodigo(codigo).orElseThrow{ MateriaNoEncontradaExcepcion() }
     }
 
 }
-
-class MateriaInexistenteException: RuntimeException("La materia no existe")

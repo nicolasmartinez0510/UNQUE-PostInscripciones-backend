@@ -17,7 +17,7 @@ class FormularioController {
     @Autowired
     private lateinit var formularioService: FormularioService
 
-    @ApiOperation("Endpoint que se usa para registrar una nueva comision en el sistema")
+    @ApiOperation("Endpoint que se usa para generar un formulario con solicitudes de materias")
     @RequestMapping(value = ["/crear"], method = [RequestMethod.POST])
     fun solicitarCupo(@RequestBody solicitud: FormularioSolicitud): ResponseEntity<*> {
         return ResponseEntity(

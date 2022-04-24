@@ -14,7 +14,7 @@ class Comision(
     val numero: Int = 1,
     @ManyToOne(fetch = FetchType.EAGER)
     val cuatrimestre: Cuatrimestre = Cuatrimestre(2009, Semestre.S1),
-    @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    @OneToMany(fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
     val horarios: List<Horario> = listOf(),
     val cuposTotales: Int = 30,
     val cuposOcupados: Int = 0,

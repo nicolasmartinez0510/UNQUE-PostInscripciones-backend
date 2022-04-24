@@ -1,11 +1,13 @@
 package ar.edu.unq.postinscripciones.service
 
+import ar.edu.unq.postinscripciones.model.exception.ExcepcionUNQUE
 import ar.edu.unq.postinscripciones.model.Materia
 import ar.edu.unq.postinscripciones.resources.DataService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 
 @IntegrationTest
@@ -43,6 +45,13 @@ class MateriaServiceTest {
     fun `Se puede obtener una materia especifica`() {
         val materiaEncontrada = materiaService.obtener(bdd.codigo)
         assertThat(materiaEncontrada).usingRecursiveComparison().isEqualTo(bdd)
+    }
+
+    @Test
+    fun `No se puede obtener una materia que no existe`() {
+        val exception = assertThrows<ExcepcionUNQUE> { materiaService.obtener("AA-207") }
+
+        assertThat(exception.message).isEqualTo("No se encuentra la materia")
     }
 
     @AfterEach

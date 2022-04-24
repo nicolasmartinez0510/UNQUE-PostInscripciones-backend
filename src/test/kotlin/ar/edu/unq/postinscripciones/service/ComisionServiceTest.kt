@@ -1,5 +1,6 @@
 package ar.edu.unq.postinscripciones.service
 
+import ar.edu.unq.postinscripciones.model.exception.ExcepcionUNQUE
 import ar.edu.unq.postinscripciones.model.Materia
 import ar.edu.unq.postinscripciones.model.comision.Comision
 import ar.edu.unq.postinscripciones.model.comision.Dia
@@ -11,6 +12,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.LocalTime
 
@@ -66,10 +68,27 @@ class ComisionServiceTest {
         assertThat(comisionService.obtenerComisionesMateria(bdd.codigo).first()).usingRecursiveComparison()
                 .isEqualTo(comision)
     }
-//    @Test
-//    fun `Se puede pedir la cantidad de cupos de una comision`() {
-//        val cuposDisponibles =
-//    }
+    @Test
+    fun `Se puede obtener una comision especifica`() {
+        val comisionObtenida = comisionService.obtener(comision.id!!)
+
+        assertThat(comisionObtenida).usingRecursiveComparison().isEqualTo(comision)
+    }
+
+    @Test
+    fun `No se puede obtener una comision que no existe`() {
+        val exception = assertThrows<ExcepcionUNQUE> { comisionService.obtener(2) }
+
+        assertThat(exception.message).isEqualTo("No se encuentra la comision")
+    }
+
+    @Test
+    fun `No se pueden obtener las comisiones de una materia que no existe`() {
+        val exception = assertThrows<ExcepcionUNQUE> { comisionService.obtenerComisionesMateria("AA-209") }
+
+        assertThat(exception.message).isEqualTo("No se encuentra la materia")
+    }
+
 
     @AfterEach
     fun tearDown() {

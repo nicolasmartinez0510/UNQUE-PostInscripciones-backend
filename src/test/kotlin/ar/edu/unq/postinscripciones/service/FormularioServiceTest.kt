@@ -7,11 +7,14 @@ import ar.edu.unq.postinscripciones.model.comision.Horario
 import ar.edu.unq.postinscripciones.model.cuatrimestre.Cuatrimestre
 import ar.edu.unq.postinscripciones.model.cuatrimestre.CuatrimestreId
 import ar.edu.unq.postinscripciones.model.cuatrimestre.Semestre
+import ar.edu.unq.postinscripciones.model.exception.ExcepcionUNQUE
 import ar.edu.unq.postinscripciones.resources.DataService
 import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.LocalTime
 
@@ -63,7 +66,7 @@ class FormularioServiceTest {
     fun `Se puede crear un formulario para el cuatrmiestre actual`() {
         val formulario = formularioService.crear(CuatrimestreId(c1.anio, c1.semestre), listOf(Solicitud(comision.id!!), Solicitud(comision.id!!)))
 
-        Assertions.assertThat(formulario).isNotNull
+        assertThat(formulario).isNotNull
     }
 
     @Test
@@ -71,7 +74,7 @@ class FormularioServiceTest {
         val solicitudes = listOf(Solicitud(comision.id!!))
         val formulario = formularioService.crear(CuatrimestreId(c1.anio, c1.semestre), solicitudes)
 
-        Assertions.assertThat(formulario.solicitudes.first().comision.id).isEqualTo(solicitudes.first().comisionId)
+        assertThat(formulario.solicitudes.first().comision.id).isEqualTo(solicitudes.first().comisionId)
     }
 
     @AfterEach

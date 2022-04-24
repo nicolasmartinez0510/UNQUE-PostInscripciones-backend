@@ -2,6 +2,7 @@ package ar.edu.unq.postinscripciones.model
 
 import ar.edu.unq.postinscripciones.model.comision.Comision
 import ar.edu.unq.postinscripciones.model.cuatrimestre.Cuatrimestre
+import ar.edu.unq.postinscripciones.model.exception.ExcepcionUNQUE
 import javax.persistence.CascadeType
 import javax.persistence.Entity
 import javax.persistence.FetchType

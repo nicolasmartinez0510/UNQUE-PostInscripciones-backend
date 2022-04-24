@@ -1,6 +1,7 @@
 package ar.edu.unq.postinscripciones.resources
 
 import ar.edu.unq.postinscripciones.persistence.*
+import ar.edu.unq.postinscripciones.service.AlumnoService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import javax.transaction.Transactional
@@ -20,11 +21,16 @@ class DataService {
     @Autowired
     private lateinit var formularioRepository: FormularioRepository
 
+    @Autowired
+    private lateinit var alumnoRepository: AlumnoRepository
+
     @Transactional
     fun clearDataSet() {
         formularioRepository.deleteAll()
         comisionRespository.deleteAll()
         materiaRepository.deleteAll()
         cuatrimestreRepository.deleteAll()
+        alumnoRepository.deleteAll()
+
     }
 }

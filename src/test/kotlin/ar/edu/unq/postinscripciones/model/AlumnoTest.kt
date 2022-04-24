@@ -1,6 +1,7 @@
 package ar.edu.unq.postinscripciones.model
 
 import ar.edu.unq.postinscripciones.model.comision.Comision
+import ar.edu.unq.postinscripciones.model.exception.ExcepcionUNQUE
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

@@ -1,9 +1,11 @@
 package ar.edu.unq.postinscripciones.service
 
+import ar.edu.unq.postinscripciones.model.exception.ExcepcionUNQUE
 import ar.edu.unq.postinscripciones.model.comision.Comision
 import ar.edu.unq.postinscripciones.model.comision.Horario
 import ar.edu.unq.postinscripciones.model.cuatrimestre.CuatrimestreId
 import ar.edu.unq.postinscripciones.model.cuatrimestre.Semestre
+import ar.edu.unq.postinscripciones.model.exception.MateriaNoEncontradaExcepcion
 import ar.edu.unq.postinscripciones.persistence.ComisionRespository
 import ar.edu.unq.postinscripciones.persistence.CuatrimestreRepository
 import ar.edu.unq.postinscripciones.persistence.HorarioRepository
@@ -29,20 +31,20 @@ class ComisionService {
 
     @Transactional
     fun crear(formularioComision: FormularioComision): Comision {
-        val materia = materiaRepository.findMateriaByCodigo(formularioComision.codigoMateria).get()
+        val materia = materiaRepository.findMateriaByCodigo(formularioComision.codigoMateria).orElseThrow { MateriaNoEncontradaExcepcion() }
         val cuatrimestre = cuatrimestreRepository.findById(CuatrimestreId(formularioComision.anio,formularioComision.semestre)).get()
         val horarios = horarioRepository.saveAll(formularioComision.horarios).toList()
         return comisionRespository.save(Comision(materia, formularioComision.numero, cuatrimestre, horarios, formularioComision.cuposTotales, 0, formularioComision.sobreCuposTotales))
     }
 
     @Transactional
-    fun cuposDisponiblesComision(id: Long): Int {
-        return comisionRespository.findById(id).get().cuposDisponibles()
+    fun obtener(id: Long): Comision {
+        return comisionRespository.findById(id).orElseThrow { ExcepcionUNQUE("No se encuentra la comision") }
     }
 
     @Transactional
     fun obtenerComisionesMateria(codigoMateria: String): List<Comision> {
-        val materia = materiaRepository.findMateriaByCodigo(codigoMateria).get()
+        val materia = materiaRepository.findMateriaByCodigo(codigoMateria).orElseThrow { ExcepcionUNQUE("No se encuentra la materia") }
         val comisiones = comisionRespository.findAllByMateria(materia).get()
         comisiones.forEach { comision -> comision.horarios.size }
         return comisiones
