@@ -1,6 +1,5 @@
 package ar.edu.unq.postinscripciones.webservice.controller
 
-import ar.edu.unq.postinscripciones.model.cuatrimestre.CuatrimestreId
 import ar.edu.unq.postinscripciones.service.FormularioService
 import ar.edu.unq.postinscripciones.service.Solicitud
 import io.swagger.annotations.ApiOperation
@@ -21,12 +20,12 @@ class FormularioController {
     @RequestMapping(value = ["/crear"], method = [RequestMethod.POST])
     fun solicitarCupo(@RequestBody solicitud: FormularioSolicitud): ResponseEntity<*> {
         return ResponseEntity(
-            formularioService.crear(solicitud.cuatrimestreId, solicitud.solicitudes),
+            formularioService.crear(solicitud.idCuatrimestre, solicitud.solicitudes),
             HttpStatus.CREATED
         )
     }
 }
 
-data class FormularioSolicitud(val cuatrimestreId: CuatrimestreId, val solicitudes: List<Solicitud>) {
+data class FormularioSolicitud(val idCuatrimestre: Long, val solicitudes: List<Solicitud>) {
 
 }

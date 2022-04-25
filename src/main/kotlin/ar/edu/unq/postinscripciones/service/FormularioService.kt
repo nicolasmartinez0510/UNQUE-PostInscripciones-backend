@@ -2,7 +2,6 @@ package ar.edu.unq.postinscripciones.service
 
 import ar.edu.unq.postinscripciones.model.Formulario
 import ar.edu.unq.postinscripciones.model.SolicitudSobrecupo
-import ar.edu.unq.postinscripciones.model.cuatrimestre.CuatrimestreId
 import ar.edu.unq.postinscripciones.persistence.ComisionRespository
 import ar.edu.unq.postinscripciones.persistence.CuatrimestreRepository
 import ar.edu.unq.postinscripciones.persistence.FormularioRepository
@@ -23,8 +22,8 @@ class FormularioService {
     private lateinit var comisionRepository: ComisionRespository
 
     @Transactional
-    fun crear(cuatrimestreId: CuatrimestreId, solicitudesSobrecupo: List<Solicitud>): Formulario {
-        val cuatrimestre = cuatrimestreRepository.findById(cuatrimestreId).get()
+    fun crear(idCuatrimestre: Long, solicitudesSobrecupo: List<Solicitud>): Formulario {
+        val cuatrimestre = cuatrimestreRepository.findById(idCuatrimestre).get()
         val comisiones = comisionRepository.findAllById(solicitudesSobrecupo.map { it.comisionId })
         return formularioRepository.save(Formulario(cuatrimestre, comisiones.map { SolicitudSobrecupo(it) }))
     }

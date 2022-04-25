@@ -5,16 +5,12 @@ import ar.edu.unq.postinscripciones.model.comision.Comision
 import ar.edu.unq.postinscripciones.model.comision.Dia
 import ar.edu.unq.postinscripciones.model.comision.Horario
 import ar.edu.unq.postinscripciones.model.cuatrimestre.Cuatrimestre
-import ar.edu.unq.postinscripciones.model.cuatrimestre.CuatrimestreId
 import ar.edu.unq.postinscripciones.model.cuatrimestre.Semestre
-import ar.edu.unq.postinscripciones.model.exception.ExcepcionUNQUE
 import ar.edu.unq.postinscripciones.resources.DataService
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.LocalTime
 
@@ -51,7 +47,7 @@ class FormularioServiceTest {
             Horario(Dia.JUEVES, LocalTime.of(18, 30, 0), LocalTime.of(21, 30, 0))
         )
 
-        val formularioComision =  FormularioComision(
+        val formularioComision = FormularioComision(
             1,
             materia.codigo,
             2022,
@@ -62,9 +58,10 @@ class FormularioServiceTest {
         )
         comision = comisionService.crear(formularioComision)
     }
+
     @Test
     fun `Se puede crear un formulario para el cuatrmiestre actual`() {
-        val formulario = formularioService.crear(CuatrimestreId(c1.anio, c1.semestre), listOf(Solicitud(comision.id!!), Solicitud(comision.id!!)))
+        val formulario = formularioService.crear(c1.id!!, listOf(Solicitud(comision.id!!), Solicitud(comision.id!!)))
 
         assertThat(formulario).isNotNull
     }
@@ -72,7 +69,7 @@ class FormularioServiceTest {
     @Test
     fun `El Formulario creado tiene la comision adecuada`() {
         val solicitudes = listOf(Solicitud(comision.id!!))
-        val formulario = formularioService.crear(CuatrimestreId(c1.anio, c1.semestre), solicitudes)
+        val formulario = formularioService.crear(c1.id!!, solicitudes)
 
         assertThat(formulario.solicitudes.first().comision.id).isEqualTo(solicitudes.first().comisionId)
     }

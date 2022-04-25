@@ -20,11 +20,11 @@ class Comision(
     val cuposOcupados: Int = 0,
     val sobrecuposTotales: Int = 5
 ) {
-    private var sobrecuposOcupados = 0
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
+
+    private var sobrecuposOcupados = 0
 
     fun cuposDisponibles() = (cuposTotales + sobrecuposTotales) - (cuposOcupados + sobrecuposOcupados)
 

@@ -1,15 +1,14 @@
 package ar.edu.unq.postinscripciones.service
 
 import ar.edu.unq.postinscripciones.model.Alumno
-import ar.edu.unq.postinscripciones.model.exception.ExcepcionUNQUE
 import ar.edu.unq.postinscripciones.model.Formulario
 import ar.edu.unq.postinscripciones.model.Materia
 import ar.edu.unq.postinscripciones.model.comision.Comision
 import ar.edu.unq.postinscripciones.model.comision.Dia
 import ar.edu.unq.postinscripciones.model.comision.Horario
 import ar.edu.unq.postinscripciones.model.cuatrimestre.Cuatrimestre
-import ar.edu.unq.postinscripciones.model.cuatrimestre.CuatrimestreId
 import ar.edu.unq.postinscripciones.model.cuatrimestre.Semestre
+import ar.edu.unq.postinscripciones.model.exception.ExcepcionUNQUE
 import ar.edu.unq.postinscripciones.resources.DataService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
@@ -50,33 +49,33 @@ class AlumnoServiceTest {
     @BeforeEach
     fun setUp() {
         val formularioCrear = FormularioCrearAlumno(
-                45328,
-                "Nicolas",
-                "Martinez",
-                "nicolas.martinez@unq.edu.ar",
-                42256394,
-                "42256395"
+            45328,
+            "Nicolas",
+            "Martinez",
+            "nicolas.martinez@unq.edu.ar",
+            42256394,
+            "42256395"
         )
 
         alumno = alumnoService.crear(formularioCrear)
         algo = materiaService.crear("Algoritmos", "ALG-208")
         c1 = cuatrimestreService.crear(2022, Semestre.S1)
         val horarios = listOf(
-                Horario(Dia.LUNES, LocalTime.of(18, 30, 0), LocalTime.of(21, 30, 0)),
-                Horario(Dia.JUEVES, LocalTime.of(18, 30, 0), LocalTime.of(21, 30, 0))
+            Horario(Dia.LUNES, LocalTime.of(18, 30, 0), LocalTime.of(21, 30, 0)),
+            Horario(Dia.JUEVES, LocalTime.of(18, 30, 0), LocalTime.of(21, 30, 0))
         )
 
-        val formularioComision =  FormularioComision(
-                1,
-                algo.codigo,
-                2022,
-                Semestre.S1,
-                35,
-                5,
-                horarios
+        val formularioComision = FormularioComision(
+            1,
+            algo.codigo,
+            2022,
+            Semestre.S1,
+            35,
+            5,
+            horarios
         )
         comision1Algoritmos = comisionService.crear(formularioComision)
-        formularioSolicitud = formularioService.crear(CuatrimestreId(c1.anio, c1.semestre), listOf(Solicitud(comision1Algoritmos.id!!)))
+        formularioSolicitud = formularioService.crear(c1.id!!, listOf(Solicitud(comision1Algoritmos.id!!)))
 
     }
 
@@ -87,7 +86,8 @@ class AlumnoServiceTest {
 
     @Test
     fun `Un alumno registra un formulario de solicitud de cupo`() {
-        val alumnoDespuesDeGuardarFormulario = alumnoService.registrarFormularioDeSolicitud(alumno.legajo,formularioSolicitud)
+        val alumnoDespuesDeGuardarFormulario =
+            alumnoService.registrarFormularioDeSolicitud(alumno.legajo, formularioSolicitud)
 
         assertThat(alumnoDespuesDeGuardarFormulario.haSolicitado(comision1Algoritmos)).isTrue
     }
@@ -95,7 +95,12 @@ class AlumnoServiceTest {
     @Test
     fun `Un alumno no puede registrar dos formularios para el mismo cuatrimestre`() {
         alumnoService.registrarFormularioDeSolicitud(alumno.legajo, formularioSolicitud)
-        val exception = assertThrows<ExcepcionUNQUE> { alumnoService.registrarFormularioDeSolicitud(alumno.legajo, formularioSolicitud) }
+        val exception = assertThrows<ExcepcionUNQUE> {
+            alumnoService.registrarFormularioDeSolicitud(
+                alumno.legajo,
+                formularioSolicitud
+            )
+        }
         assertThat(exception.message).isEqualTo("Ya has solicitado materias para este cuatrimestre")
     }
 

@@ -1,14 +1,12 @@
 package ar.edu.unq.postinscripciones.service
 
-import ar.edu.unq.postinscripciones.model.exception.ExcepcionUNQUE
 import ar.edu.unq.postinscripciones.model.comision.Comision
 import ar.edu.unq.postinscripciones.model.comision.Horario
-import ar.edu.unq.postinscripciones.model.cuatrimestre.CuatrimestreId
 import ar.edu.unq.postinscripciones.model.cuatrimestre.Semestre
+import ar.edu.unq.postinscripciones.model.exception.ExcepcionUNQUE
 import ar.edu.unq.postinscripciones.model.exception.MateriaNoEncontradaExcepcion
 import ar.edu.unq.postinscripciones.persistence.ComisionRespository
 import ar.edu.unq.postinscripciones.persistence.CuatrimestreRepository
-import ar.edu.unq.postinscripciones.persistence.HorarioRepository
 import ar.edu.unq.postinscripciones.persistence.MateriaRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -26,15 +24,23 @@ class ComisionService {
     @Autowired
     private lateinit var cuatrimestreRepository: CuatrimestreRepository
 
-    @Autowired
-    private lateinit var horarioRepository: HorarioRepository
-
     @Transactional
     fun crear(formularioComision: FormularioComision): Comision {
-        val materia = materiaRepository.findMateriaByCodigo(formularioComision.codigoMateria).orElseThrow { MateriaNoEncontradaExcepcion() }
-        val cuatrimestre = cuatrimestreRepository.findById(CuatrimestreId(formularioComision.anio,formularioComision.semestre)).get()
-        val horarios = horarioRepository.saveAll(formularioComision.horarios).toList()
-        return comisionRespository.save(Comision(materia, formularioComision.numero, cuatrimestre, horarios, formularioComision.cuposTotales, 0, formularioComision.sobreCuposTotales))
+        val materia = materiaRepository.findMateriaByCodigo(formularioComision.codigoMateria)
+            .orElseThrow { MateriaNoEncontradaExcepcion() }
+        val cuatrimestre =
+            cuatrimestreRepository.findByAnioAndSemestre(formularioComision.anio, formularioComision.semestre).get()
+        return comisionRespository.save(
+            Comision(
+                materia,
+                formularioComision.numero,
+                cuatrimestre,
+                formularioComision.horarios,
+                formularioComision.cuposTotales,
+                0,
+                formularioComision.sobreCuposTotales
+            )
+        )
     }
 
     @Transactional
@@ -44,7 +50,8 @@ class ComisionService {
 
     @Transactional
     fun obtenerComisionesMateria(codigoMateria: String): List<Comision> {
-        val materia = materiaRepository.findMateriaByCodigo(codigoMateria).orElseThrow { ExcepcionUNQUE("No se encuentra la materia") }
+        val materia = materiaRepository.findMateriaByCodigo(codigoMateria)
+            .orElseThrow { ExcepcionUNQUE("No se encuentra la materia") }
         val comisiones = comisionRespository.findAllByMateria(materia).get()
         comisiones.forEach { comision -> comision.horarios.size }
         return comisiones
@@ -52,11 +59,11 @@ class ComisionService {
 }
 
 data class FormularioComision(
-        val numero: Int,
-        val codigoMateria: String,
-        val anio: Int,
-        val semestre: Semestre,
-        val cuposTotales: Int,
-        val sobreCuposTotales: Int,
-        val horarios: List<Horario>
+    val numero: Int,
+    val codigoMateria: String,
+    val anio: Int,
+    val semestre: Semestre,
+    val cuposTotales: Int,
+    val sobreCuposTotales: Int,
+    val horarios: List<Horario>
 )
