@@ -13,7 +13,6 @@ class AlumnoService {
     @Autowired
     private lateinit var alumnoRepository: AlumnoRepository
 
-
     @Transactional
     fun crear(formulario: FormularioCrearAlumno): Alumno {
         return alumnoRepository.save(Alumno(
@@ -31,6 +30,25 @@ class AlumnoService {
         val alumno = alumnoRepository.findById(legajo).get()
         alumno.guardarFormulario(formulario)
         return alumnoRepository.save(alumno)
+    }
+
+    @Transactional
+    fun todos(): List<Alumno> {
+        return alumnoRepository.findAll().toList()
+    }
+
+    @Transactional
+    fun registrarAlumnos(planillaAlumnos: List<FormularioCrearAlumno>) {
+        planillaAlumnos.forEach { formulario ->
+            alumnoRepository.save(Alumno(
+                formulario.legajo,
+                formulario.nombre,
+                formulario.apellido,
+                formulario.correo,
+                formulario.dni,
+                formulario.contrasenia
+            ))
+        }
     }
 }
 

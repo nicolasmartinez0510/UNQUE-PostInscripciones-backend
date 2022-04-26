@@ -21,7 +21,6 @@ import java.time.LocalTime
 @IntegrationTest
 class AlumnoServiceTest {
 
-
     @Autowired
     private lateinit var formularioService: FormularioService
 

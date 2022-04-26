@@ -6,8 +6,6 @@ import ar.edu.unq.postinscripciones.model.cuatrimestre.Semestre
 import javax.persistence.*
 
 @Entity
-// Revisar como poder hacer andar esto, no anda al querer crear una nueva comision
-//@IdClass(ComisionId::class)
 class Comision(
     @ManyToOne(fetch = FetchType.EAGER)
     val materia: Materia = Materia("", ""),
