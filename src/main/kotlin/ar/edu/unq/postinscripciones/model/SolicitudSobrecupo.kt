@@ -5,7 +5,7 @@ import javax.persistence.*
 
 @Entity
 class SolicitudSobrecupo(
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     val comision: Comision = Comision()
 ) {
     @Id

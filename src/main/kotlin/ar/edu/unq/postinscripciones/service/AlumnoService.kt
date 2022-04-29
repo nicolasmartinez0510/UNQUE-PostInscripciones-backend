@@ -2,8 +2,12 @@ package ar.edu.unq.postinscripciones.service
 
 import ar.edu.unq.postinscripciones.model.Alumno
 import ar.edu.unq.postinscripciones.model.Formulario
+import ar.edu.unq.postinscripciones.model.SolicitudSobrecupo
 import ar.edu.unq.postinscripciones.model.exception.ExcepcionUNQUE
 import ar.edu.unq.postinscripciones.persistence.AlumnoRepository
+import ar.edu.unq.postinscripciones.persistence.ComisionRespository
+import ar.edu.unq.postinscripciones.persistence.CuatrimestreRepository
+import ar.edu.unq.postinscripciones.persistence.FormularioRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import javax.transaction.Transactional
@@ -14,22 +18,14 @@ class AlumnoService {
     @Autowired
     private lateinit var alumnoRepository: AlumnoRepository
 
-    @Transactional
-    fun crear(formulario: FormularioCrearAlumno): Alumno {
-        return this.guardarAlumno(formulario)
-    }
+    @Autowired
+    private lateinit var formularioRepository: FormularioRepository
 
-    @Transactional
-    fun registrarFormularioDeSolicitud(legajo: Int, formulario: Formulario): Alumno {
-        val alumno = alumnoRepository.findById(legajo).get()
-        alumno.guardarFormulario(formulario)
-        return alumnoRepository.save(alumno)
-    }
+    @Autowired
+    private lateinit var comisionRepository: ComisionRespository
 
-    @Transactional
-    fun todos(): List<Alumno> {
-        return alumnoRepository.findAll().toList()
-    }
+    @Autowired
+    private lateinit var cuatrimestreService: CuatrimestreRepository
 
     @Transactional
     fun registrarAlumnos(planillaAlumnos: List<FormularioCrearAlumno>) {
@@ -38,6 +34,31 @@ class AlumnoService {
                 .ifPresent { throw ExcepcionUNQUE("Ya existe el alumno con el legajo ${formulario.legajo}. Intente nuevamente") }
             guardarAlumno(formulario)
         }
+    }
+
+    @Transactional
+    fun guardarSolicitudPara(legajoAlumno: Int, idCuatrimestre: Long, comisionesSolicitadas: List<Long>): Alumno {
+        val alumno = alumnoRepository.findById(legajoAlumno).get()
+        val cuatrimestre = cuatrimestreService.findById(idCuatrimestre).get()
+        val solicitudesPorMateria = comisionesSolicitadas.map { idComision ->
+            val comision = comisionRepository.findById(idComision)
+            SolicitudSobrecupo(comision.get())
+        }
+        val formulario = formularioRepository.save(Formulario(cuatrimestre, solicitudesPorMateria))
+
+        alumno.guardarFormulario(formulario)
+
+        return alumnoRepository.save(alumno)
+    }
+
+    @Transactional
+    fun crear(formulario: FormularioCrearAlumno): Alumno {
+        return this.guardarAlumno(formulario)
+    }
+
+    @Transactional
+    fun todos(): List<Alumno> {
+        return alumnoRepository.findAll().toList()
     }
 
     private fun guardarAlumno(formulario: FormularioCrearAlumno): Alumno {

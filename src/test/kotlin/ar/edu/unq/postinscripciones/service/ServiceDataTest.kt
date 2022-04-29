@@ -1,13 +1,17 @@
 package ar.edu.unq.postinscripciones.service
 
+import ar.edu.unq.postinscripciones.model.comision.Dia
 import ar.edu.unq.postinscripciones.model.cuatrimestre.Semestre
 import ar.edu.unq.postinscripciones.model.exception.ExcepcionUNQUE
 import ar.edu.unq.postinscripciones.resources.DataService
+import ar.edu.unq.postinscripciones.service.dto.ComisionACrear
+import ar.edu.unq.postinscripciones.service.dto.HorarioDTO
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
+import java.time.LocalTime
 
 @IntegrationTest
 internal class ServiceDataTest {
@@ -85,12 +89,26 @@ internal class ServiceDataTest {
             cuatri.anio,
             cuatri.semestre,
             listOf(
-                ComisionACrear(1, bdd.codigo, listOf(), 30, 30, 8),
-                ComisionACrear(2, bdd.codigo, listOf(), 30, 30, 8)
+                ComisionACrear(
+                    1,
+                    bdd.codigo,
+                    listOf(HorarioDTO(Dia.LUNES, LocalTime.of(18, 0), LocalTime.of(21, 0))),
+                    30,
+                    30,
+                    8
+                ),
+                ComisionACrear(
+                    2,
+                    bdd.codigo,
+                    listOf(HorarioDTO(Dia.MIERCOLES, LocalTime.of(15, 0), LocalTime.of(18, 0))),
+                    30,
+                    30,
+                    8
+                )
             )
         )
 
-        val ofertaDelCuatrimestre = comisionService.ofertaDelCuatrimestre(cuatri.id!!)
+        val ofertaDelCuatrimestre = comisionService.ofertaDelCuatrimestre(cuatri.anio, cuatri.semestre)
 
         assertThat(ofertaDelCuatrimestre).hasSize(2)
         assertThat(ofertaDelCuatrimestre).allMatch { it.materia == bdd.nombre }

@@ -1,7 +1,4 @@
-package ar.edu.unq.postinscripciones.service
-
-import ar.edu.unq.postinscripciones.model.comision.Dia
-import java.time.LocalTime
+package ar.edu.unq.postinscripciones.service.dto
 
 data class ComisionACrear(
     val numeroComision: Int,
@@ -11,5 +8,3 @@ data class ComisionACrear(
     val cuposOcupados: Int,
     val sobrecuposTotales: Int
 )
-
-data class HorarioDTO(val dia: Dia, val inicio: LocalTime, val fin: LocalTime)

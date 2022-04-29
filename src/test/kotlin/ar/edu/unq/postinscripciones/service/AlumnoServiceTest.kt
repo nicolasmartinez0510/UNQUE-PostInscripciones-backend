@@ -1,7 +1,6 @@
 package ar.edu.unq.postinscripciones.service
 
 import ar.edu.unq.postinscripciones.model.Alumno
-import ar.edu.unq.postinscripciones.model.Formulario
 import ar.edu.unq.postinscripciones.model.Materia
 import ar.edu.unq.postinscripciones.model.comision.Comision
 import ar.edu.unq.postinscripciones.model.comision.Dia
@@ -10,6 +9,7 @@ import ar.edu.unq.postinscripciones.model.cuatrimestre.Cuatrimestre
 import ar.edu.unq.postinscripciones.model.cuatrimestre.Semestre
 import ar.edu.unq.postinscripciones.model.exception.ExcepcionUNQUE
 import ar.edu.unq.postinscripciones.resources.DataService
+import ar.edu.unq.postinscripciones.service.dto.FormularioComision
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -20,9 +20,6 @@ import java.time.LocalTime
 
 @IntegrationTest
 class AlumnoServiceTest {
-
-    @Autowired
-    private lateinit var formularioService: FormularioService
 
     @Autowired
     private lateinit var alumnoService: AlumnoService
@@ -40,8 +37,7 @@ class AlumnoServiceTest {
     private lateinit var dataService: DataService
 
     private lateinit var alumno: Alumno
-    private lateinit var formularioSolicitud: Formulario
-    private lateinit var c1: Cuatrimestre
+    private lateinit var cuatrimestre: Cuatrimestre
     private lateinit var comision1Algoritmos: Comision
     private lateinit var algo: Materia
 
@@ -58,7 +54,7 @@ class AlumnoServiceTest {
 
         alumno = alumnoService.crear(formularioCrear)
         algo = materiaService.crear("Algoritmos", "ALG-208")
-        c1 = cuatrimestreService.crear(2022, Semestre.S1)
+        cuatrimestre = cuatrimestreService.crear(2022, Semestre.S1)
         val horarios = listOf(
             Horario(Dia.LUNES, LocalTime.of(18, 30, 0), LocalTime.of(21, 30, 0)),
             Horario(Dia.JUEVES, LocalTime.of(18, 30, 0), LocalTime.of(21, 30, 0))
@@ -74,8 +70,6 @@ class AlumnoServiceTest {
             horarios
         )
         comision1Algoritmos = comisionService.crear(formularioComision)
-        formularioSolicitud = formularioService.crear(c1.id!!, listOf(Solicitud(comision1Algoritmos.id!!)))
-
     }
 
     @Test
@@ -86,18 +80,27 @@ class AlumnoServiceTest {
     @Test
     fun `Un alumno registra un formulario de solicitud de cupo`() {
         val alumnoDespuesDeGuardarFormulario =
-            alumnoService.registrarFormularioDeSolicitud(alumno.legajo, formularioSolicitud)
+            alumnoService.guardarSolicitudPara(
+                alumno.legajo,
+                cuatrimestre.id!!,
+                listOf(comision1Algoritmos.id!!)
+            )
 
         assertThat(alumnoDespuesDeGuardarFormulario.haSolicitado(comision1Algoritmos)).isTrue
     }
 
     @Test
     fun `Un alumno no puede registrar dos formularios para el mismo cuatrimestre`() {
-        alumnoService.registrarFormularioDeSolicitud(alumno.legajo, formularioSolicitud)
+        alumnoService.guardarSolicitudPara(
+            alumno.legajo,
+            cuatrimestre.id!!,
+            listOf(comision1Algoritmos.id!!)
+        )
         val exception = assertThrows<ExcepcionUNQUE> {
-            alumnoService.registrarFormularioDeSolicitud(
+            alumnoService.guardarSolicitudPara(
                 alumno.legajo,
-                formularioSolicitud
+                cuatrimestre.id!!,
+                listOf()
             )
         }
         assertThat(exception.message).isEqualTo("Ya has solicitado materias para este cuatrimestre")
