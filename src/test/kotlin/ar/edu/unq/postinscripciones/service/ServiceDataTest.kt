@@ -1,5 +1,6 @@
 package ar.edu.unq.postinscripciones.service
 
+import ar.edu.unq.postinscripciones.model.cuatrimestre.Semestre
 import ar.edu.unq.postinscripciones.model.exception.ExcepcionUNQUE
 import ar.edu.unq.postinscripciones.resources.DataService
 import org.assertj.core.api.Assertions.assertThat
@@ -9,7 +10,13 @@ import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 
 @IntegrationTest
-class ServiceDataTest {
+internal class ServiceDataTest {
+    @Autowired
+    private lateinit var cuatrimestreService: CuatrimestreService
+
+    @Autowired
+    private lateinit var comisionService: ComisionService
+
     @Autowired
     lateinit var materiaService: MateriaService
 
@@ -47,7 +54,7 @@ class ServiceDataTest {
 
         alumnoService.registrarAlumnos(planillaAlumnos)
 
-        val excepcion = assertThrows<ExcepcionUNQUE>{ alumnoService.registrarAlumnos(otraPlanilla)}
+        val excepcion = assertThrows<ExcepcionUNQUE> { alumnoService.registrarAlumnos(otraPlanilla) }
 
         assertThat(excepcion.message).isEqualTo("Ya existe el alumno con el legajo 1. Intente nuevamente")
     }
@@ -71,8 +78,24 @@ class ServiceDataTest {
 
     @Test
     fun `se puede guardar una planilla de oferta de comisiones para un cuatrimestre`() {
+        val cuatri = cuatrimestreService.crear(2022, Semestre.S1)
+        val bdd = materiaService.crear("Bases de Datos", "BD")
 
+        comisionService.guardarComisiones(
+            cuatri.anio,
+            cuatri.semestre,
+            listOf(
+                ComisionACrear(1, bdd.codigo, listOf(), 30, 30, 8),
+                ComisionACrear(2, bdd.codigo, listOf(), 30, 30, 8)
+            )
+        )
+
+        val ofertaDelCuatrimestre = comisionService.ofertaDelCuatrimestre(cuatri.id!!)
+
+        assertThat(ofertaDelCuatrimestre).hasSize(2)
+        assertThat(ofertaDelCuatrimestre).allMatch { it.materia == bdd.nombre }
     }
+
     private fun generarAlumnos(prefijo: Int = 1): List<FormularioCrearAlumno> {
         val planilla = mutableListOf<FormularioCrearAlumno>()
         repeat(10) {

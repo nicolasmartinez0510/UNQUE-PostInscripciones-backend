@@ -26,7 +26,52 @@ class ComisionService {
 
     @Transactional
     fun crear(formularioComision: FormularioComision): Comision {
-        val materia = materiaRepository.findMateriaByCodigo(formularioComision.codigoMateria)
+        return guardarComision(formularioComision)
+    }
+
+    @Transactional
+    fun obtener(id: Long): Comision {
+        return comisionRespository.findById(id).orElseThrow { ExcepcionUNQUE("No se encuentra la comision") }
+    }
+
+    @Transactional
+    fun obtenerComisionesMateria(codigoMateria: String): List<Comision> {
+        val materia = materiaRepository.findById(codigoMateria)
+            .orElseThrow { ExcepcionUNQUE("No se encuentra la materia") }
+        val comisiones = comisionRespository.findAllByMateria(materia)
+        comisiones.forEach { comision -> comision.horarios.size }
+        return comisiones
+    }
+
+    @Transactional
+    fun guardarComisiones(anio: Int, semestre: Semestre, comisionesACrear: List<ComisionACrear>) {
+        val cuatrimestre = cuatrimestreRepository.findByAnioAndSemestre(anio, semestre).get()
+
+        comisionesACrear.forEach { comisionACrear ->
+            val materia = materiaRepository.findMateriaByCodigo(comisionACrear.codigoMateria)
+                .orElseThrow { MateriaNoEncontradaExcepcion() }
+            comisionRespository.save(
+                Comision(
+                    materia,
+                    comisionACrear.numeroComision,
+                    cuatrimestre,
+                    comisionACrear.horarios.map { horarioDTO ->
+                        Horario(
+                            horarioDTO.dia,
+                            horarioDTO.inicio,
+                            horarioDTO.fin
+                        )
+                    },
+                    comisionACrear.cuposTotales,
+                    comisionACrear.cuposOcupados,
+                    comisionACrear.sobrecuposTotales
+                )
+            )
+        }
+    }
+
+    private fun guardarComision(formularioComision: FormularioComision): Comision {
+        val materia = materiaRepository.findById(formularioComision.codigoMateria)
             .orElseThrow { MateriaNoEncontradaExcepcion() }
         val cuatrimestre =
             cuatrimestreRepository.findByAnioAndSemestre(formularioComision.anio, formularioComision.semestre).get()
@@ -44,17 +89,8 @@ class ComisionService {
     }
 
     @Transactional
-    fun obtener(id: Long): Comision {
-        return comisionRespository.findById(id).orElseThrow { ExcepcionUNQUE("No se encuentra la comision") }
-    }
-
-    @Transactional
-    fun obtenerComisionesMateria(codigoMateria: String): List<Comision> {
-        val materia = materiaRepository.findMateriaByCodigo(codigoMateria)
-            .orElseThrow { ExcepcionUNQUE("No se encuentra la materia") }
-        val comisiones = comisionRespository.findAllByMateria(materia).get()
-        comisiones.forEach { comision -> comision.horarios.size }
-        return comisiones
+    fun ofertaDelCuatrimestre(idCuatrimestre: Long): List<ComisionDTO> {
+        return comisionRespository.findByCuatrimestreAnioAndCuatrimestreSemestre(2022, Semestre.S1).map { ComisionDTO.desdeModelo(it) }
     }
 }
 
@@ -67,3 +103,25 @@ data class FormularioComision(
     val sobreCuposTotales: Int,
     val horarios: List<Horario>
 )
+
+data class ComisionDTO(
+    val id: Long,
+    val numero: Int,
+    val materia: String,
+    val cuposTotales: Int,
+    val sobreCuposTotales: Int,
+    val cuposDisponibles: Int
+) {
+    companion object {
+        fun desdeModelo(comision: Comision): ComisionDTO {
+            return ComisionDTO(
+                comision.id!!,
+                comision.numero,
+                comision.materia.nombre,
+                comision.cuposTotales,
+                comision.sobrecuposTotales,
+                comision.cuposDisponibles()
+            )
+        }
+    }
+}
