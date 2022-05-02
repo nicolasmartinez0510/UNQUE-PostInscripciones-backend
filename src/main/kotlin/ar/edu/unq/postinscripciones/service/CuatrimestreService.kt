@@ -16,11 +16,20 @@ class CuatrimestreService {
     private lateinit var cuatrimestreRepository: CuatrimestreRepository
 
     @Transactional
-    fun crear(anio: Int, semestre: Semestre): Cuatrimestre {
+    fun crear(formularioRegistrarCuatrimestre: FormularioCuatrimestre): Cuatrimestre {
         try {
-            return cuatrimestreRepository.save(Cuatrimestre(anio, semestre))
+            return cuatrimestreRepository.save(Cuatrimestre(
+                    formularioRegistrarCuatrimestre.anio,
+                    formularioRegistrarCuatrimestre.semestre)
+            )
         } catch (excepcion: DataIntegrityViolationException) {
             throw ExcepcionUNQUE("Ya existe el cuatrimestre que desea crear.")
         }
     }
 }
+
+
+data class FormularioCuatrimestre(
+        val anio: Int,
+        val semestre: Semestre
+)

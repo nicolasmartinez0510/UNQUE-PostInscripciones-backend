@@ -3,6 +3,8 @@ package ar.edu.unq.postinscripciones.webservice.controller
 import ar.edu.unq.postinscripciones.service.ComisionService
 import ar.edu.unq.postinscripciones.service.dto.FormularioComision
 import io.swagger.annotations.ApiOperation
+import io.swagger.annotations.ApiResponse
+import io.swagger.annotations.ApiResponses
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -19,6 +21,12 @@ class ComisionController {
 
     @ApiOperation("Endpoint que se usa para registrar una nueva comision en el sistema")
     @RequestMapping(value = ["/crear"], method = [RequestMethod.POST])
+    @ApiResponses(
+            value = [
+                ApiResponse(code = 200, message = "Comision creada"),
+                ApiResponse(code = 400, message = "Algo salio mal")
+            ]
+    )
     fun registrarComision(@RequestBody formularioComision: FormularioComision): ResponseEntity<*> {
         return ResponseEntity(
             comisionService.crear(formularioComision),

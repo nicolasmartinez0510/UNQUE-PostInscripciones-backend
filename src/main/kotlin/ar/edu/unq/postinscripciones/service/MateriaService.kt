@@ -15,7 +15,7 @@ class MateriaService {
 
     @Transactional
     fun crear(nombre: String, codigo: String): Materia {
-        return materiaRepository.save(Materia(nombre, codigo))
+        return materiaRepository.save(Materia(codigo, nombre))
     }
 
     @Transactional

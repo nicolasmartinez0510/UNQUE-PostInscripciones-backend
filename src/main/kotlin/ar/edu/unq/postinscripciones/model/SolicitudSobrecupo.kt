@@ -14,6 +14,10 @@ class SolicitudSobrecupo(
 
     @Enumerated(EnumType.STRING)
     var estado: EstadoSolicitud = EstadoSolicitud.PENDIENTE
+
+    fun cambiarEstado(estado: EstadoSolicitud){
+        this.estado = estado
+    }
 }
 
 enum class EstadoSolicitud {

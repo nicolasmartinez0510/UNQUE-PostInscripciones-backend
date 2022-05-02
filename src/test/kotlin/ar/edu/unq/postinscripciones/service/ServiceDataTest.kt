@@ -82,7 +82,8 @@ internal class ServiceDataTest {
 
     @Test
     fun `se puede guardar una planilla de oferta de comisiones para un cuatrimestre`() {
-        val cuatri = cuatrimestreService.crear(2022, Semestre.S1)
+        val formularioCuatrimestre = FormularioCuatrimestre(2022, Semestre.S1)
+        val cuatri = cuatrimestreService.crear(formularioCuatrimestre)
         val bdd = materiaService.crear("Bases de Datos", "BD")
 
         comisionService.guardarComisiones(

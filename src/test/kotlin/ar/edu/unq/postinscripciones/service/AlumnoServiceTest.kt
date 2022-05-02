@@ -1,6 +1,7 @@
 package ar.edu.unq.postinscripciones.service
 
 import ar.edu.unq.postinscripciones.model.Alumno
+import ar.edu.unq.postinscripciones.model.EstadoSolicitud
 import ar.edu.unq.postinscripciones.model.Materia
 import ar.edu.unq.postinscripciones.model.comision.Comision
 import ar.edu.unq.postinscripciones.model.comision.Dia
@@ -54,7 +55,8 @@ class AlumnoServiceTest {
 
         alumno = alumnoService.crear(formularioCrear)
         algo = materiaService.crear("Algoritmos", "ALG-208")
-        cuatrimestre = cuatrimestreService.crear(2022, Semestre.S1)
+        val formularioCuatrimestre = FormularioCuatrimestre(2022, Semestre.S1)
+        cuatrimestre = cuatrimestreService.crear(formularioCuatrimestre)
         val horarios = listOf(
             Horario(Dia.LUNES, LocalTime.of(18, 30, 0), LocalTime.of(21, 30, 0)),
             Horario(Dia.JUEVES, LocalTime.of(18, 30, 0), LocalTime.of(21, 30, 0))
@@ -104,6 +106,51 @@ class AlumnoServiceTest {
             )
         }
         assertThat(exception.message).isEqualTo("Ya has solicitado materias para este cuatrimestre")
+    }
+
+    @Test
+    fun `Se puede obtener el formulario`() {
+        val alumnoDespuesDeGuardarFormulario =
+                alumnoService.guardarSolicitudPara(
+                        alumno.legajo,
+                        cuatrimestre.id!!,
+                        listOf(comision1Algoritmos.id!!)
+                )
+        val formulario = alumnoDespuesDeGuardarFormulario.obtenerFormulario(cuatrimestre.anio, cuatrimestre.semestre)
+        val formularioPersistido = alumnoService.obtenerFormulario(cuatrimestre.anio, cuatrimestre.semestre, alumno.legajo)
+
+        assertThat(formularioPersistido).usingRecursiveComparison().isEqualTo(formulario)
+    }
+
+    @Test
+    fun `Se puede aprobar una solicitud de sobrecupo`() {
+        val alumnoDespuesDeGuardarFormulario =
+                alumnoService.guardarSolicitudPara(
+                        alumno.legajo,
+                        cuatrimestre.id!!,
+                        listOf(comision1Algoritmos.id!!)
+                )
+        val formulario = alumnoDespuesDeGuardarFormulario.obtenerFormulario(cuatrimestre.anio, cuatrimestre.semestre)
+        val solicitudPendiente = formulario.solicitudes.first()
+        val solicitudAprobada = alumnoService.cambiarEstado(solicitudPendiente.id!!, EstadoSolicitud.APROBADO)
+
+        assertThat(solicitudAprobada.estado).isEqualTo(EstadoSolicitud.APROBADO)
+        assertThat(solicitudAprobada).usingRecursiveComparison().ignoringFields("estado").isEqualTo(solicitudPendiente)
+    }
+
+    @Test
+    fun `Se puede rechazar una solicitud de sobrecupo`() {
+        val alumnoDespuesDeGuardarFormulario =
+                alumnoService.guardarSolicitudPara(
+                        alumno.legajo,
+                        cuatrimestre.id!!,
+                        listOf(comision1Algoritmos.id!!)
+                )
+        val formulario = alumnoDespuesDeGuardarFormulario.obtenerFormulario(cuatrimestre.anio, cuatrimestre.semestre)
+        val solicitudPendiente = formulario.solicitudes.first()
+        val solicitudRechazada = alumnoService.cambiarEstado(solicitudPendiente.id!!, EstadoSolicitud.RECHAZADO)
+
+        assertThat(solicitudRechazada.estado).isEqualTo(EstadoSolicitud.RECHAZADO)
     }
 
     @AfterEach

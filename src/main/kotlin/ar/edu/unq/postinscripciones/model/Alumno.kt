@@ -2,6 +2,7 @@ package ar.edu.unq.postinscripciones.model
 
 import ar.edu.unq.postinscripciones.model.comision.Comision
 import ar.edu.unq.postinscripciones.model.cuatrimestre.Cuatrimestre
+import ar.edu.unq.postinscripciones.model.cuatrimestre.Semestre
 import ar.edu.unq.postinscripciones.model.exception.ExcepcionUNQUE
 import javax.persistence.CascadeType
 import javax.persistence.Entity
@@ -25,6 +26,11 @@ class Alumno(
     fun guardarFormulario(formulario: Formulario) {
         chequearSiExiste(formulario)
         formularios.add(formulario)
+    }
+
+    fun obtenerFormulario(anio: Int, semestre: Semestre): Formulario {
+        val formulario = formularios.find { it.cuatrimestre.esElCuatrimestre(anio, semestre) }
+        return formulario ?: throw ExcepcionUNQUE("No se encontró ningun formulario para el cuatrimestre dado")
     }
 
     fun haSolicitado(unaComision: Comision): Boolean {

@@ -2,6 +2,8 @@ package ar.edu.unq.postinscripciones.webservice.controller
 
 import ar.edu.unq.postinscripciones.service.MateriaService
 import io.swagger.annotations.ApiOperation
+import io.swagger.annotations.ApiResponse
+import io.swagger.annotations.ApiResponses
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -17,6 +19,12 @@ class MateriaController {
 
     @ApiOperation("Endpoint que se usa para registra una nueva materia en el sistema")
     @RequestMapping(value = ["/crear"], method = [RequestMethod.POST])
+    @ApiResponses(
+            value = [
+                ApiResponse(code = 201, message = "Materia creada"),
+                ApiResponse(code = 400, message = "Algo salio mal")
+            ]
+    )
     fun registrarMateria(@RequestBody formularioMateria: FormularioMateria): ResponseEntity<*> {
         return ResponseEntity(
             materiaService.crear(formularioMateria.nombre, formularioMateria.codigo),

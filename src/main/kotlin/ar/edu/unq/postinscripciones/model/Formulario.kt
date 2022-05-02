@@ -8,7 +8,7 @@ import javax.persistence.*
 class Formulario(
     @ManyToOne(fetch = FetchType.EAGER)
     val cuatrimestre: Cuatrimestre = Cuatrimestre(2009, Semestre.S1),
-    @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    @OneToMany(fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
     val solicitudes: List<SolicitudSobrecupo> = listOf()
 ) {
 

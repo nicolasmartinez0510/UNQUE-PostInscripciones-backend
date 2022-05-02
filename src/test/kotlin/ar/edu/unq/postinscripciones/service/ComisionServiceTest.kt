@@ -40,7 +40,8 @@ class ComisionServiceTest {
     @BeforeEach
     fun setUp() {
         bdd = materiaService.crear("Base de datos", "BBD-208")
-        c1 = cuatrimestreService.crear(2022, Semestre.S1)
+        val formularioCuatrimestre = FormularioCuatrimestre(2022, Semestre.S1)
+        c1 = cuatrimestreService.crear(formularioCuatrimestre)
 
         horarios = listOf(
             Horario(Dia.LUNES, LocalTime.of(18, 30, 0), LocalTime.of(21, 30, 0)),
