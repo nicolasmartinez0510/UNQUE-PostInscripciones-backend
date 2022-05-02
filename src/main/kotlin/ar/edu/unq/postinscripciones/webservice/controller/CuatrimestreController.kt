@@ -6,6 +6,7 @@ import ar.edu.unq.postinscripciones.service.CuatrimestreService
 import ar.edu.unq.postinscripciones.service.FormularioCuatrimestre
 import ar.edu.unq.postinscripciones.service.dto.FormularioComision
 import io.swagger.annotations.ApiOperation
+import io.swagger.annotations.ApiParam
 import io.swagger.annotations.ApiResponse
 import io.swagger.annotations.ApiResponses
 import org.springframework.beans.factory.annotation.Autowired
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
+import org.springframework.web.bind.annotation.RequestParam
 
 @ServiceREST
 @RequestMapping("/api/cuatrimestre")
@@ -43,10 +45,17 @@ class CuatrimestreController {
 
     @ApiOperation("Endpoint que se usa para obtener al oferta academica del cuatrimestre actual")
     @RequestMapping(value = ["/oferta"], method = [RequestMethod.GET])
-    fun ofertaAcademica(@RequestBody formularioCuatrimestre: FormularioCuatrimestre): ResponseEntity<*> {
+    fun ofertaAcademica(
+            @ApiParam(value = "Anio del cuatrimestre en curso", example = "2022", required = true)
+            @RequestParam
+            anio: Int,
+            @ApiParam(value = "Semestre en transito", example = "S1", required = true)
+            @RequestParam
+            semestre: Semestre
+    ): ResponseEntity<*> {
         return ResponseEntity(
-                comisionService.ofertaDelCuatrimestre(formularioCuatrimestre.anio, formularioCuatrimestre.semestre),
-                HttpStatus.CREATED
+                comisionService.ofertaDelCuatrimestre(anio, semestre),
+                HttpStatus.OK
         )
     }
 
