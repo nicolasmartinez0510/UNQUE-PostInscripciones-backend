@@ -1,20 +1,29 @@
 package ar.edu.unq.postinscripciones.webservice.config
 
+import ar.edu.unq.postinscripciones.model.Alumno
 import ar.edu.unq.postinscripciones.model.Materia
+import ar.edu.unq.postinscripciones.model.comision.Comision
+import ar.edu.unq.postinscripciones.model.comision.Dia
+import ar.edu.unq.postinscripciones.model.comision.Horario
 import ar.edu.unq.postinscripciones.model.cuatrimestre.Cuatrimestre
 import ar.edu.unq.postinscripciones.model.cuatrimestre.Semestre
+import ar.edu.unq.postinscripciones.persistence.AlumnoRepository
+import ar.edu.unq.postinscripciones.persistence.ComisionRespository
 import ar.edu.unq.postinscripciones.persistence.CuatrimestreRepository
 import ar.edu.unq.postinscripciones.persistence.MateriaRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
+import java.time.LocalTime
 
 @Profile("!test")
 @Component
 class DataSeed(
     @Autowired private val materiaRepository: MateriaRepository,
-    @Autowired private val cuatrimestreRepository: CuatrimestreRepository
+    @Autowired private val cuatrimestreRepository: CuatrimestreRepository,
+    @Autowired private val comisionRespository: ComisionRespository,
+    @Autowired private val alumnoRepository: AlumnoRepository
 ) : CommandLineRunner {
 
     @Throws(Exception::class)
@@ -30,11 +39,48 @@ class DataSeed(
             val materia3 = Materia("2", "Organización de las Computadoras")
             val materia4 = Materia("3", "Matemática 1")
             val materia5 = Materia("4", "Estructura de Datos")
+            val bddhorariosc1 = listOf<Horario>(
+                    Horario(Dia.MARTES, LocalTime.of(10, 0, 0), LocalTime.of(12, 0,0)),
+                    Horario(Dia.JUEVES, LocalTime.of(10, 0, 0), LocalTime.of(12, 0,0))
+            )
+
+            val bddhorariosc2 = listOf<Horario>(
+                    Horario(Dia.LUNES, LocalTime.of(10, 0, 0), LocalTime.of(12, 0,0)),
+                    Horario(Dia.MIERCOLES, LocalTime.of(10, 0, 0), LocalTime.of(12, 0,0))
+            )
+
+            val matehorarios = listOf<Horario>(
+                    Horario(Dia.LUNES, LocalTime.of(10, 30, 0), LocalTime.of(12, 30,0)),
+                    Horario(Dia.JUEVES, LocalTime.of(10, 30, 0), LocalTime.of(12, 30,0))
+            )
+
+            val estrhorarios = listOf<Horario>(
+                    Horario(Dia.LUNES, LocalTime.of(9, 0, 0), LocalTime.of(12, 0,0)),
+                    Horario(Dia.MIERCOLES, LocalTime.of(9, 0, 0), LocalTime.of(12, 0,0)),
+                    Horario(Dia.VIERNES, LocalTime.of(9, 0, 0), LocalTime.of(12, 0,0))
+            )
+
 
             val cuatrimestre = Cuatrimestre(2022, Semestre.S1)
 
+            val bddc1 = Comision(materia1, 1, cuatrimestre, bddhorariosc1)
+            val bddc2 = Comision(materia1, 2, cuatrimestre, bddhorariosc2)
+            val matec1 = Comision(materia4, 1, cuatrimestre, matehorarios)
+            val estrc1 = Comision(materia5, 1, cuatrimestre, estrhorarios)
+
+            val jorge = Alumno(
+                12345,
+                "Jorge",
+                "Arenales",
+                "jorge.arenales20@alu.edu.ar",
+                12345678,
+                "contrasenia"
+            )
+
             cuatrimestreRepository.save(cuatrimestre)
             materiaRepository.saveAll(listOf(materia1, materia2, materia3, materia4, materia5))
+            comisionRespository.saveAll(listOf(bddc1, bddc2, matec1, estrc1))
+            alumnoRepository.save(jorge)
 
             println()
             println("##########################")
@@ -43,6 +89,7 @@ class DataSeed(
             println()
         }
         println("Total de materias: ${materiaRepository.count()}")
+        println("Total de comisiones: ${comisionRespository.count()}")
     }
 
     private fun emptyData(): Boolean {
