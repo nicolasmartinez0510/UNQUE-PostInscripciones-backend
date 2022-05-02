@@ -66,8 +66,9 @@ class ComisionService {
     }
 
     @Transactional
-    fun obtener(id: Long): Comision {
-        return comisionRespository.findById(id).orElseThrow { ExcepcionUNQUE("No se encuentra la comision") }
+    fun obtener(id: Long): ComisionDTO {
+        val comision = comisionRespository.findById(id).orElseThrow { ExcepcionUNQUE("No se encuentra la comision") }
+        return ComisionDTO.desdeModelo(comision)
     }
 
     @Transactional

@@ -8,6 +8,7 @@ import ar.edu.unq.postinscripciones.model.cuatrimestre.Semestre
 import ar.edu.unq.postinscripciones.model.exception.ExcepcionUNQUE
 import ar.edu.unq.postinscripciones.persistence.*
 import ar.edu.unq.postinscripciones.service.dto.FormularioDTO
+import ar.edu.unq.postinscripciones.service.dto.SolicitudSobrecupoDTO
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import javax.transaction.Transactional
@@ -65,16 +66,16 @@ class AlumnoService {
     }
 
     @Transactional
-    fun obtenerFormulario(anio: Int, semestre: Semestre, legajo: Int): Formulario {
+    fun obtenerFormulario(anio: Int, semestre: Semestre, legajo: Int): FormularioDTO {
         val alumno = alumnoRepository.findById(legajo).orElseThrow { ExcepcionUNQUE("No existe el alumno") }
-        return alumno.obtenerFormulario(anio, semestre)
+        return FormularioDTO.desdeModelo(alumno.obtenerFormulario(anio, semestre), alumno.legajo)
     }
 
     @Transactional
-    fun cambiarEstado(solicitudId: Long, estado: EstadoSolicitud): SolicitudSobrecupo {
+    fun cambiarEstado(solicitudId: Long, estado: EstadoSolicitud): SolicitudSobrecupoDTO {
         val solicitud = solicitudSobrecupoRepository.findById(solicitudId).orElseThrow{ ExcepcionUNQUE("No existe la solicitud") }
         solicitud.cambiarEstado(estado)
-        return solicitudSobrecupoRepository.save(solicitud)
+        return SolicitudSobrecupoDTO.desdeModelo(solicitudSobrecupoRepository.save(solicitud))
     }
 
     private fun guardarAlumno(formulario: FormularioCrearAlumno): Alumno {

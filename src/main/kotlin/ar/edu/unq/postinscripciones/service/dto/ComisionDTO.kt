@@ -10,6 +10,7 @@ data class ComisionDTO(
     val sobreCuposTotales: Int,
     val cuposDisponibles: Int
 ) {
+
     companion object {
         fun desdeModelo(comision: Comision): ComisionDTO {
             return ComisionDTO(
