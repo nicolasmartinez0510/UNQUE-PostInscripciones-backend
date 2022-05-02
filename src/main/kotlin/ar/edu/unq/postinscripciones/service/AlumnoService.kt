@@ -7,6 +7,7 @@ import ar.edu.unq.postinscripciones.model.SolicitudSobrecupo
 import ar.edu.unq.postinscripciones.model.cuatrimestre.Semestre
 import ar.edu.unq.postinscripciones.model.exception.ExcepcionUNQUE
 import ar.edu.unq.postinscripciones.persistence.*
+import ar.edu.unq.postinscripciones.service.dto.FormularioDTO
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import javax.transaction.Transactional
@@ -39,7 +40,7 @@ class AlumnoService {
     }
 
     @Transactional
-    fun guardarSolicitudPara(legajo: Int, idCuatrimestre: Long, solicitudes: List<Long>): Alumno {
+    fun guardarSolicitudPara(legajo: Int, idCuatrimestre: Long, solicitudes: List<Long>): FormularioDTO {
         val alumno = alumnoRepository.findById(legajo).get()
         val cuatrimestre = cuatrimestreService.findById(idCuatrimestre).get()
         val solicitudesPorMateria = solicitudes.map { idComision ->
@@ -49,8 +50,9 @@ class AlumnoService {
         val formulario = formularioRepository.save(Formulario(cuatrimestre, solicitudesPorMateria))
 
         alumno.guardarFormulario(formulario)
+        alumnoRepository.save(alumno)
 
-        return alumnoRepository.save(alumno)
+        return FormularioDTO.desdeModelo(formulario, alumno.legajo)
     }
     @Transactional
     fun crear(formulario: FormularioCrearAlumno): Alumno {
