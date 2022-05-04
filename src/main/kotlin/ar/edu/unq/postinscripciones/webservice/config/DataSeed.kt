@@ -39,7 +39,7 @@ class DataSeed(
             val materia3 = Materia("2", "Organización de las Computadoras")
             val materia4 = Materia("3", "Matemática 1")
             val materia5 = Materia("4", "Estructura de Datos")
-            val bddhorariosc1 = listOf<Horario>(
+            val bddhorariosc1 = listOf(
                     Horario(Dia.MARTES, LocalTime.of(10, 0, 0), LocalTime.of(12, 0,0)),
                     Horario(Dia.JUEVES, LocalTime.of(10, 0, 0), LocalTime.of(12, 0,0))
             )

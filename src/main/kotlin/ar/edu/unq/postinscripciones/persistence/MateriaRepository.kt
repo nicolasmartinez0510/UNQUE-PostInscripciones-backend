@@ -9,4 +9,5 @@ import java.util.Optional
 interface MateriaRepository: CrudRepository<Materia, String> {
 
     fun findMateriaByCodigo(codigo: String): Optional<Materia>
+    fun findByNombreIgnoringCaseOrCodigoIgnoringCase(nombre: String, codigo: String): Optional<Materia>
 }

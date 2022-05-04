@@ -21,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import java.time.LocalTime
 
 @IntegrationTest
-class AlumnoServiceTest {
+internal class AlumnoServiceTest {
 
     @Autowired
     private lateinit var alumnoService: AlumnoService

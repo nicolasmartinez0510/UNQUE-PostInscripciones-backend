@@ -12,7 +12,7 @@ import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 
 @IntegrationTest
-class CuatrimestreServiceTest {
+internal class CuatrimestreServiceTest {
 
     @Autowired
     private lateinit var dataService: DataService

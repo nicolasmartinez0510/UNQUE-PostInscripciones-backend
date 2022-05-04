@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import java.time.LocalTime
 
 @IntegrationTest
-class ComisionServiceTest {
+internal class ComisionServiceTest {
 
     @Autowired
     private lateinit var comisionService: ComisionService

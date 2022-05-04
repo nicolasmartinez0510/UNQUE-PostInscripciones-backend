@@ -1,7 +1,7 @@
 package ar.edu.unq.postinscripciones.service
 
-import ar.edu.unq.postinscripciones.model.exception.ExcepcionUNQUE
 import ar.edu.unq.postinscripciones.model.Materia
+import ar.edu.unq.postinscripciones.model.exception.ExcepcionUNQUE
 import ar.edu.unq.postinscripciones.resources.DataService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
@@ -11,7 +11,7 @@ import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 
 @IntegrationTest
-class MateriaServiceTest {
+internal class MateriaServiceTest {
 
     @Autowired
     private lateinit var materiaService: MateriaService
@@ -32,6 +32,26 @@ class MateriaServiceTest {
     fun `Se puede crear una materia`() {
         val materia = materiaService.crear("Intro", "IP-102")
         assertThat(materia).isNotNull
+    }
+
+    @Test
+    fun `no se puede crear una materia con un nombre existente`() {
+        val materia = materiaService.crear("Intro", "IP-102")
+        assertThat(materia).isNotNull
+    }
+
+    @Test
+    fun `no se puede crear una materia con un codigo o nombre existente`() {
+        val materia = materiaService.crear("Intro", "IP-102")
+        val nombreConflictivo = materia.nombre.lowercase()
+        val codigoConflictivo = materia.codigo.lowercase()
+        val excepcion = assertThrows<ExcepcionUNQUE> { materiaService.crear(nombreConflictivo, codigoConflictivo) }
+
+        assertThat(excepcion.message).isEqualTo(
+            "La materia que desea crear con nombre $nombreConflictivo " +
+                    "y codigo $codigoConflictivo, " +
+                    "genera conflicto con la materia: ${materia.nombre}, codigo: ${materia.codigo}"
+        )
     }
 
     @Test
