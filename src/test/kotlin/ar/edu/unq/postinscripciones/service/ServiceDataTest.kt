@@ -2,14 +2,12 @@ package ar.edu.unq.postinscripciones.service
 
 import ar.edu.unq.postinscripciones.model.comision.Dia
 import ar.edu.unq.postinscripciones.model.cuatrimestre.Semestre
-import ar.edu.unq.postinscripciones.model.exception.ExcepcionUNQUE
 import ar.edu.unq.postinscripciones.resources.DataService
 import ar.edu.unq.postinscripciones.service.dto.ComisionACrear
 import ar.edu.unq.postinscripciones.service.dto.HorarioDTO
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.LocalTime
 
@@ -51,33 +49,40 @@ internal class ServiceDataTest {
     }
 
     @Test
-    fun `al crear una lista de alumnos, si un alumno no se pudo registrar, se levanta una excepcion`() {
+    fun `al crear una lista de alumnos, si un alumno no se pudo registrar, lo retorna en una lista como datos conflictivo`() {
         val planillaAlumnos: List<FormularioCrearAlumno> = generarAlumnos()
         val otraPlanilla: MutableList<FormularioCrearAlumno> = generarAlumnos(100).toMutableList()
         otraPlanilla.add(planillaAlumnos.first())
 
         alumnoService.registrarAlumnos(planillaAlumnos)
 
-        val excepcion = assertThrows<ExcepcionUNQUE> { alumnoService.registrarAlumnos(otraPlanilla) }
+        val cargaOtraPlanilla = alumnoService.registrarAlumnos(otraPlanilla)
 
-        assertThat(excepcion.message).isEqualTo("Ya existe el alumno con el legajo 1. Intente nuevamente")
+        assertThat(cargaOtraPlanilla).hasSize(1)
     }
 
     @Test
-    fun `al crear una lista de alumnos, si un alumno no se pudo registrar, no se registra ninguno de esa lista`() {
+    fun `al registrar un listado de alumnos, obtenemos los generaron conflictos por dni o legajo con los ya creados`() {
         val planillaAlumnos: List<FormularioCrearAlumno> = generarAlumnos()
-        val otraPlanilla: MutableList<FormularioCrearAlumno> = generarAlumnos(100).toMutableList()
-        otraPlanilla.add(planillaAlumnos.first())
+        val otraPlanilla: List<FormularioCrearAlumno> = listOf(planillaAlumnos.first(), planillaAlumnos.last())
+        val cargaDePrimeraPlanilla = alumnoService.registrarAlumnos(planillaAlumnos)
 
-        alumnoService.registrarAlumnos(planillaAlumnos)
-        assertThrows<ExcepcionUNQUE> { alumnoService.registrarAlumnos(planillaAlumnos) }
+        val cargaDeSegundaPlanilla = alumnoService.registrarAlumnos(otraPlanilla)
 
-        val alumnosRegistrados = alumnoService.todos()
-        assertThat(alumnosRegistrados.size).isEqualTo(planillaAlumnos.size)
-        assertThat(alumnosRegistrados)
-            .usingRecursiveComparison()
-            .ignoringFields("formularios")
-            .isEqualTo(planillaAlumnos)
+        assertThat(cargaDePrimeraPlanilla).isEmpty()
+        assertThat(cargaDeSegundaPlanilla).hasSize(2)
+        assertThat(alumnoService.todos()).hasSize(planillaAlumnos.size)
+    }
+
+    @Test
+    fun `si hay conflictos dentro de la lista a guardar se guarda al primero y al segundo se lo retorna como conflictivo`() {
+        val planillaAlumnos: MutableList<FormularioCrearAlumno> = generarAlumnos().toMutableList()
+        planillaAlumnos.add(planillaAlumnos.first())
+        val cargaDePrimeraPlanilla = alumnoService.registrarAlumnos(planillaAlumnos)
+
+        assertThat(cargaDePrimeraPlanilla).hasSize(1)
+        assertThat(cargaDePrimeraPlanilla.first().second).isEqualTo(planillaAlumnos.first())
+        assertThat(alumnoService.todos()).hasSize(planillaAlumnos.size - 1)
     }
 
     @Test
@@ -121,7 +126,7 @@ internal class ServiceDataTest {
             planilla.add(
                 FormularioCrearAlumno(
                     prefijo + planilla.size, "pepe", "soria", "correo" + planilla.size + "@ejemplo.com",
-                    1 + planilla.size, "asdas"
+                    prefijo + planilla.size, "asdas"
                 )
             )
         }

@@ -7,6 +7,7 @@ import ar.edu.unq.postinscripciones.model.SolicitudSobrecupo
 import ar.edu.unq.postinscripciones.model.cuatrimestre.Semestre
 import ar.edu.unq.postinscripciones.model.exception.ExcepcionUNQUE
 import ar.edu.unq.postinscripciones.persistence.*
+import ar.edu.unq.postinscripciones.service.dto.AlumnoDTO
 import ar.edu.unq.postinscripciones.service.dto.FormularioDTO
 import ar.edu.unq.postinscripciones.service.dto.SolicitudSobrecupoDTO
 import org.springframework.beans.factory.annotation.Autowired
@@ -32,17 +33,23 @@ class AlumnoService {
     private lateinit var solicitudSobrecupoRepository: SolicitudSobrecupoRepository
 
     @Transactional
-    fun registrarAlumnos(planillaAlumnos: List<FormularioCrearAlumno>) {
+    fun registrarAlumnos(planillaAlumnos: List<FormularioCrearAlumno>): List<Pair<AlumnoDTO, FormularioCrearAlumno>> {
+        val alumnosConflictivos: MutableList<Pair<AlumnoDTO, FormularioCrearAlumno>> = mutableListOf()
+
         planillaAlumnos.forEach { formulario ->
-            alumnoRepository.findById(formulario.legajo)
-                .ifPresent { throw ExcepcionUNQUE("Ya existe el alumno con el legajo ${formulario.legajo}. Intente nuevamente") }
-            guardarAlumno(formulario)
+            val existeAlumno = alumnoRepository.findByDniOrLegajo(formulario.dni, formulario.legajo)
+            if (existeAlumno.isPresent) {
+                alumnosConflictivos.add(Pair(AlumnoDTO.desdeModelo(existeAlumno.get()), formulario))
+            } else {
+                guardarAlumno(formulario)
+            }
         }
+        return alumnosConflictivos.toList()
     }
 
     @Transactional
-    fun guardarSolicitudPara(legajo: Int, idCuatrimestre: Long, solicitudes: List<Long>): FormularioDTO {
-        val alumno = alumnoRepository.findById(legajo).get()
+    fun guardarSolicitudPara(dni: Int, idCuatrimestre: Long, solicitudes: List<Long>): FormularioDTO {
+        val alumno = alumnoRepository.findById(dni).get()
         val cuatrimestre = cuatrimestreService.findById(idCuatrimestre).get()
         val solicitudesPorMateria = solicitudes.map { idComision ->
             val comision = comisionRepository.findById(idComision)
@@ -53,8 +60,9 @@ class AlumnoService {
         alumno.guardarFormulario(formulario)
         alumnoRepository.save(alumno)
 
-        return FormularioDTO.desdeModelo(formulario, alumno.legajo)
+        return FormularioDTO.desdeModelo(formulario, alumno.dni)
     }
+
     @Transactional
     fun crear(formulario: FormularioCrearAlumno): Alumno {
         return this.guardarAlumno(formulario)
@@ -66,14 +74,15 @@ class AlumnoService {
     }
 
     @Transactional
-    fun obtenerFormulario(anio: Int, semestre: Semestre, legajo: Int): FormularioDTO {
-        val alumno = alumnoRepository.findById(legajo).orElseThrow { ExcepcionUNQUE("No existe el alumno") }
-        return FormularioDTO.desdeModelo(alumno.obtenerFormulario(anio, semestre), alumno.legajo)
+    fun obtenerFormulario(anio: Int, semestre: Semestre, dni: Int): FormularioDTO {
+        val alumno = alumnoRepository.findById(dni).orElseThrow { ExcepcionUNQUE("No existe el alumno") }
+        return FormularioDTO.desdeModelo(alumno.obtenerFormulario(anio, semestre), alumno.dni)
     }
 
     @Transactional
     fun cambiarEstado(solicitudId: Long, estado: EstadoSolicitud): SolicitudSobrecupoDTO {
-        val solicitud = solicitudSobrecupoRepository.findById(solicitudId).orElseThrow{ ExcepcionUNQUE("No existe la solicitud") }
+        val solicitud =
+            solicitudSobrecupoRepository.findById(solicitudId).orElseThrow { ExcepcionUNQUE("No existe la solicitud") }
         solicitud.cambiarEstado(estado)
         return SolicitudSobrecupoDTO.desdeModelo(solicitudSobrecupoRepository.save(solicitud))
     }
@@ -81,11 +90,11 @@ class AlumnoService {
     private fun guardarAlumno(formulario: FormularioCrearAlumno): Alumno {
         return alumnoRepository.save(
             Alumno(
-                formulario.legajo,
+                formulario.dni,
                 formulario.nombre,
                 formulario.apellido,
                 formulario.correo,
-                formulario.dni,
+                formulario.legajo,
                 formulario.contrasenia
             )
         )
@@ -93,10 +102,10 @@ class AlumnoService {
 }
 
 data class FormularioCrearAlumno(
-    val legajo: Int,
+    val dni: Int,
     val nombre: String,
     val apellido: String,
     val correo: String,
-    val dni: Int,
+    val legajo: Int,
     val contrasenia: String
 )

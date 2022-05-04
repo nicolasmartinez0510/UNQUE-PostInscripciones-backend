@@ -58,9 +58,9 @@ internal class AlumnoTest {
 
     @Test
     fun `un alumno conoce su legajo`() {
-        alumno = Alumno(legajo = 90)
+        alumno = Alumno(dni = 90)
 
-        assertThat(alumno.legajo).isEqualTo(90)
+        assertThat(alumno.dni).isEqualTo(90)
     }
 
     @Test
@@ -93,8 +93,8 @@ internal class AlumnoTest {
 
     @Test
     fun `un alumno conoce su dni`() {
-        alumno = Alumno(dni = 123)
+        alumno = Alumno(legajo = 123)
 
-        assertThat(alumno.dni).isEqualTo(123)
+        assertThat(alumno.legajo).isEqualTo(123)
     }
 }
