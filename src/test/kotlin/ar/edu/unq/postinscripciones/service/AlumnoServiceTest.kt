@@ -5,20 +5,17 @@ import ar.edu.unq.postinscripciones.model.EstadoSolicitud
 import ar.edu.unq.postinscripciones.model.Materia
 import ar.edu.unq.postinscripciones.model.comision.Comision
 import ar.edu.unq.postinscripciones.model.comision.Dia
-import ar.edu.unq.postinscripciones.model.comision.Horario
 import ar.edu.unq.postinscripciones.model.cuatrimestre.Cuatrimestre
 import ar.edu.unq.postinscripciones.model.cuatrimestre.Semestre
 import ar.edu.unq.postinscripciones.model.exception.ExcepcionUNQUE
 import ar.edu.unq.postinscripciones.resources.DataService
-import ar.edu.unq.postinscripciones.service.dto.ComisionDTO
-import ar.edu.unq.postinscripciones.service.dto.FormularioComision
+import ar.edu.unq.postinscripciones.service.dto.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
-import java.time.LocalTime
 
 @IntegrationTest
 internal class AlumnoServiceTest {
@@ -59,8 +56,8 @@ internal class AlumnoServiceTest {
         val formularioCuatrimestre = FormularioCuatrimestre(2022, Semestre.S1)
         cuatrimestre = cuatrimestreService.crear(formularioCuatrimestre)
         val horarios = listOf(
-            Horario(Dia.LUNES, LocalTime.of(18, 30, 0), LocalTime.of(21, 30, 0)),
-            Horario(Dia.JUEVES, LocalTime.of(18, 30, 0), LocalTime.of(21, 30, 0))
+            HorarioDTO(Dia.LUNES, "18:30", "21:30"),
+            HorarioDTO(Dia.JUEVES, "18:30", "21:30")
         )
 
         val formularioComision = FormularioComision(
@@ -88,7 +85,7 @@ internal class AlumnoServiceTest {
                 cuatrimestre.id!!,
                 listOf(comision1Algoritmos.id!!)
             )
-        val comisionesDeSolicitudes = formulario.solicitudes.map{ it.comisionDTO }
+        val comisionesDeSolicitudes = formulario.solicitudes.map { it.comisionDTO }
 
         assertThat(comisionesDeSolicitudes).contains(ComisionDTO.desdeModelo(comision1Algoritmos))
     }
@@ -113,11 +110,11 @@ internal class AlumnoServiceTest {
     @Test
     fun `Se puede obtener el formulario`() {
         val formularioDTO =
-                alumnoService.guardarSolicitudPara(
-                        alumno.dni,
-                        cuatrimestre.id!!,
-                        listOf(comision1Algoritmos.id!!)
-                )
+            alumnoService.guardarSolicitudPara(
+                alumno.dni,
+                cuatrimestre.id!!,
+                listOf(comision1Algoritmos.id!!)
+            )
         val formularioPersistido = alumnoService.obtenerFormulario(cuatrimestre.anio, cuatrimestre.semestre, alumno.dni)
 
         assertThat(formularioDTO).usingRecursiveComparison().isEqualTo(formularioPersistido)
@@ -126,11 +123,11 @@ internal class AlumnoServiceTest {
     @Test
     fun `Se puede aprobar una solicitud de sobrecupo`() {
         val formulario =
-                alumnoService.guardarSolicitudPara(
-                        alumno.dni,
-                        cuatrimestre.id!!,
-                        listOf(comision1Algoritmos.id!!)
-                )
+            alumnoService.guardarSolicitudPara(
+                alumno.dni,
+                cuatrimestre.id!!,
+                listOf(comision1Algoritmos.id!!)
+            )
         val solicitudPendiente = formulario.solicitudes.first()
         val solicitudAprobada = alumnoService.cambiarEstado(solicitudPendiente.id, EstadoSolicitud.APROBADO)
 
@@ -141,11 +138,11 @@ internal class AlumnoServiceTest {
     @Test
     fun `Se puede rechazar una solicitud de sobrecupo`() {
         val formulario =
-                alumnoService.guardarSolicitudPara(
-                        alumno.dni,
-                        cuatrimestre.id!!,
-                        listOf(comision1Algoritmos.id!!)
-                )
+            alumnoService.guardarSolicitudPara(
+                alumno.dni,
+                cuatrimestre.id!!,
+                listOf(comision1Algoritmos.id!!)
+            )
         val solicitudPendiente = formulario.solicitudes.first()
         val solicitudRechazada = alumnoService.cambiarEstado(solicitudPendiente.id, EstadoSolicitud.RECHAZADO)
 

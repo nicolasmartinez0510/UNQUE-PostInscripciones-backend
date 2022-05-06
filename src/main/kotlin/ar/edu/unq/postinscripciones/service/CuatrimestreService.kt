@@ -1,9 +1,9 @@
 package ar.edu.unq.postinscripciones.service
 
 import ar.edu.unq.postinscripciones.model.cuatrimestre.Cuatrimestre
-import ar.edu.unq.postinscripciones.model.cuatrimestre.Semestre
 import ar.edu.unq.postinscripciones.model.exception.ExcepcionUNQUE
 import ar.edu.unq.postinscripciones.persistence.CuatrimestreRepository
+import ar.edu.unq.postinscripciones.service.dto.FormularioCuatrimestre
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import javax.transaction.Transactional
@@ -32,9 +32,3 @@ class CuatrimestreService {
         }
     }
 }
-
-
-data class FormularioCuatrimestre(
-    val anio: Int,
-    val semestre: Semestre
-)

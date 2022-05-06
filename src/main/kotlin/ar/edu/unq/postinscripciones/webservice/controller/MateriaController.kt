@@ -1,6 +1,7 @@
 package ar.edu.unq.postinscripciones.webservice.controller
 
 import ar.edu.unq.postinscripciones.service.MateriaService
+import ar.edu.unq.postinscripciones.service.dto.FormularioMateria
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiResponse
 import io.swagger.annotations.ApiResponses
@@ -41,5 +42,3 @@ class MateriaController {
         )
     }
 }
-
-data class FormularioMateria(val nombre: String, val codigo: String)

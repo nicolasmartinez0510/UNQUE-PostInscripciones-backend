@@ -3,20 +3,20 @@ package ar.edu.unq.postinscripciones.service
 import ar.edu.unq.postinscripciones.model.Materia
 import ar.edu.unq.postinscripciones.model.comision.Comision
 import ar.edu.unq.postinscripciones.model.comision.Dia
-import ar.edu.unq.postinscripciones.model.comision.Horario
 import ar.edu.unq.postinscripciones.model.cuatrimestre.Cuatrimestre
 import ar.edu.unq.postinscripciones.model.cuatrimestre.Semestre
 import ar.edu.unq.postinscripciones.model.exception.ExcepcionUNQUE
 import ar.edu.unq.postinscripciones.resources.DataService
 import ar.edu.unq.postinscripciones.service.dto.ComisionDTO
 import ar.edu.unq.postinscripciones.service.dto.FormularioComision
+import ar.edu.unq.postinscripciones.service.dto.FormularioCuatrimestre
+import ar.edu.unq.postinscripciones.service.dto.HorarioDTO
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
-import java.time.LocalTime
 
 @IntegrationTest
 internal class ComisionServiceTest {
@@ -35,7 +35,7 @@ internal class ComisionServiceTest {
 
     private lateinit var bdd: Materia
     private lateinit var c1: Cuatrimestre
-    private lateinit var horarios: List<Horario>
+    private lateinit var horarios: List<HorarioDTO>
     private lateinit var comision: Comision
 
     @BeforeEach
@@ -45,8 +45,8 @@ internal class ComisionServiceTest {
         c1 = cuatrimestreService.crear(formularioCuatrimestre)
 
         horarios = listOf(
-            Horario(Dia.LUNES, LocalTime.of(18, 30, 0), LocalTime.of(21, 30, 0)),
-            Horario(Dia.JUEVES, LocalTime.of(18, 30, 0), LocalTime.of(21, 30, 0))
+            HorarioDTO(Dia.LUNES, "18:30", "21:30"),
+            HorarioDTO(Dia.JUEVES, "18:30", "21:30")
         )
 
         val formulario = FormularioComision(
@@ -69,7 +69,7 @@ internal class ComisionServiceTest {
     @Test
     fun `Se puede pedir todas las comisiones de una materia`() {
         assertThat(comisionService.obtenerComisionesMateria(bdd.codigo).first()).usingRecursiveComparison()
-            .isEqualTo(comision)
+            .isEqualTo(ComisionDTO.desdeModelo(comision))
     }
 
     @Test

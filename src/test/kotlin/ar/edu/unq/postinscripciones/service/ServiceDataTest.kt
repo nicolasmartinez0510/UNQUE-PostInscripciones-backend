@@ -4,12 +4,13 @@ import ar.edu.unq.postinscripciones.model.comision.Dia
 import ar.edu.unq.postinscripciones.model.cuatrimestre.Semestre
 import ar.edu.unq.postinscripciones.resources.DataService
 import ar.edu.unq.postinscripciones.service.dto.ComisionACrear
+import ar.edu.unq.postinscripciones.service.dto.FormularioCrearAlumno
+import ar.edu.unq.postinscripciones.service.dto.FormularioCuatrimestre
 import ar.edu.unq.postinscripciones.service.dto.HorarioDTO
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import java.time.LocalTime
 
 @IntegrationTest
 internal class ServiceDataTest {
@@ -81,7 +82,7 @@ internal class ServiceDataTest {
         val cargaDePrimeraPlanilla = alumnoService.registrarAlumnos(planillaAlumnos)
 
         assertThat(cargaDePrimeraPlanilla).hasSize(1)
-        assertThat(cargaDePrimeraPlanilla.first().second).isEqualTo(planillaAlumnos.first())
+        assertThat(cargaDePrimeraPlanilla.first().formularioConflictivo).isEqualTo(planillaAlumnos.first())
         assertThat(alumnoService.todos()).hasSize(planillaAlumnos.size - 1)
     }
 
@@ -98,7 +99,7 @@ internal class ServiceDataTest {
                 ComisionACrear(
                     1,
                     bdd.codigo,
-                    listOf(HorarioDTO(Dia.LUNES, LocalTime.of(18, 0), LocalTime.of(21, 0))),
+                    listOf(HorarioDTO(Dia.LUNES, "18:00", "21:00")),
                     30,
                     30,
                     8
@@ -106,7 +107,7 @@ internal class ServiceDataTest {
                 ComisionACrear(
                     2,
                     bdd.codigo,
-                    listOf(HorarioDTO(Dia.MIERCOLES, LocalTime.of(15, 0), LocalTime.of(18, 0))),
+                    listOf(HorarioDTO(Dia.MIERCOLES, "15:00", "18:00")),
                     30,
                     30,
                     8
@@ -118,6 +119,42 @@ internal class ServiceDataTest {
 
         assertThat(ofertaDelCuatrimestre).hasSize(2)
         assertThat(ofertaDelCuatrimestre).allMatch { it.materia == bdd.nombre }
+    }
+
+    @Test
+    fun `se puede guardar una planilla y se obtienen las comisiones conflictivas por cuatrimestre, materia y numero`() {
+        val formularioCuatrimestre = FormularioCuatrimestre(2022, Semestre.S1)
+        val cuatri = cuatrimestreService.crear(formularioCuatrimestre)
+        val bdd = materiaService.crear("Bases de Datos", "BD")
+        val crearBdd = ComisionACrear(
+            1,
+            bdd.codigo,
+            listOf(),
+            30,
+            30,
+            8
+        )
+        comisionService.guardarComisiones(
+            cuatri.anio,
+            cuatri.semestre,
+            listOf(
+                crearBdd,
+                ComisionACrear(
+                    2,
+                    bdd.codigo,
+                    listOf(HorarioDTO(Dia.MIERCOLES, "15:00", "18:00")),
+                    30,
+                    30,
+                    8
+                )
+            )
+        )
+
+        val comisionesGuardadasConConflicto = comisionService
+            .guardarComisiones(cuatri.anio, cuatri.semestre, listOf(crearBdd))
+
+        assertThat(comisionesGuardadasConConflicto).hasSize(1)
+        assertThat(comisionesGuardadasConConflicto.first().formularioConflictivo).isEqualTo(crearBdd)
     }
 
     private fun generarAlumnos(prefijo: Int = 1): List<FormularioCrearAlumno> {

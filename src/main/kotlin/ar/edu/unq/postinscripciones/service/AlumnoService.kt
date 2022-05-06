@@ -7,9 +7,7 @@ import ar.edu.unq.postinscripciones.model.SolicitudSobrecupo
 import ar.edu.unq.postinscripciones.model.cuatrimestre.Semestre
 import ar.edu.unq.postinscripciones.model.exception.ExcepcionUNQUE
 import ar.edu.unq.postinscripciones.persistence.*
-import ar.edu.unq.postinscripciones.service.dto.AlumnoDTO
-import ar.edu.unq.postinscripciones.service.dto.FormularioDTO
-import ar.edu.unq.postinscripciones.service.dto.SolicitudSobrecupoDTO
+import ar.edu.unq.postinscripciones.service.dto.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import javax.transaction.Transactional
@@ -33,13 +31,13 @@ class AlumnoService {
     private lateinit var solicitudSobrecupoRepository: SolicitudSobrecupoRepository
 
     @Transactional
-    fun registrarAlumnos(planillaAlumnos: List<FormularioCrearAlumno>): List<Pair<AlumnoDTO, FormularioCrearAlumno>> {
-        val alumnosConflictivos: MutableList<Pair<AlumnoDTO, FormularioCrearAlumno>> = mutableListOf()
+    fun registrarAlumnos(planillaAlumnos: List<FormularioCrearAlumno>): List<ConflictoAlumnoDTO> {
+        val alumnosConflictivos: MutableList<ConflictoAlumnoDTO> = mutableListOf()
 
         planillaAlumnos.forEach { formulario ->
             val existeAlumno = alumnoRepository.findByDniOrLegajo(formulario.dni, formulario.legajo)
             if (existeAlumno.isPresent) {
-                alumnosConflictivos.add(Pair(AlumnoDTO.desdeModelo(existeAlumno.get()), formulario))
+                alumnosConflictivos.add(ConflictoAlumnoDTO(AlumnoDTO.desdeModelo(existeAlumno.get()), formulario))
             } else {
                 guardarAlumno(formulario)
             }
@@ -101,11 +99,3 @@ class AlumnoService {
     }
 }
 
-data class FormularioCrearAlumno(
-    val dni: Int,
-    val nombre: String,
-    val apellido: String,
-    val correo: String,
-    val legajo: Int,
-    val contrasenia: String
-)

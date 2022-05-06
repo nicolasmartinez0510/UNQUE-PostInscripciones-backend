@@ -1,16 +1,15 @@
 package ar.edu.unq.postinscripciones.service
 
+import ar.edu.unq.postinscripciones.model.Materia
 import ar.edu.unq.postinscripciones.model.comision.Comision
-import ar.edu.unq.postinscripciones.model.comision.Horario
+import ar.edu.unq.postinscripciones.model.cuatrimestre.Cuatrimestre
 import ar.edu.unq.postinscripciones.model.cuatrimestre.Semestre
 import ar.edu.unq.postinscripciones.model.exception.ExcepcionUNQUE
 import ar.edu.unq.postinscripciones.model.exception.MateriaNoEncontradaExcepcion
 import ar.edu.unq.postinscripciones.persistence.ComisionRespository
 import ar.edu.unq.postinscripciones.persistence.CuatrimestreRepository
 import ar.edu.unq.postinscripciones.persistence.MateriaRepository
-import ar.edu.unq.postinscripciones.service.dto.ComisionACrear
-import ar.edu.unq.postinscripciones.service.dto.ComisionDTO
-import ar.edu.unq.postinscripciones.service.dto.FormularioComision
+import ar.edu.unq.postinscripciones.service.dto.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import javax.transaction.Transactional
@@ -28,30 +27,11 @@ class ComisionService {
     private lateinit var cuatrimestreRepository: CuatrimestreRepository
 
     @Transactional
-    fun guardarComisiones(anio: Int, semestre: Semestre, comisionesACrear: List<ComisionACrear>) {
-        val cuatrimestre = cuatrimestreRepository.findByAnioAndSemestre(anio, semestre).get()
+    fun guardarComisiones(anio: Int, semestre: Semestre, comisionesACrear: List<ComisionACrear>): List<ConflictoComision> {
+        val cuatrimestre = cuatrimestreRepository.findByAnioAndSemestre(anio, semestre)
+            .orElseThrow { ExcepcionUNQUE("Cuatrimestre no encontrado") }
 
-        comisionesACrear.forEach { comisionACrear ->
-            val materia = materiaRepository.findMateriaByCodigo(comisionACrear.codigoMateria)
-                .orElseThrow { MateriaNoEncontradaExcepcion() }
-            comisionRespository.save(
-                Comision(
-                    materia,
-                    comisionACrear.numeroComision,
-                    cuatrimestre,
-                    comisionACrear.horarios.map { horarioDTO ->
-                        Horario(
-                            horarioDTO.dia,
-                            horarioDTO.inicio,
-                            horarioDTO.fin
-                        )
-                    },
-                    comisionACrear.cuposTotales,
-                    comisionACrear.cuposOcupados,
-                    comisionACrear.sobrecuposTotales
-                )
-            )
-        }
+        return guardarComisionesBuscandoConflictos(comisionesACrear, cuatrimestre)
     }
 
     @Transactional
@@ -72,12 +52,53 @@ class ComisionService {
     }
 
     @Transactional
-    fun obtenerComisionesMateria(codigoMateria: String): List<Comision> {
+    fun obtenerComisionesMateria(codigoMateria: String): List<ComisionDTO> {
         val materia = materiaRepository.findById(codigoMateria)
             .orElseThrow { ExcepcionUNQUE("No se encuentra la materia") }
         val comisiones = comisionRespository.findAllByMateria(materia)
-        comisiones.forEach { comision -> comision.horarios.size }
-        return comisiones
+
+        return comisiones.map { ComisionDTO.desdeModelo(it) }
+    }
+
+    private fun guardarComisionesBuscandoConflictos(
+        comisionesACrear: List<ComisionACrear>,
+        cuatrimestre: Cuatrimestre,
+    ): List<ConflictoComision> {
+        val comisionesConflictivas = mutableListOf<ConflictoComision>()
+        comisionesACrear.forEach { comisionACrear ->
+            val materia = materiaRepository.findMateriaByCodigo(comisionACrear.codigoMateria)
+                .orElseThrow { MateriaNoEncontradaExcepcion() }
+            val existeComision = comisionRespository
+                .findByNumeroAndMateriaAndCuatrimestre(comisionACrear.numeroComision, materia, cuatrimestre)
+            if (existeComision.isPresent) {
+                comisionesConflictivas.add(
+                    ConflictoComision(
+                        ComisionDTO.desdeModelo(existeComision.get()),
+                        comisionACrear
+                    )
+                )
+            }
+            guardarComision(comisionACrear, materia, cuatrimestre)
+        }
+        return comisionesConflictivas
+    }
+
+    private fun guardarComision(
+        comisionACrear: ComisionACrear,
+        materia: Materia,
+        cuatrimestre: Cuatrimestre
+    ): Comision {
+        return comisionRespository.save(
+            Comision(
+                materia,
+                comisionACrear.numeroComision,
+                cuatrimestre,
+                comisionACrear.horarios.map { HorarioDTO.aModelo(it) },
+                comisionACrear.cuposTotales,
+                comisionACrear.cuposOcupados,
+                comisionACrear.sobrecuposTotales
+            )
+        )
     }
 
     private fun guardarComision(formularioComision: FormularioComision): Comision {
@@ -90,7 +111,7 @@ class ComisionService {
                 materia,
                 formularioComision.numero,
                 cuatrimestre,
-                formularioComision.horarios,
+                formularioComision.horarios.map { HorarioDTO.aModelo(it) },
                 formularioComision.cuposTotales,
                 0,
                 formularioComision.sobreCuposTotales

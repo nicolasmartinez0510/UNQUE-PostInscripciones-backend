@@ -40,24 +40,24 @@ class DataSeed(
             val materia4 = Materia("3", "Matemática 1")
             val materia5 = Materia("4", "Estructura de Datos")
             val bddhorariosc1 = listOf(
-                    Horario(Dia.MARTES, LocalTime.of(10, 0, 0), LocalTime.of(12, 0,0)),
-                    Horario(Dia.JUEVES, LocalTime.of(10, 0, 0), LocalTime.of(12, 0,0))
+                Horario(Dia.MARTES, LocalTime.of(10, 0, 0), LocalTime.of(12, 0, 0)),
+                Horario(Dia.JUEVES, LocalTime.of(10, 0, 0), LocalTime.of(12, 0, 0))
             )
 
-            val bddhorariosc2 = listOf<Horario>(
-                    Horario(Dia.LUNES, LocalTime.of(10, 0, 0), LocalTime.of(12, 0,0)),
-                    Horario(Dia.MIERCOLES, LocalTime.of(10, 0, 0), LocalTime.of(12, 0,0))
+            val bddhorariosc2 = listOf(
+                Horario(Dia.LUNES, LocalTime.of(10, 0, 0), LocalTime.of(12, 0, 0)),
+                Horario(Dia.MIERCOLES, LocalTime.of(10, 0, 0), LocalTime.of(12, 0, 0))
             )
 
-            val matehorarios = listOf<Horario>(
-                    Horario(Dia.LUNES, LocalTime.of(10, 30, 0), LocalTime.of(12, 30,0)),
-                    Horario(Dia.JUEVES, LocalTime.of(10, 30, 0), LocalTime.of(12, 30,0))
+            val matehorarios = listOf(
+                Horario(Dia.LUNES, LocalTime.of(10, 30, 0), LocalTime.of(12, 30, 0)),
+                Horario(Dia.JUEVES, LocalTime.of(10, 30, 0), LocalTime.of(12, 30, 0))
             )
 
-            val estrhorarios = listOf<Horario>(
-                    Horario(Dia.LUNES, LocalTime.of(9, 0, 0), LocalTime.of(12, 0,0)),
-                    Horario(Dia.MIERCOLES, LocalTime.of(9, 0, 0), LocalTime.of(12, 0,0)),
-                    Horario(Dia.VIERNES, LocalTime.of(9, 0, 0), LocalTime.of(12, 0,0))
+            val estrhorarios = listOf(
+                Horario(Dia.LUNES, LocalTime.of(9, 0, 0), LocalTime.of(12, 0, 0)),
+                Horario(Dia.MIERCOLES, LocalTime.of(9, 0, 0), LocalTime.of(12, 0, 0)),
+                Horario(Dia.VIERNES, LocalTime.of(9, 0, 0), LocalTime.of(12, 0, 0))
             )
 
 
@@ -82,14 +82,19 @@ class DataSeed(
             comisionRespository.saveAll(listOf(bddc1, bddc2, matec1, estrc1))
             alumnoRepository.save(jorge)
 
+            val cantMaterias = materiaRepository.count()
+            val cantComisiones = comisionRespository.count()
+            val cantAlumnos = alumnoRepository.count()
+
             println()
             println("##########################")
             println("Datos creados exitosamente")
             println("##########################")
             println()
+            println("Total de materias: $cantMaterias")
+            println("Total de comisiones: $cantComisiones")
+            println("Total de alumnos: $cantAlumnos")
         }
-        println("Total de materias: ${materiaRepository.count()}")
-        println("Total de comisiones: ${comisionRespository.count()}")
     }
 
     private fun emptyData(): Boolean {
