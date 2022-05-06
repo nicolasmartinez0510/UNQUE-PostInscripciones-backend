@@ -1,13 +1,13 @@
 package ar.edu.unq.postinscripciones
 
+import ar.edu.unq.postinscripciones.service.IntegrationTest
 import org.junit.jupiter.api.Test
-import org.springframework.boot.test.context.SpringBootTest
 
-@SpringBootTest
+@IntegrationTest
 class PostinscripcionesApplicationTests {
 
-	@Test
-	fun contextLoads() {
-	}
+    @Test
+    fun contextLoads() {
+    }
 
 }

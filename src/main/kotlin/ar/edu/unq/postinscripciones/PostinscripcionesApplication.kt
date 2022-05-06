@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 
-@SpringBootApplication
+@SpringBootApplication()
 class PostinscripcionesApplication
 
 fun main(args: Array<String>) {
@@ -16,10 +16,10 @@ fun main(args: Array<String>) {
 
 @RestController
 @RequestMapping("/api")
-class AuthController {
+class HolaMundoController {
 	@RequestMapping(value = ["/hola"], method = [RequestMethod.GET])
 	fun helloWorld(): ResponseEntity<*> {
-		return ResponseEntity.ok("Hola!")
+		return ResponseEntity.ok("Hola mundo!")
 	}
 
 }
