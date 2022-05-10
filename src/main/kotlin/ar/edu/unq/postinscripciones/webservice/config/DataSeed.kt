@@ -12,7 +12,8 @@ import ar.edu.unq.postinscripciones.persistence.ComisionRespository
 import ar.edu.unq.postinscripciones.persistence.CuatrimestreRepository
 import ar.edu.unq.postinscripciones.persistence.MateriaRepository
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.CommandLineRunner
+import org.springframework.boot.ApplicationArguments
+import org.springframework.boot.ApplicationRunner
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 import java.time.LocalTime
@@ -24,10 +25,9 @@ class DataSeed(
     @Autowired private val cuatrimestreRepository: CuatrimestreRepository,
     @Autowired private val comisionRespository: ComisionRespository,
     @Autowired private val alumnoRepository: AlumnoRepository
-) : CommandLineRunner {
+) : ApplicationRunner {
 
-    @Throws(Exception::class)
-    override fun run(vararg args: String?) {
+    override fun run(args: ApplicationArguments?) {
         loadData()
     }
 
@@ -100,4 +100,6 @@ class DataSeed(
     private fun emptyData(): Boolean {
         return materiaRepository.count().toInt() == 0
     }
+
+
 }
