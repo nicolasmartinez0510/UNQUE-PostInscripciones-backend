@@ -10,8 +10,6 @@ data class ComisionACrear(
     val horarios: List<HorarioDTO>,
     @ApiModelProperty(example = "30", required = true)
     val cuposTotales: Int,
-    @ApiModelProperty(example = "30", required = true)
-    val cuposOcupados: Int,
     @ApiModelProperty(example = "8", required = true)
     val sobrecuposTotales: Int
 )

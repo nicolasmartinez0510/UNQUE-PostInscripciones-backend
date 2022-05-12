@@ -19,7 +19,7 @@ data class ComisionDTO(
                 comision.materia.nombre,
                 comision.cuposTotales,
                 comision.sobrecuposTotales,
-                comision.cuposDisponibles()
+                comision.sobrecuposDisponibles()
             )
         }
     }

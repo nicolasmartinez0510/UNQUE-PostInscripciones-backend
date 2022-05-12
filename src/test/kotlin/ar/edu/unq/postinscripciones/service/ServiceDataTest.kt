@@ -101,14 +101,12 @@ internal class ServiceDataTest {
                     bdd.codigo,
                     listOf(HorarioDTO(Dia.LUNES, "18:00", "21:00")),
                     30,
-                    30,
                     8
                 ),
                 ComisionACrear(
                     2,
                     bdd.codigo,
                     listOf(HorarioDTO(Dia.MIERCOLES, "15:00", "18:00")),
-                    30,
                     30,
                     8
                 )
@@ -131,7 +129,6 @@ internal class ServiceDataTest {
             bdd.codigo,
             listOf(),
             30,
-            30,
             8
         )
         comisionService.guardarComisiones(
@@ -143,7 +140,6 @@ internal class ServiceDataTest {
                     2,
                     bdd.codigo,
                     listOf(HorarioDTO(Dia.MIERCOLES, "15:00", "18:00")),
-                    30,
                     30,
                     8
                 )
