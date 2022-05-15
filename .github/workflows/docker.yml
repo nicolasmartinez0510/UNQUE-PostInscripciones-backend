@@ -2,7 +2,8 @@ name: UNQUE-PostInscripciones Docker
 
 on:
   release:
-
+    types:
+      - published
 jobs:
   update-dockerhub:
     runs-on: ubuntu-latest
