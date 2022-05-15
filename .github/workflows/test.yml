@@ -5,8 +5,8 @@ on:
     branches:
       - '*'
   release:
-    branches:
-      - 'main'
+    types:
+      - released
 
 jobs:
   build:
