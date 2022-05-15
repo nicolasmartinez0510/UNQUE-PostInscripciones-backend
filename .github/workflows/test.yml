@@ -1,9 +1,12 @@
-name: UNQUE-PostInscripciones
+name: UNQUE-PostInscripciones Test
 
 on:
   push:
     branches:
       - '*'
+  release:
+    branches:
+      - 'main'
 
 jobs:
   build:
