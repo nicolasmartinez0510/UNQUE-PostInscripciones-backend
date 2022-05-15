@@ -15,15 +15,18 @@ class Alumno(
     val correo: String = "",
     @Column(unique = true)
     val legajo: Int = 4,
-    val contrasenia: String = ""
+    val contrasenia: String = "",
+    val carrera: Carrera? = null
 ) {
     @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     private val formularios: MutableList<Formulario> = mutableListOf()
 
     fun guardarFormulario(formulario: Formulario) {
+        carrera ?: throw ExcepcionUNQUE("Un alumno sin carrera no puede solicitar cupos")
         chequearSiExiste(formulario)
         formularios.add(formulario)
     }
+
 
     fun obtenerFormulario(anio: Int, semestre: Semestre): Formulario {
         val formulario = formularios.find { it.cuatrimestre.esElCuatrimestre(anio, semestre) }

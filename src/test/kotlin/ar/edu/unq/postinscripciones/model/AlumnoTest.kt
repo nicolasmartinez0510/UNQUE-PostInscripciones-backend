@@ -16,7 +16,7 @@ internal class AlumnoTest {
     fun `set up`() {
         comisionBdd = Comision()
         otraComision = Comision(numero = 5)
-        alumno = Alumno()
+        alumno = Alumno(carrera = Carrera.TPI)
     }
 
     @Test
@@ -28,6 +28,16 @@ internal class AlumnoTest {
 
         assertThat(alumno.llenoElFormularioDelCuatrimestre(comisionBdd.cuatrimestre)).isTrue
         assertThat(alumno.haSolicitado(otraComision)).isFalse
+    }
+
+    @Test
+    fun `Un alumno sin carrera no puede completar un formulario de solicitud de cupo`() {
+        val formulario = Formulario(comisionBdd.cuatrimestre, listOf())
+        val alumno = Alumno()
+
+        val excepcion = assertThrows<ExcepcionUNQUE> { alumno.guardarFormulario(formulario) }
+
+        assertThat(excepcion.message).isEqualTo("Un alumno sin carrera no puede solicitar cupos")
     }
 
     @Test
@@ -96,5 +106,12 @@ internal class AlumnoTest {
         alumno = Alumno(legajo = 123)
 
         assertThat(alumno.legajo).isEqualTo(123)
+    }
+
+    @Test
+    fun `Un alumno conoce la carrera en la que se encuentra inscripto`() {
+        alumno = Alumno(carrera = Carrera.TPI)
+
+        assertThat(alumno.carrera).isEqualTo(Carrera.TPI)
     }
 }

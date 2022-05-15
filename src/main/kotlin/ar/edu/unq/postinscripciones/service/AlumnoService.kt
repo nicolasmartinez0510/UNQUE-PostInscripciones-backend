@@ -93,7 +93,8 @@ class AlumnoService {
                 formulario.apellido,
                 formulario.correo,
                 formulario.legajo,
-                formulario.contrasenia
+                formulario.contrasenia,
+                formulario.carrera
             )
         )
     }
