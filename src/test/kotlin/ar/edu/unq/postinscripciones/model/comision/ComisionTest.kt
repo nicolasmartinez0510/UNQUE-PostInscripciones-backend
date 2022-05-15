@@ -57,6 +57,13 @@ internal class ComisionTest {
     fun `una comision conoce sus cupos disponibles`() {
         assertThat(comisionUnoBdd.sobrecuposDisponibles()).isEqualTo(sobrecuposTotales)
     }
+    @Test
+    fun `Una comision sabe su modalidad`() {
+        val horarios: List<Horario> = horariosBdd()
+        val comisionDosBdd = Comision(bdd, 2, cuatrimestre, horarios, cuposTotales, sobrecuposTotales, Modalidad.VIRTUAL)
+        assertThat(comisionDosBdd.modalidad).isEqualTo(Modalidad.VIRTUAL)
+    }
+
 
     fun horariosBdd(): List<Horario> {
         return listOf(

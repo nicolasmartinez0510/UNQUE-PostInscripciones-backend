@@ -129,7 +129,8 @@ class ComisionService {
                 cuatrimestre,
                 formularioComision.horarios.map { HorarioDTO.aModelo(it) },
                 formularioComision.cuposTotales,
-                formularioComision.sobreCuposTotales
+                formularioComision.sobreCuposTotales,
+                formularioComision.modalidad
             )
         )
     }

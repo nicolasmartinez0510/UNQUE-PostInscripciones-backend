@@ -15,7 +15,8 @@ class Comision(
     @OneToMany(fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
     val horarios: List<Horario> = listOf(),
     val cuposTotales: Int = 30,
-    val sobrecuposTotales: Int = 5
+    val sobrecuposTotales: Int = 5,
+    val modalidad: Modalidad = Modalidad.PRESENCIAL
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

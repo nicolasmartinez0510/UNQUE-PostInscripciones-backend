@@ -3,6 +3,7 @@ package ar.edu.unq.postinscripciones.service
 import ar.edu.unq.postinscripciones.model.Materia
 import ar.edu.unq.postinscripciones.model.comision.Comision
 import ar.edu.unq.postinscripciones.model.comision.Dia
+import ar.edu.unq.postinscripciones.model.comision.Modalidad
 import ar.edu.unq.postinscripciones.model.cuatrimestre.Cuatrimestre
 import ar.edu.unq.postinscripciones.model.cuatrimestre.Semestre
 import ar.edu.unq.postinscripciones.model.exception.ExcepcionUNQUE
@@ -56,7 +57,8 @@ internal class ComisionServiceTest {
             Semestre.S1,
             35,
             5,
-            horarios
+            horarios,
+            Modalidad.PRESENCIAL
         )
         comision = comisionService.crear(formulario)
     }

@@ -1,5 +1,6 @@
 package ar.edu.unq.postinscripciones.service
 
+import ar.edu.unq.postinscripciones.model.Carrera
 import ar.edu.unq.postinscripciones.model.comision.Dia
 import ar.edu.unq.postinscripciones.model.cuatrimestre.Cuatrimestre
 import ar.edu.unq.postinscripciones.model.cuatrimestre.Semestre
@@ -190,7 +191,7 @@ internal class ServiceDataTest {
             planilla.add(
                 FormularioCrearAlumno(
                     prefijo + planilla.size, "pepe", "soria", "correo" + planilla.size + "@ejemplo.com",
-                    prefijo + planilla.size, "asdas"
+                    prefijo + planilla.size, "asdas", Carrera.TPI
                 )
             )
         }
