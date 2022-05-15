@@ -21,7 +21,7 @@ class ComisionController {
     private lateinit var comisionService: ComisionService
 
     @ApiOperation("Endpoint que se usa para registrar nuevas comisiones en el sistema")
-    @RequestMapping(value = ["/crear"], method = [RequestMethod.POST])
+    @RequestMapping(value = ["/"], method = [RequestMethod.POST])
     @ApiResponses(
         value = [
             ApiResponse(code = 200, message = "Comision creada"),
@@ -37,7 +37,7 @@ class ComisionController {
         )
     }
 
-    @ApiOperation(value = "Endpoint usado para listar todas las materias disponibles")
+    @ApiOperation(value = "Endpoint usado para listar todas las comisiones de una materia especifica")
     @RequestMapping(value = ["/materia/{codigoMateria}"], method = [RequestMethod.GET])
     fun materiasComision(
         @PathVariable

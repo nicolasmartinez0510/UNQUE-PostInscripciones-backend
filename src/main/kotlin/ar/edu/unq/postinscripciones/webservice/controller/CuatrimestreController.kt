@@ -26,7 +26,7 @@ class CuatrimestreController {
 
 
     @ApiOperation("Endpoint que se usa para registrar un nuevo cuatrimestre en el sistema")
-    @RequestMapping(value = ["/crear"], method = [RequestMethod.POST])
+    @RequestMapping(value = ["/"], method = [RequestMethod.POST])
     @ApiResponses(
         value = [
             ApiResponse(code = 201, message = "Cuatrimestre creado"),

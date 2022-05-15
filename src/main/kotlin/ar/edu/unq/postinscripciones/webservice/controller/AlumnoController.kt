@@ -21,7 +21,7 @@ class AlumnoController {
     private lateinit var alumnoService: AlumnoService
 
     @ApiOperation("Endpoint que se usa para registrar una lista de alumnos en el sistema")
-    @RequestMapping(value = ["/registrar"], method = [RequestMethod.POST])
+    @RequestMapping(value = ["/"], method = [RequestMethod.POST])
     @ApiResponses(
         value = [
             ApiResponse(code = 201, message = "Alumnos registrados correctamente"),
@@ -36,7 +36,7 @@ class AlumnoController {
     }
 
     @ApiOperation("Endpoint que se usa para obtener todos los alumnos registrados")
-    @RequestMapping(value = ["/todos"], method = [RequestMethod.GET])
+    @RequestMapping(value = ["/"], method = [RequestMethod.GET])
     fun todos(): ResponseEntity<*> {
         return ResponseEntity(
             alumnoService.todos(),

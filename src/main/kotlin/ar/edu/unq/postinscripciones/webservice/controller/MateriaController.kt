@@ -19,7 +19,7 @@ class MateriaController {
     private lateinit var materiaService: MateriaService
 
     @ApiOperation("Endpoint que se usa para registra una nueva materia en el sistema")
-    @RequestMapping(value = ["/crear"], method = [RequestMethod.POST])
+    @RequestMapping(value = ["/"], method = [RequestMethod.POST])
     @ApiResponses(
             value = [
                 ApiResponse(code = 201, message = "Materia creada"),
@@ -34,7 +34,7 @@ class MateriaController {
     }
 
     @ApiOperation(value = "Endpoint usado para listar todas las materias disponibles")
-    @RequestMapping(value = ["/todas"], method = [RequestMethod.GET])
+    @RequestMapping(value = ["/"], method = [RequestMethod.GET])
     fun todas(): ResponseEntity<*> {
         return ResponseEntity(
                 materiaService.todas(),
