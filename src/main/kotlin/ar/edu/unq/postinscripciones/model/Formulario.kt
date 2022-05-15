@@ -15,4 +15,23 @@ class Formulario(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
+    var estado = EstadoFormulario.ABIERTO
+
+    fun cambiarEstado() {
+        estado.cambiarEstado(this)
+    }
+
+    fun cerrarFormulario() {
+        solicitudes.forEach {
+            if (it.estado == EstadoSolicitud.PENDIENTE){
+                it.cambiarEstado(EstadoSolicitud.RECHAZADO)
+            }
+        }
+        estado = EstadoFormulario.CERRADO
+    }
+
+    fun abrirFormulario() {
+        estado = EstadoFormulario.ABIERTO
+    }
 }
+

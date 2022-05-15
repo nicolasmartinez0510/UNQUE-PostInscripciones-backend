@@ -1,9 +1,6 @@
 package ar.edu.unq.postinscripciones.service
 
-import ar.edu.unq.postinscripciones.model.Alumno
-import ar.edu.unq.postinscripciones.model.EstadoSolicitud
-import ar.edu.unq.postinscripciones.model.Formulario
-import ar.edu.unq.postinscripciones.model.SolicitudSobrecupo
+import ar.edu.unq.postinscripciones.model.*
 import ar.edu.unq.postinscripciones.model.cuatrimestre.Semestre
 import ar.edu.unq.postinscripciones.model.exception.ExcepcionUNQUE
 import ar.edu.unq.postinscripciones.persistence.*
@@ -83,6 +80,15 @@ class AlumnoService {
             solicitudSobrecupoRepository.findById(solicitudId).orElseThrow { ExcepcionUNQUE("No existe la solicitud") }
         solicitud.cambiarEstado(estado)
         return SolicitudSobrecupoDTO.desdeModelo(solicitudSobrecupoRepository.save(solicitud))
+    }
+
+    @Transactional
+    fun cambiarEstadoFormularios(anio: Int, semestre: Semestre) {
+        val alumnos = alumnoRepository.findAll()
+        alumnos.forEach {
+            val formulario = it.obtenerFormulario(anio, semestre)
+            formulario.cambiarEstado()
+        }
     }
 
     private fun guardarAlumno(formulario: FormularioCrearAlumno): Alumno {
