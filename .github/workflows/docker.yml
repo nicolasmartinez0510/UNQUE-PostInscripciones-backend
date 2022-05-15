@@ -2,12 +2,6 @@ name: UNQUE-PostInscripciones Docker
 
 on:
   release:
-    types:
-      - published
-  workflow_run:
-    workflows: [ "UNQUE-PostInscripciones Test" ]
-    types:
-      - completed
 
 jobs:
   update-dockerhub:
