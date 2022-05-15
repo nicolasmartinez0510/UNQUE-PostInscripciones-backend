@@ -64,6 +64,7 @@ internal class MateriaServiceTest {
     @Test
     fun `Se puede obtener una materia especifica`() {
         val materiaEncontrada = materiaService.obtener(bdd.codigo)
+        bdd.correlativas.size
         assertThat(materiaEncontrada).usingRecursiveComparison().isEqualTo(bdd)
     }
 
