@@ -47,17 +47,17 @@ class ComisionService {
             cuatrimestre.semestre
         )
         chequearSiHayOferta(oferta, cuatrimestre)
-        return  oferta.map { ComisionDTO.desdeModelo(it) }
+        return oferta.map { ComisionDTO.desdeModelo(it) }
     }
 
     @Transactional
-    fun comisionesPorSolicitudes(cuatrimestre: Cuatrimestre = Cuatrimestre.actual()): List<ComisionSolicitudes> {
-        val comisiones = comisionRespository.findByCuatrimestreAnioAndCuatrimestreSemestreOrderByCountSolicitudes(
-            cuatrimestre.anio,
-            cuatrimestre.semestre
-        )
-
-        return comisiones.map { ComisionSolicitudes(ComisionDTO.desdeModelo(it.get(0) as Comision), (it.get(1) as Long).toInt()) }
+    fun comisionesPorSolicitudes(cuatrimestre: Cuatrimestre = Cuatrimestre.actual()): List<ComisionPorSolicitudes> {
+        return comisionRespository
+            .findByCuatrimestreAnioAndCuatrimestreSemestreOrderByCountSolicitudes(
+                cuatrimestre.anio,
+                cuatrimestre.semestre
+            )
+            .map { ComisionPorSolicitudes.desdeTupla(it) }
     }
 
     @Transactional

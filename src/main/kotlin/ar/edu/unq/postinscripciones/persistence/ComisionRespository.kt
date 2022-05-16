@@ -22,8 +22,14 @@ interface ComisionRespository : CrudRepository<Comision, Long> {
     ): Optional<Comision>
 
     @Query(
-        "select c, count(s) as total from Comision as c left join SolicitudSobrecupo s on s.comision.id = c.id where c.cuatrimestre.anio = ?1 and c.cuatrimestre.semestre = ?2 group by c.id order by count(s) desc "
+        "SELECT c.id, c.numero, c.materia.nombre, count(s), c.sobrecuposTotales, (c.sobrecuposTotales - c.sobrecuposOcupados) " +
+                "FROM Comision AS c " +
+                "JOIN SolicitudSobrecupo AS s " +
+                "ON s.comision.id = c.id " +
+                "WHERE c.cuatrimestre.anio = ?1 " +
+                "AND c.cuatrimestre.semestre = ?2 " +
+                "GROUP BY c.id " +
+                "ORDER BY count(s) DESC"
     )
     fun findByCuatrimestreAnioAndCuatrimestreSemestreOrderByCountSolicitudes(anio: Int, semestre: Semestre): List<Tuple>
-
 }

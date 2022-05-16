@@ -36,7 +36,7 @@ internal class ComisionServiceTest {
     private lateinit var dataService: DataService
 
     private lateinit var bdd: Materia
-    private lateinit var c1: Cuatrimestre
+    private lateinit var cuatrimestre: Cuatrimestre
     private lateinit var horarios: List<HorarioDTO>
     private lateinit var comision: Comision
     private lateinit var comision2: Comision
@@ -49,7 +49,7 @@ internal class ComisionServiceTest {
 
         bdd = materiaService.crear("Base de datos", "BBD-208")
         val formularioCuatrimestre = FormularioCuatrimestre(2022, Semestre.S1)
-        c1 = cuatrimestreService.crear(formularioCuatrimestre)
+        cuatrimestre = cuatrimestreService.crear(formularioCuatrimestre)
 
         horarios = listOf(
             HorarioDTO(Dia.LUNES, "18:30", "21:30"),
@@ -93,8 +93,8 @@ internal class ComisionServiceTest {
         )
         comision2 = comisionService.crear(formulario2)
         comision3 = comisionService.crear(formulario3)
-        alumnoService.guardarSolicitudPara(alumno.dni,c1.id!!, listOf(comision.id!!, comision2.id!!))
-        alumnoService.guardarSolicitudPara(alumno2.dni,c1.id!!, listOf(comision2.id!!))
+        alumnoService.guardarSolicitudPara(alumno.dni,cuatrimestre.id!!, listOf(comision.id!!, comision2.id!!))
+        alumnoService.guardarSolicitudPara(alumno2.dni,cuatrimestre.id!!, listOf(comision2.id!!))
 
     }
 
@@ -132,11 +132,12 @@ internal class ComisionServiceTest {
 
     @Test
     fun `Obtener comisiones ordenadas por cantidad de solicitudes`() {
-        val comisionesObtenidas = comisionService.comisionesPorSolicitudes(c1)
-        assertThat(comisionesObtenidas.maxOf { it.cantSolicitudes }).isEqualTo(comisionesObtenidas.first().cantSolicitudes)
-        assertThat(comisionesObtenidas.minOf { it.cantSolicitudes }).isEqualTo(comisionesObtenidas.last().cantSolicitudes)
-        assertThat(comisionesObtenidas.first().comision).usingRecursiveComparison().isEqualTo(ComisionDTO.desdeModelo(comision2))
-        assertThat(comisionesObtenidas.first().cantSolicitudes).usingRecursiveComparison().isEqualTo(2)
+        val comisionesObtenidas = comisionService.comisionesPorSolicitudes(cuatrimestre)
+        assertThat(comisionesObtenidas.maxOf { it.cantidadSolicitudes }).isEqualTo(comisionesObtenidas.first().cantidadSolicitudes)
+        assertThat(comisionesObtenidas.minOf { it.cantidadSolicitudes }).isEqualTo(comisionesObtenidas.last().cantidadSolicitudes)
+        assertThat(comisionesObtenidas).allMatch { it.id != comision3.id }
+        assertThat(comisionesObtenidas.first().cantidadSolicitudes).isEqualTo(2)
+        assertThat(comisionesObtenidas.last().cantidadSolicitudes).isEqualTo(1)
     }
 
 
