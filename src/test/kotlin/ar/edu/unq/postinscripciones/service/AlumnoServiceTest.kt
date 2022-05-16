@@ -1,9 +1,6 @@
 package ar.edu.unq.postinscripciones.service
 
-import ar.edu.unq.postinscripciones.model.Alumno
-import ar.edu.unq.postinscripciones.model.Carrera
-import ar.edu.unq.postinscripciones.model.EstadoSolicitud
-import ar.edu.unq.postinscripciones.model.Materia
+import ar.edu.unq.postinscripciones.model.*
 import ar.edu.unq.postinscripciones.model.comision.Comision
 import ar.edu.unq.postinscripciones.model.comision.Dia
 import ar.edu.unq.postinscripciones.model.comision.Modalidad
@@ -38,13 +35,14 @@ internal class AlumnoServiceTest {
     private lateinit var dataService: DataService
 
     private lateinit var alumno: Alumno
+    private lateinit var fede: Alumno
     private lateinit var cuatrimestre: Cuatrimestre
     private lateinit var comision1Algoritmos: Comision
     private lateinit var algo: Materia
 
     @BeforeEach
     fun setUp() {
-        val formularioCrear = FormularioCrearAlumno(
+        val nicoFormularioCrear = FormularioCrearAlumno(
             45328,
             "Nicolas",
             "Martinez",
@@ -54,7 +52,18 @@ internal class AlumnoServiceTest {
             Carrera.TPI
         )
 
-        alumno = alumnoService.crear(formularioCrear)
+        val fedeFormularioCrear = FormularioCrearAlumno(
+                45329,
+                "Fede",
+                "Sandoval",
+                "fede.sando@unq.edu.ar",
+                11223344,
+                "1234",
+                Carrera.TPI
+        )
+
+        alumno = alumnoService.crear(nicoFormularioCrear)
+        fede = alumnoService.crear(fedeFormularioCrear)
         algo = materiaService.crear("Algoritmos", "ALG-208")
         val formularioCuatrimestre = FormularioCuatrimestre(2022, Semestre.S1)
         cuatrimestre = cuatrimestreService.crear(formularioCuatrimestre)
@@ -151,6 +160,34 @@ internal class AlumnoServiceTest {
         val solicitudRechazada = alumnoService.cambiarEstado(solicitudPendiente.id, EstadoSolicitud.RECHAZADO)
 
         assertThat(solicitudRechazada.estado).isEqualTo(EstadoSolicitud.RECHAZADO)
+    }
+
+    @Test
+    fun `Se pueden cerrar todos los formularios del cuatrimestre corriente`() {
+        val formularioAntesDeCerrar =
+            alumnoService.guardarSolicitudPara(
+                alumno.dni,
+                cuatrimestre.id!!,
+                listOf(comision1Algoritmos.id!!)
+        )
+        val formulario2AntesDeCerrar =
+            alumnoService.guardarSolicitudPara(
+                    fede.dni,
+                    cuatrimestre.id!!,
+                    listOf(comision1Algoritmos.id!!)
+            )
+
+        alumnoService.cambiarEstadoFormularios(cuatrimestre.anio, cuatrimestre.semestre)
+        val formularioDespuesDeCerrar = alumnoService.obtenerFormulario(cuatrimestre.anio, cuatrimestre.semestre, alumno.dni)
+        val formulario2DespuesDeCerrar = alumnoService.obtenerFormulario(cuatrimestre.anio, cuatrimestre.semestre, fede.dni)
+
+        assertThat(listOf(formularioAntesDeCerrar, formulario2AntesDeCerrar).map { it.estado })
+                .usingRecursiveComparison()
+                .isEqualTo(listOf(EstadoFormulario.ABIERTO, EstadoFormulario.ABIERTO))
+
+        assertThat(listOf(formularioDespuesDeCerrar, formulario2DespuesDeCerrar).map { it.estado })
+                .usingRecursiveComparison()
+                .isEqualTo(listOf(EstadoFormulario.CERRADO, EstadoFormulario.CERRADO))
     }
 
     @AfterEach
