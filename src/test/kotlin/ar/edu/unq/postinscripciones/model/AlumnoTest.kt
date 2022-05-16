@@ -114,4 +114,28 @@ internal class AlumnoTest {
 
         assertThat(alumno.carrera).isEqualTo(Carrera.TPI)
     }
+
+    @Test
+    fun `Un alumno conoce su historia academica`() {
+        val intro = Materia("int-102", "Intro", mutableListOf())
+        val materiaCursada1 = MateriaCursada(intro)
+
+        alumno.cargarHistoriaAcademica(materiaCursada1)
+
+        assertThat(alumno.historiaAcademica).usingRecursiveComparison().isEqualTo(listOf(materiaCursada1))
+
+
+    }
+
+    @Test
+    fun `No se puede agregar otra vez la misma materia aprobada`() {
+        val intro = Materia("int-102", "Intro", mutableListOf())
+        val materiaCursada1 = MateriaCursada(intro)
+        val materiaCursada2 = MateriaCursada(intro)
+
+        alumno.cargarHistoriaAcademica(materiaCursada1)
+        val excepcion = assertThrows<ExcepcionUNQUE> { alumno.cargarHistoriaAcademica(materiaCursada2) }
+
+        assertThat(excepcion.message).isEqualTo("La materia ya fue cargada en la historia academica")
+    }
 }

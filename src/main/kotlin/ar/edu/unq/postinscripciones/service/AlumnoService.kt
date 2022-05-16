@@ -16,6 +16,9 @@ class AlumnoService {
     private lateinit var alumnoRepository: AlumnoRepository
 
     @Autowired
+    private lateinit var materiaRepository: MateriaRepository
+
+    @Autowired
     private lateinit var formularioRepository: FormularioRepository
 
     @Autowired
@@ -26,6 +29,9 @@ class AlumnoService {
 
     @Autowired
     private lateinit var solicitudSobrecupoRepository: SolicitudSobrecupoRepository
+
+//    @Autowired
+//    private lateinit var materiaCursadaRepository: MateriaCursadaRepository
 
     @Transactional
     fun registrarAlumnos(planillaAlumnos: List<FormularioCrearAlumno>): List<ConflictoAlumnoDTO> {
@@ -91,18 +97,35 @@ class AlumnoService {
         }
     }
 
+//    @Transactional
+//    fun cambiarEstadoMateriaCursada(codigoMateria: String, estadoMateria: EstadoMateria): MateriaCursada {
+//        val materia = materiaRepository.findMateriaByCodigo(codigoMateria).get()
+//        val materiaCursada = materiaCursadaRepository.findByMateria(materia).get()
+//
+//        materiaCursada.cambiarEstado(estadoMateria)
+//
+//        return materiaCursadaRepository.save(materiaCursada)
+//    }
+
     private fun guardarAlumno(formulario: FormularioCrearAlumno): Alumno {
-        return alumnoRepository.save(
-            Alumno(
+        val historiaAcademica = formulario.historiaAcademica.map {
+            val materia = materiaRepository
+                    .findMateriaByCodigo(it.codigoMateria).orElseThrow { ExcepcionUNQUE("No existe la materia") }
+            MateriaCursada(materia)
+        }
+        val alumno = Alumno(
                 formulario.dni,
                 formulario.nombre,
                 formulario.apellido,
                 formulario.correo,
                 formulario.legajo,
                 formulario.contrasenia,
-                formulario.carrera
-            )
+                formulario.carrera,
         )
+
+        historiaAcademica.forEach { alumno.cargarHistoriaAcademica(it) }
+
+        return alumnoRepository.save(alumno)
     }
 }
 

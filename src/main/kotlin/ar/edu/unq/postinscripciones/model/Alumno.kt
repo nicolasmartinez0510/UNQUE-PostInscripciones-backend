@@ -16,15 +16,30 @@ class Alumno(
     @Column(unique = true)
     val legajo: Int = 4,
     val contrasenia: String = "",
-    val carrera: Carrera? = null
+    val carrera: Carrera? = null,
 ) {
     @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     private val formularios: MutableList<Formulario> = mutableListOf()
+
+    @OneToMany(fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
+    val historiaAcademica: MutableList<MateriaCursada> = mutableListOf()
+    get() = field
 
     fun guardarFormulario(formulario: Formulario) {
         carrera ?: throw ExcepcionUNQUE("Un alumno sin carrera no puede solicitar cupos")
         chequearSiExiste(formulario)
         formularios.add(formulario)
+    }
+
+    fun cargarHistoriaAcademica(materiaCursada: MateriaCursada) {
+        if(cargoMateriaCursada(materiaCursada.materia)) {
+            throw ExcepcionUNQUE("La materia ya fue cargada en la historia academica")
+        }
+        historiaAcademica.add(materiaCursada)
+    }
+
+    fun cargoMateriaCursada(materia: Materia): Boolean {
+        return historiaAcademica.any{ it.materia.esLaMateria(materia) }
     }
 
 

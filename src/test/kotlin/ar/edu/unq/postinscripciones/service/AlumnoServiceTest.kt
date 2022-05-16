@@ -15,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
+import java.time.LocalDate
 
 @IntegrationTest
 internal class AlumnoServiceTest {
@@ -39,6 +40,7 @@ internal class AlumnoServiceTest {
     private lateinit var cuatrimestre: Cuatrimestre
     private lateinit var comision1Algoritmos: Comision
     private lateinit var algo: Materia
+    private lateinit var funcional: Materia
 
     @BeforeEach
     fun setUp() {
@@ -49,7 +51,8 @@ internal class AlumnoServiceTest {
             "nicolas.martinez@unq.edu.ar",
             42256394,
             "42256395",
-            Carrera.TPI
+            Carrera.TPI,
+            listOf()
         )
 
         val fedeFormularioCrear = FormularioCrearAlumno(
@@ -59,12 +62,14 @@ internal class AlumnoServiceTest {
                 "fede.sando@unq.edu.ar",
                 11223344,
                 "1234",
-                Carrera.TPI
+                Carrera.TPI,
+                listOf()
         )
 
         alumno = alumnoService.crear(nicoFormularioCrear)
         fede = alumnoService.crear(fedeFormularioCrear)
         algo = materiaService.crear("Algoritmos", "ALG-208")
+        funcional = materiaService.crear("Funcional", "FUN-205")
         val formularioCuatrimestre = FormularioCuatrimestre(2022, Semestre.S1)
         cuatrimestre = cuatrimestreService.crear(formularioCuatrimestre)
         val horarios = listOf(
@@ -189,6 +194,48 @@ internal class AlumnoServiceTest {
                 .usingRecursiveComparison()
                 .isEqualTo(listOf(EstadoFormulario.CERRADO, EstadoFormulario.CERRADO))
     }
+
+    @Test
+    fun `Se puede cargar la historia academica de un alumno`() {
+        val materiaCursada = MateriaCursadaDTO(funcional.codigo, EstadoMateria.APROBADO, LocalDate.of(2021, 12, 20))
+        val formularioAlumno = FormularioCrearAlumno(
+                1234567,
+                "Pepe",
+                "Sanchez",
+                "pepe.sanchez@unq.edu.ar",
+                44556,
+                "1234",
+                Carrera.TPI,
+                listOf(materiaCursada)
+        )
+
+        val alumno = alumnoService.crear(formularioAlumno)
+
+        assertThat(alumno.historiaAcademica).isNotEmpty
+        assertThat(alumno.historiaAcademica.first().materia.codigo).isEqualTo(materiaCursada.codigoMateria)
+    }
+
+//    @Test
+//    fun `Se puede cambiar el estado de una materia cursada`() {
+//        val materiaCursada = MateriaCursadaDTO(funcional.codigo, EstadoMateria.APROBADO, LocalDate.of(2021, 12, 20))
+//        val formularioAlumno = FormularioCrearAlumno(
+//                1234567,
+//                "Pepe",
+//                "Sanchez",
+//                "pepe.sanchez@unq.edu.ar",
+//                44556,
+//                "1234",
+//                Carrera.TPI,
+//                listOf(materiaCursada)
+//        )
+//
+//        alumnoService.crear(formularioAlumno);
+//
+//        val materiaCursadaNuevoEstado = alumnoService
+//                .cambiarEstadoMateriaCursada(funcional.codigo, EstadoMateria.APROBADO)
+//
+//        assertThat(materiaCursadaNuevoEstado.estado).isEqualTo(EstadoMateria.APROBADO)
+//    }
 
     @AfterEach
     fun tearDown() {

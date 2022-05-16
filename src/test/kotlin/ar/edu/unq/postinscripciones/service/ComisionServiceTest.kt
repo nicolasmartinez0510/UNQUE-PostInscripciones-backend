@@ -44,8 +44,8 @@ internal class ComisionServiceTest {
 
     @BeforeEach
     fun setUp() {
-        val alumno = alumnoService.crear(FormularioCrearAlumno(123312, "", "", "", 1234, "", Carrera.LICENCIATURA))
-        val alumno2 = alumnoService.crear(FormularioCrearAlumno(1233123, "", "", "", 12345, "", Carrera.LICENCIATURA))
+        val alumno = alumnoService.crear(FormularioCrearAlumno(123312, "", "", "", 1234, "", Carrera.LICENCIATURA, listOf()))
+        val alumno2 = alumnoService.crear(FormularioCrearAlumno(1233123, "", "", "", 12345, "", Carrera.LICENCIATURA, listOf()))
 
         bdd = materiaService.crear("Base de datos", "BBD-208")
         val formularioCuatrimestre = FormularioCuatrimestre(2022, Semestre.S1)

@@ -17,5 +17,6 @@ data class FormularioCrearAlumno(
     @ApiModelProperty(example = "contrasenia", required = true)
     val contrasenia: String,
     @ApiModelProperty(example = "TPI", required = true)
-    val carrera: Carrera
+    val carrera: Carrera,
+    val historiaAcademica: List<MateriaCursadaDTO>
 )
