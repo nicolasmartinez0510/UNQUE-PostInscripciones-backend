@@ -27,12 +27,16 @@ class MateriaService {
 
     @Transactional
     fun todas(): List<Materia> {
-        return materiaRepository.findAll().toList()
+        val materias = materiaRepository.findAll().toList()
+        materias.forEach { it.correlativas.size }
+        return materias
     }
 
     @Transactional
     fun obtener(codigo: String): Materia {
-        return materiaRepository.findMateriaByCodigo(codigo).orElseThrow{ MateriaNoEncontradaExcepcion() }
+        val materia = materiaRepository.findMateriaByCodigo(codigo).orElseThrow{ MateriaNoEncontradaExcepcion() }
+        materia.correlativas.size
+        return materia
     }
 
 }
