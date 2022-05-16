@@ -1,5 +1,7 @@
 package ar.edu.unq.postinscripciones.webservice.controller
 
+import ar.edu.unq.postinscripciones.model.cuatrimestre.Cuatrimestre
+import ar.edu.unq.postinscripciones.model.cuatrimestre.Semestre
 import ar.edu.unq.postinscripciones.service.ComisionService
 import ar.edu.unq.postinscripciones.service.dto.ComisionACrear
 import io.swagger.annotations.ApiOperation
@@ -9,10 +11,7 @@ import io.swagger.annotations.ApiResponses
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestMethod
+import org.springframework.web.bind.annotation.*
 
 @ServiceREST
 @RequestMapping("/api/comision")
@@ -46,6 +45,22 @@ class ComisionController {
     ): ResponseEntity<*> {
         return ResponseEntity(
             comisionService.obtenerComisionesMateria(codigoMateria),
+            HttpStatus.OK
+        )
+    }
+
+    @ApiOperation(value = "Endpoint usado para listar todas las comisiones de un cuatrimestre ordenadas por cantidad de solicitudes")
+    @RequestMapping(value = ["/"], method = [RequestMethod.GET])
+    fun comisionSolicitudes(
+        @ApiParam(value = "Anio del cuatrimestre", example = "2022", required = true)
+        @RequestParam
+        anio: Int,
+        @ApiParam(value = "Semestre del cuatrimestre", example = "S1", required = true)
+        @RequestParam
+        semestre: Semestre
+    ): ResponseEntity<*> {
+        return ResponseEntity(
+            comisionService.comisionesPorSolicitudes(Cuatrimestre(anio, semestre)),
             HttpStatus.OK
         )
     }

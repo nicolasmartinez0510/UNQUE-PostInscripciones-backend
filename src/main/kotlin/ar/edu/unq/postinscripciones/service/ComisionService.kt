@@ -51,6 +51,16 @@ class ComisionService {
     }
 
     @Transactional
+    fun comisionesPorSolicitudes(cuatrimestre: Cuatrimestre = Cuatrimestre.actual()): List<ComisionSolicitudes> {
+        val comisiones = comisionRespository.findByCuatrimestreAnioAndCuatrimestreSemestreOrderByCountSolicitudes(
+            cuatrimestre.anio,
+            cuatrimestre.semestre
+        )
+
+        return comisiones.map { ComisionSolicitudes(ComisionDTO.desdeModelo(it.get(0) as Comision), (it.get(1) as Long).toInt()) }
+    }
+
+    @Transactional
     fun crear(formularioComision: FormularioComision): Comision {
         return guardarComision(formularioComision)
     }
