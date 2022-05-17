@@ -106,5 +106,23 @@ class AlumnoController {
             HttpStatus.OK
         )
     }
+
+    @ApiOperation("Endpoint que se usa para obtener las materias que puede cursar un alumno")
+    @RequestMapping(value = ["/materias/{dni}"], method = [RequestMethod.GET])
+    fun materiasDisponibles(
+        @ApiParam(value = "Legajo del alumno para cargar solicitudes", example = "1", required = true)
+        @PathVariable
+        dni: Int,
+        @RequestParam
+        anio: Int,
+        @ApiParam(value = "Semestre del cuatrimestre", example = "S1", required = true)
+        @RequestParam
+        semestre: Semestre
+    ): ResponseEntity<*> {
+        return ResponseEntity(
+            alumnoService.materiasDisponibles(dni, anio, semestre),
+            HttpStatus.OK
+        )
+    }
 }
 

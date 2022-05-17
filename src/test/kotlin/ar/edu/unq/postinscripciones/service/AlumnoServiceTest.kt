@@ -217,7 +217,7 @@ internal class AlumnoServiceTest {
 
     @Test
     fun `Se puede obtener las materias disponibles de un alumno`() {
-        val materiasdisponibles = alumnoService.materiasDisponibles(alumno.dni)
+        val materiasdisponibles = alumnoService.materiasDisponibles(alumno.dni, cuatrimestre.anio, cuatrimestre.semestre)
         assertThat(materiasdisponibles).isNotEmpty
         assertThat(materiasdisponibles.first().codigo).isEqualTo(algo.codigo)
     }
@@ -225,19 +225,19 @@ internal class AlumnoServiceTest {
     @Test
     fun `un alumno tiene disponible materias solo de su carrera`() {
         val logica = materiaService.crear("Lógica y Programacion", "LOG-209", mutableListOf(), Carrera.LICENCIATURA)
-        val materiasdisponibles = alumnoService.materiasDisponibles(alumno.dni)
+        val materiasdisponibles = alumnoService.materiasDisponibles(alumno.dni, cuatrimestre.anio, cuatrimestre.semestre)
         assertThat(materiasdisponibles.map { it.codigo }).doesNotContain(logica.codigo)
     }
 
     @Test
-    fun `un alumno no tiene disponible materias de las cuales no cumple los requisites`() {
+    fun `un alumno no tiene disponible materias de las cuales no cumple los requisitos`() {
         val logica = materiaService.crear("Lógica y Programacion", "LOG-209", mutableListOf("ALG-208"), Carrera.TPI)
-        val materiasdisponibles = alumnoService.materiasDisponibles(alumno.dni)
+        val materiasdisponibles = alumnoService.materiasDisponibles(alumno.dni, cuatrimestre.anio, cuatrimestre.semestre)
         assertThat(materiasdisponibles.map { it.codigo }).doesNotContain(logica.codigo)
     }
 
     @Test
-    fun `un alumno tiene disponible materias de las cuales cumple los requisites`() {
+    fun `un alumno tiene disponible materias de las cuales cumple los requisitos`() {
         val materiaCursada = MateriaCursadaDTO(algo.codigo, EstadoMateria.APROBADO, LocalDate.of(2021, 12, 20))
         val formularioAlumno = FormularioCrearAlumno(
             123456712,
@@ -251,8 +251,20 @@ internal class AlumnoServiceTest {
         )
         val nacho = alumnoService.crear(formularioAlumno)
         val logica = materiaService.crear("Lógica y Programacion", "LOG-209", mutableListOf(algo.codigo), Carrera.TPI)
-        val materiasdisponibles = alumnoService.materiasDisponibles(nacho.dni)
+        val formularioComision = FormularioComision(
+            1,
+            logica.codigo,
+            cuatrimestre.anio,
+            cuatrimestre.semestre,
+            35,
+            5,
+            listOf(),
+            Modalidad.PRESENCIAL
+        )
+        val comisionLogica = comisionService.crear(formularioComision)
+        val materiasdisponibles = alumnoService.materiasDisponibles(nacho.dni, cuatrimestre.anio, cuatrimestre.semestre)
         assertThat(materiasdisponibles.map { it.codigo }).contains(logica.codigo)
+        assertThat(materiasdisponibles.first().comisiones.first()).usingRecursiveComparison().isEqualTo(ComisionDTO.desdeModelo(comisionLogica))
     }
 
     @Test
@@ -269,7 +281,7 @@ internal class AlumnoServiceTest {
             listOf(materiaCursada)
         )
         val nacho = alumnoService.crear(formularioAlumno)
-        val materiasdisponibles = alumnoService.materiasDisponibles(nacho.dni)
+        val materiasdisponibles = alumnoService.materiasDisponibles(nacho.dni, cuatrimestre.anio, cuatrimestre.semestre)
         assertThat(materiasdisponibles.map { it.codigo }).doesNotContain(algo.codigo)
     }
 
