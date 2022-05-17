@@ -68,8 +68,8 @@ internal class AlumnoServiceTest {
 
         alumno = alumnoService.crear(nicoFormularioCrear)
         fede = alumnoService.crear(fedeFormularioCrear)
-        algo = materiaService.crear("Algoritmos", "ALG-208")
-        funcional = materiaService.crear("Funcional", "FUN-205")
+        algo = materiaService.crear("Algoritmos", "ALG-208", mutableListOf(), Carrera.SIMULTANEIDAD)
+        funcional = materiaService.crear("Funcional", "FUN-205", mutableListOf(), Carrera.SIMULTANEIDAD)
         val formularioCuatrimestre = FormularioCuatrimestre(2022, Semestre.S1)
         cuatrimestre = cuatrimestreService.crear(formularioCuatrimestre)
         val horarios = listOf(
@@ -213,6 +213,64 @@ internal class AlumnoServiceTest {
 
         assertThat(alumno.historiaAcademica).isNotEmpty
         assertThat(alumno.historiaAcademica.first().materia.codigo).isEqualTo(materiaCursada.codigoMateria)
+    }
+
+    @Test
+    fun `Se puede obtener las materias disponibles de un alumno`() {
+        val materiasdisponibles = alumnoService.materiasDisponibles(alumno.dni)
+        assertThat(materiasdisponibles).isNotEmpty
+        assertThat(materiasdisponibles.first().codigo).isEqualTo(algo.codigo)
+    }
+
+    @Test
+    fun `un alumno tiene disponible materias solo de su carrera`() {
+        val logica = materiaService.crear("Lógica y Programacion", "LOG-209", mutableListOf(), Carrera.LICENCIATURA)
+        val materiasdisponibles = alumnoService.materiasDisponibles(alumno.dni)
+        assertThat(materiasdisponibles.map { it.codigo }).doesNotContain(logica.codigo)
+    }
+
+    @Test
+    fun `un alumno no tiene disponible materias de las cuales no cumple los requisites`() {
+        val logica = materiaService.crear("Lógica y Programacion", "LOG-209", mutableListOf("ALG-208"), Carrera.TPI)
+        val materiasdisponibles = alumnoService.materiasDisponibles(alumno.dni)
+        assertThat(materiasdisponibles.map { it.codigo }).doesNotContain(logica.codigo)
+    }
+
+    @Test
+    fun `un alumno tiene disponible materias de las cuales cumple los requisites`() {
+        val materiaCursada = MateriaCursadaDTO(algo.codigo, EstadoMateria.APROBADO, LocalDate.of(2021, 12, 20))
+        val formularioAlumno = FormularioCrearAlumno(
+            123456712,
+            "Pepe",
+            "Sanchez",
+            "pepe.sanchez@unq.edu.ar",
+            4455611,
+            "1234",
+            Carrera.TPI,
+            listOf(materiaCursada)
+        )
+        val nacho = alumnoService.crear(formularioAlumno)
+        val logica = materiaService.crear("Lógica y Programacion", "LOG-209", mutableListOf(algo.codigo), Carrera.TPI)
+        val materiasdisponibles = alumnoService.materiasDisponibles(nacho.dni)
+        assertThat(materiasdisponibles.map { it.codigo }).contains(logica.codigo)
+    }
+
+    @Test
+    fun `un alumno no tiene disponible materias que ya aprobo`() {
+        val materiaCursada = MateriaCursadaDTO(algo.codigo, EstadoMateria.APROBADO, LocalDate.of(2021, 12, 20))
+        val formularioAlumno = FormularioCrearAlumno(
+            123456712,
+            "Pepe",
+            "Sanchez",
+            "pepe.sanchez@unq.edu.ar",
+            4455611,
+            "1234",
+            Carrera.TPI,
+            listOf(materiaCursada)
+        )
+        val nacho = alumnoService.crear(formularioAlumno)
+        val materiasdisponibles = alumnoService.materiasDisponibles(nacho.dni)
+        assertThat(materiasdisponibles.map { it.codigo }).doesNotContain(algo.codigo)
     }
 
 //    @Test

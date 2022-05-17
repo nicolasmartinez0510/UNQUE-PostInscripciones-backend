@@ -138,4 +138,14 @@ internal class AlumnoTest {
 
         assertThat(excepcion.message).isEqualTo("La materia ya fue cargada en la historia academica")
     }
+
+    @Test
+    fun `Un alumno conoce sus materias aprobadas`() {
+        val intro = Materia("int-102", "Intro", mutableListOf())
+        val materiaCursada1 = MateriaCursada(intro)
+        materiaCursada1.cambiarEstado(EstadoMateria.APROBADO)
+        alumno.cargarHistoriaAcademica(materiaCursada1)
+
+        assertThat(alumno.materiasAprobadas()).usingRecursiveComparison().isEqualTo(listOf(materiaCursada1.materia))
+    }
 }

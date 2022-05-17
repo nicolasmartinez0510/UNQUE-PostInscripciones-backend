@@ -94,7 +94,7 @@ internal class ServiceDataTest {
     fun `se puede guardar una planilla de oferta de comisiones para un cuatrimestre`() {
         val formularioCuatrimestre = FormularioCuatrimestre(2022, Semestre.S1)
         val cuatri = cuatrimestreService.crear(formularioCuatrimestre)
-        val bdd = materiaService.crear("Bases de Datos", "BD")
+        val bdd = materiaService.crear("Bases de Datos", "BD", mutableListOf(), Carrera.SIMULTANEIDAD)
 
         comisionService.guardarComisiones(
             listOf(
@@ -126,7 +126,7 @@ internal class ServiceDataTest {
     fun `se puede guardar una planilla y se obtienen las comisiones conflictivas por cuatrimestre, materia y numero`() {
         val formularioCuatrimestre = FormularioCuatrimestre(2022, Semestre.S1)
         val cuatri = cuatrimestreService.crear(formularioCuatrimestre)
-        val bdd = materiaService.crear("Bases de Datos", "BD")
+        val bdd = materiaService.crear("Bases de Datos", "BD", mutableListOf(), Carrera.SIMULTANEIDAD)
         val crearBdd = ComisionACrear(
             1,
             bdd.codigo,
@@ -157,7 +157,7 @@ internal class ServiceDataTest {
 
     @Test
     fun `si no se aclara un cuatrimestre al subir la oferta academica, se crearan en el cuatrimestre actual`() {
-        val bdd = materiaService.crear("Bases de Datos", "BD")
+        val bdd = materiaService.crear("Bases de Datos", "BD", mutableListOf(), Carrera.SIMULTANEIDAD)
 
         comisionService.guardarComisiones(
             listOf(

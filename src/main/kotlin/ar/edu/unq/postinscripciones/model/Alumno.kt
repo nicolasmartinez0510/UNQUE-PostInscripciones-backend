@@ -23,7 +23,6 @@ class Alumno(
 
     @OneToMany(fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
     val historiaAcademica: MutableList<MateriaCursada> = mutableListOf()
-    get() = field
 
     fun guardarFormulario(formulario: Formulario) {
         carrera ?: throw ExcepcionUNQUE("Un alumno sin carrera no puede solicitar cupos")
@@ -60,6 +59,10 @@ class Alumno(
 
     fun llenoElFormularioDelCuatrimestre(cuatrimestre: Cuatrimestre): Boolean {
         return formularios.any { formulario -> formulario.cuatrimestre.esElCuatrimestre(cuatrimestre) }
+    }
+
+    fun materiasAprobadas(): List<Materia>{
+        return historiaAcademica.filter { it.estado == EstadoMateria.APROBADO }.map { it.materia }
     }
 
     private fun chequearSiExiste(formulario: Formulario) {

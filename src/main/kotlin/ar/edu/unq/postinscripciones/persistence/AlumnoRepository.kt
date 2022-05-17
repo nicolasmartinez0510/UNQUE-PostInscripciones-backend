@@ -8,4 +8,5 @@ import java.util.*
 @Repository
 interface AlumnoRepository: CrudRepository<Alumno, Int> {
     fun findByDniOrLegajo(dni: Int, legajo:Int): Optional<Alumno>
+    fun findByDni(dni: Int): Optional<Alumno>
 }

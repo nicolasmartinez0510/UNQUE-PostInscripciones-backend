@@ -28,7 +28,7 @@ class MateriaController {
     )
     fun registrarMateria(@RequestBody formularioMateria: FormularioMateria): ResponseEntity<*> {
         return ResponseEntity(
-            materiaService.crear(formularioMateria.nombre, formularioMateria.codigo),
+            materiaService.crear(formularioMateria.nombre, formularioMateria.codigo, formularioMateria.correlativas,formularioMateria.carrera),
             HttpStatus.CREATED
         )
     }

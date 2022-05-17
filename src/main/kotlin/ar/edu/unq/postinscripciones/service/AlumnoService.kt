@@ -111,7 +111,10 @@ class AlumnoService {
         val historiaAcademica = formulario.historiaAcademica.map {
             val materia = materiaRepository
                     .findMateriaByCodigo(it.codigoMateria).orElseThrow { ExcepcionUNQUE("No existe la materia") }
-            MateriaCursada(materia)
+            val materiaCursada = MateriaCursada(materia)
+            materiaCursada.estado = it.estado
+            materiaCursada.fechaDeCarga = it.fechaDeCarga
+            materiaCursada
         }
         val alumno = Alumno(
                 formulario.dni,
@@ -126,6 +129,13 @@ class AlumnoService {
         historiaAcademica.forEach { alumno.cargarHistoriaAcademica(it) }
 
         return alumnoRepository.save(alumno)
+    }
+
+    @Transactional
+    fun materiasDisponibles(dni: Int): List<Materia> {
+        val alumno =
+            alumnoRepository.findByDni(dni).orElseThrow { ExcepcionUNQUE("No existe el alumno") }
+        return materiaRepository.findMateriasDisponibles(alumno.materiasAprobadas(), alumno.carrera!!)
     }
 }
 
