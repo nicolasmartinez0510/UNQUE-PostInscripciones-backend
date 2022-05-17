@@ -19,26 +19,31 @@ class MateriaController {
     private lateinit var materiaService: MateriaService
 
     @ApiOperation("Endpoint que se usa para registra una nueva materia en el sistema")
-    @RequestMapping(value = ["/"], method = [RequestMethod.POST])
+    @RequestMapping(value = [""], method = [RequestMethod.POST])
     @ApiResponses(
-            value = [
-                ApiResponse(code = 201, message = "Materia creada"),
-                ApiResponse(code = 400, message = "Algo salio mal")
-            ]
+        value = [
+            ApiResponse(code = 201, message = "Materia creada"),
+            ApiResponse(code = 400, message = "Algo salio mal")
+        ]
     )
     fun registrarMateria(@RequestBody formularioMateria: FormularioMateria): ResponseEntity<*> {
         return ResponseEntity(
-            materiaService.crear(formularioMateria.nombre, formularioMateria.codigo, formularioMateria.correlativas,formularioMateria.carrera),
+            materiaService.crear(
+                formularioMateria.nombre,
+                formularioMateria.codigo,
+                formularioMateria.correlativas,
+                formularioMateria.carrera
+            ),
             HttpStatus.CREATED
         )
     }
 
     @ApiOperation(value = "Endpoint usado para listar todas las materias disponibles")
-    @RequestMapping(value = ["/"], method = [RequestMethod.GET])
+    @RequestMapping(value = [""], method = [RequestMethod.GET])
     fun todas(): ResponseEntity<*> {
         return ResponseEntity(
-                materiaService.todas(),
-                HttpStatus.OK
+            materiaService.todas(),
+            HttpStatus.OK
         )
     }
 }

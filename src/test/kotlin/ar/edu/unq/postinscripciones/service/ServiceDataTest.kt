@@ -96,7 +96,7 @@ internal class ServiceDataTest {
         val cuatri = cuatrimestreService.crear(formularioCuatrimestre)
         val bdd = materiaService.crear("Bases de Datos", "BD", mutableListOf(), Carrera.SIMULTANEIDAD)
 
-        comisionService.guardarComisiones(
+        comisionService.actualizarOfertaAcademica(
             listOf(
                 ComisionACrear(
                     1,
@@ -134,7 +134,7 @@ internal class ServiceDataTest {
             30,
             8
         )
-        comisionService.guardarComisiones(
+        comisionService.actualizarOfertaAcademica(
             listOf(
                 crearBdd,
                 ComisionACrear(
@@ -149,7 +149,7 @@ internal class ServiceDataTest {
         )
 
         val comisionesGuardadasConConflicto = comisionService
-            .guardarComisiones(listOf(crearBdd), cuatrimestre = cuatri)
+            .actualizarOfertaAcademica(listOf(crearBdd), cuatrimestre = cuatri)
 
         assertThat(comisionesGuardadasConConflicto).hasSize(1)
         assertThat(comisionesGuardadasConConflicto.first().formularioConflictivo).isEqualTo(crearBdd)
@@ -159,7 +159,7 @@ internal class ServiceDataTest {
     fun `si no se aclara un cuatrimestre al subir la oferta academica, se crearan en el cuatrimestre actual`() {
         val bdd = materiaService.crear("Bases de Datos", "BD", mutableListOf(), Carrera.SIMULTANEIDAD)
 
-        comisionService.guardarComisiones(
+        comisionService.actualizarOfertaAcademica(
             listOf(
                 ComisionACrear(
                     1,

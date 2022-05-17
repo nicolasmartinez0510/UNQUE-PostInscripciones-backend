@@ -3,7 +3,7 @@ package ar.edu.unq.postinscripciones.webservice.controller
 import ar.edu.unq.postinscripciones.model.cuatrimestre.Cuatrimestre
 import ar.edu.unq.postinscripciones.model.cuatrimestre.Semestre
 import ar.edu.unq.postinscripciones.service.ComisionService
-import ar.edu.unq.postinscripciones.service.dto.ComisionACrear
+import ar.edu.unq.postinscripciones.service.dto.OfertaAcademicaDTO
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiParam
 import io.swagger.annotations.ApiResponse
@@ -20,19 +20,19 @@ class ComisionController {
     private lateinit var comisionService: ComisionService
 
     @ApiOperation("Endpoint que se usa para registrar nuevas comisiones en el sistema")
-    @RequestMapping(value = ["/"], method = [RequestMethod.POST])
+    @RequestMapping(value = [""], method = [RequestMethod.POST])
     @ApiResponses(
         value = [
             ApiResponse(code = 200, message = "Comision creada"),
             ApiResponse(code = 400, message = "Algo salio mal")
         ]
     )
-    fun registrarComisiones(
-        @RequestBody ofertaAcademicaACargar: List<ComisionACrear>,
+    fun actualizarOfertaAcademica(
+        @RequestBody oferta: OfertaAcademicaDTO,
     ): ResponseEntity<*> {
         return ResponseEntity(
-            comisionService.guardarComisiones(ofertaAcademicaACargar),
-            HttpStatus.CREATED
+            comisionService.actualizarOfertaAcademica(oferta.comisionesACargar, oferta.inicioInscripciones, oferta.finInscripciones),
+            HttpStatus.OK
         )
     }
 
@@ -50,7 +50,7 @@ class ComisionController {
     }
 
     @ApiOperation(value = "Endpoint usado para listar todas las comisiones de un cuatrimestre ordenadas por cantidad de solicitudes")
-    @RequestMapping(value = ["/"], method = [RequestMethod.GET])
+    @RequestMapping(value = [""], method = [RequestMethod.GET])
     fun comisionSolicitudes(
         @ApiParam(value = "Anio del cuatrimestre", example = "2022", required = true)
         @RequestParam

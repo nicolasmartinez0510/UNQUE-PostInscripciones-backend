@@ -150,7 +150,7 @@ internal class ComisionServiceTest {
         val inicioInscripciones = LocalDateTime.of(2023, 3, 1, 12, 30)
         val finInscripciones = LocalDateTime.of(2023, 3, 16, 12, 30)
 
-        comisionService.guardarComisiones(
+        comisionService.actualizarOfertaAcademica(
             listOf(
                 ComisionACrear(
                     1,
@@ -178,7 +178,7 @@ internal class ComisionServiceTest {
         val miCuatrimestre = cuatrimestreService.crear(FormularioCuatrimestre(2023, Semestre.S1))
         val finInscripciones = LocalDateTime.of(2023, 3, 16, 12, 30)
 
-        comisionService.guardarComisiones(
+        comisionService.actualizarOfertaAcademica(
             listOf(),
             null,
             finInscripciones,
@@ -197,7 +197,7 @@ internal class ComisionServiceTest {
         val inicioInscripciones = LocalDateTime.of(2023, 3, 1, 12, 30)
         val finInscripciones = LocalDateTime.of(2023, 3, 16, 12, 30)
 
-        comisionService.guardarComisiones(listOf(), inicioInscripciones, finInscripciones)
+        comisionService.actualizarOfertaAcademica(listOf(), inicioInscripciones, finInscripciones)
 
         val cuatrimestreActuaActualizado = cuatrimestreService.obtener()
         assertThat(cuatrimestreActuaActualizado.inicioInscripciones).isNotEqualTo(cuatrimestre.inicioInscripciones)

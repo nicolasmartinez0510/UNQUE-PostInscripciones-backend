@@ -27,7 +27,7 @@ class ComisionService {
     private lateinit var cuatrimestreRepository: CuatrimestreRepository
 
     @Transactional
-    fun guardarComisiones(
+    fun actualizarOfertaAcademica(
         comisionesACrear: List<ComisionACrear>,
         inicioInscripciones: LocalDateTime? = null,
         finInscripciones: LocalDateTime? = null,
@@ -103,8 +103,9 @@ class ComisionService {
                         comisionACrear
                     )
                 )
+            } else {
+                guardarComision(comisionACrear, materia, cuatrimestre)
             }
-            guardarComision(comisionACrear, materia, cuatrimestre)
         }
         return comisionesConflictivas
     }

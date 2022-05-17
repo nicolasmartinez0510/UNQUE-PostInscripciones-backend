@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 @IntegrationTest
 internal class AlumnoServiceTest {
@@ -293,6 +294,36 @@ internal class AlumnoServiceTest {
         val nacho = alumnoService.crear(formularioAlumno)
         val materiasdisponibles = alumnoService.materiasDisponibles(nacho.dni, cuatrimestre.anio, cuatrimestre.semestre)
         assertThat(materiasdisponibles.map { it.codigo }).doesNotContain(algo.codigo)
+    }
+
+    @Test
+    fun `se levanta una excepcion al enviar un formulario pasada la fecha de fin aceptada por el cuatrimestre`() {
+        comisionService.actualizarOfertaAcademica(listOf(), LocalDateTime.now(), LocalDateTime.now().plusDays(3))
+
+        val excepcion = assertThrows<ExcepcionUNQUE> {
+            alumnoService.guardarSolicitudPara(
+                alumno.dni,
+                cuatrimestre.id!!,
+                listOf(comision1Algoritmos.id!!),
+                LocalDateTime.now().plusDays(5)
+            )
+        }
+        assertThat(excepcion.message).isEqualTo("El periodo para enviar solicitudes de sobrecupos ya ha pasado.")
+    }
+
+    @Test
+    fun `se levanta una excepcion al enviar un formulario antes de la fecha de inicio aceptada por el cuatrimestre`() {
+        comisionService.actualizarOfertaAcademica(listOf(), LocalDateTime.now(), LocalDateTime.now().plusDays(3))
+
+        val excepcion = assertThrows<ExcepcionUNQUE> {
+            alumnoService.guardarSolicitudPara(
+                alumno.dni,
+                cuatrimestre.id!!,
+                listOf(comision1Algoritmos.id!!),
+                LocalDateTime.now().minusDays(5)
+            )
+        }
+        assertThat(excepcion.message).isEqualTo("El periodo para enviar solicitudes de sobrecupos no ha empezado.")
     }
 
 //    @Test

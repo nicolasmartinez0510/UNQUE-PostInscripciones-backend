@@ -8,6 +8,7 @@ import ar.edu.unq.postinscripciones.persistence.*
 import ar.edu.unq.postinscripciones.service.dto.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 import javax.persistence.Tuple
 import javax.transaction.Transactional
 
@@ -51,9 +52,15 @@ class AlumnoService {
     }
 
     @Transactional
-    fun guardarSolicitudPara(dni: Int, idCuatrimestre: Long, solicitudes: List<Long>): FormularioDTO {
-        val alumno = alumnoRepository.findById(dni).get()
+    fun guardarSolicitudPara(
+        dni: Int,
+        idCuatrimestre: Long,
+        solicitudes: List<Long>,
+        fechaCarga: LocalDateTime = LocalDateTime.now()
+    ): FormularioDTO {
         val cuatrimestre = cuatrimestreService.findById(idCuatrimestre).get()
+        this.checkFecha(cuatrimestre.inicioInscripciones, cuatrimestre.finInscripciones, fechaCarga)
+        val alumno = alumnoRepository.findById(dni).get()
         val solicitudesPorMateria = solicitudes.map { idComision ->
             val comision = comisionRepository.findById(idComision)
             SolicitudSobrecupo(comision.get())
@@ -111,10 +118,16 @@ class AlumnoService {
 
     @Transactional
     fun materiasDisponibles(dni: Int, anio: Int, semestre: Semestre): List<MateriaComision> {
-        val cuatrimestre = cuatrimestreService.findByAnioAndSemestre(anio, semestre).orElseThrow { ExcepcionUNQUE("No existe el cuatrimestre") }
+        val cuatrimestre = cuatrimestreService.findByAnioAndSemestre(anio, semestre)
+            .orElseThrow { ExcepcionUNQUE("No existe el cuatrimestre") }
         val alumno =
             alumnoRepository.findByDni(dni).orElseThrow { ExcepcionUNQUE("No existe el alumno") }
-        val materiasDisponibles = materiaRepository.findMateriasDisponibles(alumno.materiasAprobadas(), alumno.carrera!!, cuatrimestre.anio, cuatrimestre.semestre)
+        val materiasDisponibles = materiaRepository.findMateriasDisponibles(
+            alumno.materiasAprobadas(),
+            alumno.carrera!!,
+            cuatrimestre.anio,
+            cuatrimestre.semestre
+        )
 
         return this.mapToMateriaComision(materiasDisponibles)
     }
@@ -122,20 +135,20 @@ class AlumnoService {
     private fun guardarAlumno(formulario: FormularioCrearAlumno): Alumno {
         val historiaAcademica = formulario.historiaAcademica.map {
             val materia = materiaRepository
-                    .findMateriaByCodigo(it.codigoMateria).orElseThrow { ExcepcionUNQUE("No existe la materia") }
+                .findMateriaByCodigo(it.codigoMateria).orElseThrow { ExcepcionUNQUE("No existe la materia") }
             val materiaCursada = MateriaCursada(materia)
             materiaCursada.estado = it.estado
             materiaCursada.fechaDeCarga = it.fechaDeCarga
             materiaCursada
         }
         val alumno = Alumno(
-                formulario.dni,
-                formulario.nombre,
-                formulario.apellido,
-                formulario.correo,
-                formulario.legajo,
-                formulario.contrasenia,
-                formulario.carrera,
+            formulario.dni,
+            formulario.nombre,
+            formulario.apellido,
+            formulario.correo,
+            formulario.legajo,
+            formulario.contrasenia,
+            formulario.carrera,
         )
 
         historiaAcademica.forEach { alumno.cargarHistoriaAcademica(it) }
@@ -146,7 +159,7 @@ class AlumnoService {
     private fun mapToMateriaComision(materiasDisponibles: List<Tuple>): List<MateriaComision> {
         val materias = mutableListOf<MateriaComision>()
         materiasDisponibles.map {
-            val materiaActual = materias.find{mat -> mat.codigo == (it.get(0) as String)}
+            val materiaActual = materias.find { mat -> mat.codigo == (it.get(0) as String) }
             materiaActual?.comisiones?.add(ComisionParaAlumno.desdeModelo(it.get(2) as Comision))
                 ?: materias.add(
                     MateriaComision(
@@ -158,5 +171,19 @@ class AlumnoService {
         }
         return materias
     }
+
+    private fun checkFecha(
+        inicioInscripciones: LocalDateTime,
+        finInscripciones: LocalDateTime,
+        fechaCargaFormulario: LocalDateTime
+    ) {
+        if (inicioInscripciones > fechaCargaFormulario) {
+            throw ExcepcionUNQUE("El periodo para enviar solicitudes de sobrecupos no ha empezado.")
+        }
+        if (finInscripciones < fechaCargaFormulario) {
+            throw ExcepcionUNQUE("El periodo para enviar solicitudes de sobrecupos ya ha pasado.")
+        }
+    }
+
 }
 
