@@ -56,14 +56,14 @@ internal class AlumnoServiceTest {
         )
 
         val fedeFormularioCrear = FormularioCrearAlumno(
-                45329,
-                "Fede",
-                "Sandoval",
-                "fede.sando@unq.edu.ar",
-                11223344,
-                "1234",
-                Carrera.TPI,
-                listOf()
+            45329,
+            "Fede",
+            "Sandoval",
+            "fede.sando@unq.edu.ar",
+            11223344,
+            "1234",
+            Carrera.TPI,
+            listOf()
         )
 
         alumno = alumnoService.crear(nicoFormularioCrear)
@@ -174,39 +174,41 @@ internal class AlumnoServiceTest {
                 alumno.dni,
                 cuatrimestre.id!!,
                 listOf(comision1Algoritmos.id!!)
-        )
+            )
         val formulario2AntesDeCerrar =
             alumnoService.guardarSolicitudPara(
-                    fede.dni,
-                    cuatrimestre.id!!,
-                    listOf(comision1Algoritmos.id!!)
+                fede.dni,
+                cuatrimestre.id!!,
+                listOf(comision1Algoritmos.id!!)
             )
 
         alumnoService.cambiarEstadoFormularios(cuatrimestre.anio, cuatrimestre.semestre)
-        val formularioDespuesDeCerrar = alumnoService.obtenerFormulario(cuatrimestre.anio, cuatrimestre.semestre, alumno.dni)
-        val formulario2DespuesDeCerrar = alumnoService.obtenerFormulario(cuatrimestre.anio, cuatrimestre.semestre, fede.dni)
+        val formularioDespuesDeCerrar =
+            alumnoService.obtenerFormulario(cuatrimestre.anio, cuatrimestre.semestre, alumno.dni)
+        val formulario2DespuesDeCerrar =
+            alumnoService.obtenerFormulario(cuatrimestre.anio, cuatrimestre.semestre, fede.dni)
 
         assertThat(listOf(formularioAntesDeCerrar, formulario2AntesDeCerrar).map { it.estado })
-                .usingRecursiveComparison()
-                .isEqualTo(listOf(EstadoFormulario.ABIERTO, EstadoFormulario.ABIERTO))
+            .usingRecursiveComparison()
+            .isEqualTo(listOf(EstadoFormulario.ABIERTO, EstadoFormulario.ABIERTO))
 
         assertThat(listOf(formularioDespuesDeCerrar, formulario2DespuesDeCerrar).map { it.estado })
-                .usingRecursiveComparison()
-                .isEqualTo(listOf(EstadoFormulario.CERRADO, EstadoFormulario.CERRADO))
+            .usingRecursiveComparison()
+            .isEqualTo(listOf(EstadoFormulario.CERRADO, EstadoFormulario.CERRADO))
     }
 
     @Test
     fun `Se puede cargar la historia academica de un alumno`() {
         val materiaCursada = MateriaCursadaDTO(funcional.codigo, EstadoMateria.APROBADO, LocalDate.of(2021, 12, 20))
         val formularioAlumno = FormularioCrearAlumno(
-                1234567,
-                "Pepe",
-                "Sanchez",
-                "pepe.sanchez@unq.edu.ar",
-                44556,
-                "1234",
-                Carrera.TPI,
-                listOf(materiaCursada)
+            1234567,
+            "Pepe",
+            "Sanchez",
+            "pepe.sanchez@unq.edu.ar",
+            44556,
+            "1234",
+            Carrera.TPI,
+            listOf(materiaCursada)
         )
 
         val alumno = alumnoService.crear(formularioAlumno)
@@ -217,7 +219,8 @@ internal class AlumnoServiceTest {
 
     @Test
     fun `Se puede obtener las materias disponibles de un alumno`() {
-        val materiasdisponibles = alumnoService.materiasDisponibles(alumno.dni, cuatrimestre.anio, cuatrimestre.semestre)
+        val materiasdisponibles =
+            alumnoService.materiasDisponibles(alumno.dni, cuatrimestre.anio, cuatrimestre.semestre)
         assertThat(materiasdisponibles).isNotEmpty
         assertThat(materiasdisponibles.first().codigo).isEqualTo(algo.codigo)
     }
@@ -225,15 +228,18 @@ internal class AlumnoServiceTest {
     @Test
     fun `un alumno tiene disponible materias solo de su carrera`() {
         val logica = materiaService.crear("Lógica y Programacion", "LOG-209", mutableListOf(), Carrera.LICENCIATURA)
-        val materiasdisponibles = alumnoService.materiasDisponibles(alumno.dni, cuatrimestre.anio, cuatrimestre.semestre)
+        val materiasdisponibles =
+            alumnoService.materiasDisponibles(alumno.dni, cuatrimestre.anio, cuatrimestre.semestre)
         assertThat(materiasdisponibles.map { it.codigo }).doesNotContain(logica.codigo)
     }
 
     @Test
     fun `un alumno no tiene disponible materias de las cuales no cumple los requisitos`() {
         val logica = materiaService.crear("Lógica y Programacion", "LOG-209", mutableListOf("ALG-208"), Carrera.TPI)
-        val materiasdisponibles = alumnoService.materiasDisponibles(alumno.dni, cuatrimestre.anio, cuatrimestre.semestre)
-        assertThat(materiasdisponibles.map { it.codigo }).doesNotContain(logica.codigo)
+        val materiasdisponibles =
+            alumnoService.materiasDisponibles(alumno.dni, cuatrimestre.anio, cuatrimestre.semestre)
+        assertThat(materiasdisponibles).hasSize(1)
+        assertThat(materiasdisponibles.map { it.codigo }).contains(algo.codigo).doesNotContain(logica.codigo)
     }
 
     @Test
@@ -258,13 +264,17 @@ internal class AlumnoServiceTest {
             cuatrimestre.semestre,
             35,
             5,
-            listOf(),
+            listOf(
+                HorarioDTO(Dia.LUNES, "18:00", "20:00"),
+                HorarioDTO(Dia.JUEVES, "09:00", "11:00")
+            ),
             Modalidad.PRESENCIAL
         )
         val comisionLogica = comisionService.crear(formularioComision)
         val materiasdisponibles = alumnoService.materiasDisponibles(nacho.dni, cuatrimestre.anio, cuatrimestre.semestre)
+        assertThat(materiasdisponibles).hasSize(1)
         assertThat(materiasdisponibles.map { it.codigo }).contains(logica.codigo)
-        assertThat(materiasdisponibles.first().comisiones.first()).usingRecursiveComparison().isEqualTo(ComisionDTO.desdeModelo(comisionLogica))
+        assertThat(materiasdisponibles.first().comisiones).allMatch { it == ComisionParaAlumno.desdeModelo(comisionLogica)  }
     }
 
     @Test

@@ -109,6 +109,16 @@ class AlumnoService {
 //        return materiaCursadaRepository.save(materiaCursada)
 //    }
 
+    @Transactional
+    fun materiasDisponibles(dni: Int, anio: Int, semestre: Semestre): List<MateriaComision> {
+        val cuatrimestre = cuatrimestreService.findByAnioAndSemestre(anio, semestre).orElseThrow { ExcepcionUNQUE("No existe el cuatrimestre") }
+        val alumno =
+            alumnoRepository.findByDni(dni).orElseThrow { ExcepcionUNQUE("No existe el alumno") }
+        val materiasDisponibles = materiaRepository.findMateriasDisponibles(alumno.materiasAprobadas(), alumno.carrera!!, cuatrimestre.anio, cuatrimestre.semestre)
+
+        return this.mapToMateriaComision(materiasDisponibles)
+    }
+
     private fun guardarAlumno(formulario: FormularioCrearAlumno): Alumno {
         val historiaAcademica = formulario.historiaAcademica.map {
             val materia = materiaRepository
@@ -133,26 +143,16 @@ class AlumnoService {
         return alumnoRepository.save(alumno)
     }
 
-    @Transactional
-    fun materiasDisponibles(dni: Int, anio: Int, semestre: Semestre): List<MateriaComision> {
-        val cuatrimestre = cuatrimestreService.findByAnioAndSemestre(anio, semestre).orElseThrow { ExcepcionUNQUE("No existe el cuatrimestre") }
-        val alumno =
-            alumnoRepository.findByDni(dni).orElseThrow { ExcepcionUNQUE("No existe el alumno") }
-        val materiasDisponibles = materiaRepository.findMateriasDisponibles(alumno.materiasAprobadas(), alumno.carrera!!, cuatrimestre.anio, cuatrimestre.semestre)
-
-        return this.mapToMateriaComision(materiasDisponibles)
-    }
-
     private fun mapToMateriaComision(materiasDisponibles: List<Tuple>): List<MateriaComision> {
         val materias = mutableListOf<MateriaComision>()
         materiasDisponibles.map {
             val materiaActual = materias.find{mat -> mat.codigo == (it.get(0) as String)}
-            materiaActual?.comisiones?.add(ComisionDTO.desdeModelo(it.get(2) as Comision))
+            materiaActual?.comisiones?.add(ComisionParaAlumno.desdeModelo(it.get(2) as Comision))
                 ?: materias.add(
                     MateriaComision(
                         it.get(0) as String,
                         it.get(1) as String,
-                        mutableListOf(ComisionDTO.desdeModelo(it.get(2) as Comision))
+                        mutableListOf(ComisionParaAlumno.desdeModelo(it.get(2) as Comision))
                     )
                 )
         }
