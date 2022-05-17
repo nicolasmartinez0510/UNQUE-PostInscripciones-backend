@@ -11,6 +11,7 @@ import ar.edu.unq.postinscripciones.persistence.MateriaRepository
 import ar.edu.unq.postinscripciones.service.dto.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 import javax.transaction.Transactional
 
 @Service
@@ -28,13 +29,18 @@ class ComisionService {
     @Transactional
     fun guardarComisiones(
         comisionesACrear: List<ComisionACrear>,
-        cuatrimestre: Cuatrimestre = Cuatrimestre.actual()
+        inicioInscripciones: LocalDateTime? = null,
+        finInscripciones: LocalDateTime? = null,
+        cuatrimestre: Cuatrimestre? = null
     ): List<ConflictoComision> {
-        val existeCuatrimestre = cuatrimestreRepository.findByAnioAndSemestre(cuatrimestre.anio, cuatrimestre.semestre)
+        val miCuatrimestre: Cuatrimestre = cuatrimestre ?: Cuatrimestre.actualConFechas(inicioInscripciones, finInscripciones)
+        val existeCuatrimestre =
+            cuatrimestreRepository.findByAnioAndSemestre(miCuatrimestre.anio, miCuatrimestre.semestre)
+
         val cuatrimestreObtenido = if (existeCuatrimestre.isPresent) {
-            existeCuatrimestre.get()
+            this.actualizarCuatrimestre(existeCuatrimestre.get(), inicioInscripciones, finInscripciones)
         } else {
-            cuatrimestreRepository.save(cuatrimestre)
+            cuatrimestreRepository.save(miCuatrimestre)
         }
 
         return guardarComisionesBuscandoConflictos(comisionesACrear, cuatrimestreObtenido)
@@ -101,6 +107,15 @@ class ComisionService {
             guardarComision(comisionACrear, materia, cuatrimestre)
         }
         return comisionesConflictivas
+    }
+
+    private fun actualizarCuatrimestre(
+        cuatrimestre: Cuatrimestre,
+        inicioInscripciones: LocalDateTime?,
+        finInscripciones: LocalDateTime?
+    ): Cuatrimestre {
+        cuatrimestre.actualizarFechas(inicioInscripciones, finInscripciones)
+        return cuatrimestreRepository.save(cuatrimestre)
     }
 
     private fun chequearSiHayOferta(

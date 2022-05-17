@@ -113,7 +113,7 @@ internal class ServiceDataTest {
                     8
                 )
             ),
-            cuatri
+            cuatrimestre = cuatri
         )
 
         val ofertaDelCuatrimestre = comisionService.ofertaDelCuatrimestre(cuatri)
@@ -145,11 +145,11 @@ internal class ServiceDataTest {
                     8
                 )
             ),
-            cuatri
+            cuatrimestre = cuatri
         )
 
         val comisionesGuardadasConConflicto = comisionService
-            .guardarComisiones(listOf(crearBdd), cuatri)
+            .guardarComisiones(listOf(crearBdd), cuatrimestre = cuatri)
 
         assertThat(comisionesGuardadasConConflicto).hasSize(1)
         assertThat(comisionesGuardadasConConflicto.first().formularioConflictivo).isEqualTo(crearBdd)

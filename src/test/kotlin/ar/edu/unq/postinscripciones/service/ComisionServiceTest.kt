@@ -16,6 +16,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
+import java.time.LocalDateTime
 
 @IntegrationTest
 internal class ComisionServiceTest {
@@ -44,8 +45,10 @@ internal class ComisionServiceTest {
 
     @BeforeEach
     fun setUp() {
-        val alumno = alumnoService.crear(FormularioCrearAlumno(123312, "", "", "", 1234, "", Carrera.LICENCIATURA, listOf()))
-        val alumno2 = alumnoService.crear(FormularioCrearAlumno(1233123, "", "", "", 12345, "", Carrera.LICENCIATURA, listOf()))
+        val alumno =
+            alumnoService.crear(FormularioCrearAlumno(123312, "", "", "", 1234, "", Carrera.LICENCIATURA, listOf()))
+        val alumno2 =
+            alumnoService.crear(FormularioCrearAlumno(1233123, "", "", "", 12345, "", Carrera.LICENCIATURA, listOf()))
 
         bdd = materiaService.crear("Base de datos", "BBD-208", mutableListOf(), Carrera.SIMULTANEIDAD)
         val formularioCuatrimestre = FormularioCuatrimestre(2022, Semestre.S1)
@@ -93,8 +96,8 @@ internal class ComisionServiceTest {
         )
         comision2 = comisionService.crear(formulario2)
         comision3 = comisionService.crear(formulario3)
-        alumnoService.guardarSolicitudPara(alumno.dni,cuatrimestre.id!!, listOf(comision.id!!, comision2.id!!))
-        alumnoService.guardarSolicitudPara(alumno2.dni,cuatrimestre.id!!, listOf(comision2.id!!))
+        alumnoService.guardarSolicitudPara(alumno.dni, cuatrimestre.id!!, listOf(comision.id!!, comision2.id!!))
+        alumnoService.guardarSolicitudPara(alumno2.dni, cuatrimestre.id!!, listOf(comision2.id!!))
 
     }
 
@@ -140,6 +143,68 @@ internal class ComisionServiceTest {
         assertThat(comisionesObtenidas.last().cantidadSolicitudes).isEqualTo(1)
     }
 
+    @Test
+    fun `se puede guardar una oferta academica con un inicio y un fin para registrar formularios`() {
+        val bdd = materiaService.crear("Bases de Datos", "BD", mutableListOf(), Carrera.SIMULTANEIDAD)
+        val miCuatrimestre = cuatrimestreService.crear(FormularioCuatrimestre(2023, Semestre.S1))
+        val inicioInscripciones = LocalDateTime.of(2023, 3, 1, 12, 30)
+        val finInscripciones = LocalDateTime.of(2023, 3, 16, 12, 30)
+
+        comisionService.guardarComisiones(
+            listOf(
+                ComisionACrear(
+                    1,
+                    bdd.codigo,
+                    listOf(HorarioDTO(Dia.LUNES, "18:00", "21:00")),
+                    30,
+                    8
+                ),
+            ),
+            inicioInscripciones,
+            finInscripciones,
+            miCuatrimestre
+        )
+
+        val cuatrimestreLuegoDeActualizar = cuatrimestreService.obtener(miCuatrimestre)
+
+        assertThat(cuatrimestreLuegoDeActualizar.inicioInscripciones).isAfter(miCuatrimestre.inicioInscripciones)
+        assertThat(cuatrimestreLuegoDeActualizar.finInscripciones).isAfter(miCuatrimestre.finInscripciones)
+        assertThat(cuatrimestreLuegoDeActualizar.inicioInscripciones).isEqualTo(inicioInscripciones)
+        assertThat(cuatrimestreLuegoDeActualizar.finInscripciones).isEqualTo(finInscripciones)
+    }
+
+    @Test
+    fun `se puede actualizar solo una fecha para aceptar formularios del cuatrimestre `() {
+        val miCuatrimestre = cuatrimestreService.crear(FormularioCuatrimestre(2023, Semestre.S1))
+        val finInscripciones = LocalDateTime.of(2023, 3, 16, 12, 30)
+
+        comisionService.guardarComisiones(
+            listOf(),
+            null,
+            finInscripciones,
+            miCuatrimestre
+        )
+
+        val cuatrimestreLuegoDeActualizar = cuatrimestreService.obtener(miCuatrimestre)
+
+        assertThat(cuatrimestreLuegoDeActualizar.inicioInscripciones).isEqualTo(miCuatrimestre.inicioInscripciones)
+        assertThat(cuatrimestreLuegoDeActualizar.finInscripciones).isNotEqualTo(miCuatrimestre.finInscripciones)
+        assertThat(cuatrimestreLuegoDeActualizar.finInscripciones).isEqualTo(finInscripciones)
+    }
+
+    @Test
+    fun `se puede actualizar la fecha para aceptar formularios del cuatrimestre actual`() {
+        val inicioInscripciones = LocalDateTime.of(2023, 3, 1, 12, 30)
+        val finInscripciones = LocalDateTime.of(2023, 3, 16, 12, 30)
+
+        comisionService.guardarComisiones(listOf(), inicioInscripciones, finInscripciones)
+
+        val cuatrimestreActuaActualizado = cuatrimestreService.obtener()
+        assertThat(cuatrimestreActuaActualizado.inicioInscripciones).isNotEqualTo(cuatrimestre.inicioInscripciones)
+        assertThat(cuatrimestreActuaActualizado.inicioInscripciones).isEqualTo(inicioInscripciones)
+        assertThat(cuatrimestreActuaActualizado.finInscripciones).isNotEqualTo(cuatrimestre.finInscripciones)
+        assertThat(cuatrimestreActuaActualizado.finInscripciones).isEqualTo(finInscripciones)
+    }
 
     @AfterEach
     fun tearDown() {
