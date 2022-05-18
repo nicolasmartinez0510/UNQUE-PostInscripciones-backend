@@ -84,19 +84,6 @@ class AlumnoController {
         )
     }
 
-    @ApiOperation("Endpoint que se usa para obtener un formulario de solicitudes de un alumno")
-    @RequestMapping(value = ["/solicitudes/{dni}"], method = [RequestMethod.GET])
-    fun obtenerFormulario(
-        @ApiParam(value = "Dni del alumno para cargar solicitudes", example = "12345678", required = true)
-        @PathVariable
-        dni: Int,
-    ): ResponseEntity<*> {
-        return ResponseEntity(
-            alumnoService.obtenerFormulario(dni),
-            HttpStatus.OK
-        )
-    }
-
     @ApiOperation("Endpoint que se usa para obtener las materias que puede cursar un alumno")
     @RequestMapping(value = ["/materias/{dni}"], method = [RequestMethod.GET])
     fun materiasDisponibles(
