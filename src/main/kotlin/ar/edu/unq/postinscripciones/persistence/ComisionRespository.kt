@@ -28,7 +28,7 @@ interface ComisionRespository : CrudRepository<Comision, Long> {
     @Query(
         "SELECT c.id, c.numero, c.materia.nombre, count(s), c.sobrecuposTotales, (c.sobrecuposTotales - c.sobrecuposOcupados) " +
                 "FROM Comision AS c " +
-                "JOIN SolicitudSobrecupo AS s " +
+                "LEFT JOIN SolicitudSobrecupo AS s " +
                 "ON s.comision.id = c.id " +
                 "WHERE c.cuatrimestre.anio = ?1 " +
                 "AND c.cuatrimestre.semestre = ?2 " +

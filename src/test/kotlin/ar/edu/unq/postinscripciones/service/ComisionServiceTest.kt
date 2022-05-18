@@ -85,7 +85,7 @@ internal class ComisionServiceTest {
             Modalidad.PRESENCIAL
         )
         val formulario3 = FormularioComision(
-            2,
+            3,
             bdd.codigo,
             2022,
             Semestre.S1,
@@ -138,9 +138,8 @@ internal class ComisionServiceTest {
         val comisionesObtenidas = comisionService.comisionesPorSolicitudes(cuatrimestre)
         assertThat(comisionesObtenidas.maxOf { it.cantidadSolicitudes }).isEqualTo(comisionesObtenidas.first().cantidadSolicitudes)
         assertThat(comisionesObtenidas.minOf { it.cantidadSolicitudes }).isEqualTo(comisionesObtenidas.last().cantidadSolicitudes)
-        assertThat(comisionesObtenidas).allMatch { it.id != comision3.id }
         assertThat(comisionesObtenidas.first().cantidadSolicitudes).isEqualTo(2)
-        assertThat(comisionesObtenidas.last().cantidadSolicitudes).isEqualTo(1)
+        assertThat(comisionesObtenidas.last().cantidadSolicitudes).isEqualTo(0)
     }
 
     @Test

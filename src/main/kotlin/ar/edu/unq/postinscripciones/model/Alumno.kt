@@ -16,7 +16,7 @@ class Alumno(
     @Column(unique = true)
     val legajo: Int = 4,
     val contrasenia: String = "",
-    val carrera: Carrera? = null,
+    val carrera: Carrera = Carrera.SIMULTANEIDAD,
 ) {
     @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     private val formularios: MutableList<Formulario> = mutableListOf()
@@ -25,7 +25,7 @@ class Alumno(
     val historiaAcademica: MutableList<MateriaCursada> = mutableListOf()
 
     fun guardarFormulario(formulario: Formulario) {
-        carrera ?: throw ExcepcionUNQUE("Un alumno sin carrera no puede solicitar cupos")
+        carrera
         chequearSiExiste(formulario)
         formularios.add(formulario)
     }

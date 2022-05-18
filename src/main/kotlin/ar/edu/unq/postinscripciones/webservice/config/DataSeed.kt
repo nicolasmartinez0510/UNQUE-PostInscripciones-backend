@@ -146,7 +146,8 @@ class DataSeed(
                 "Arenales",
                 "jorge.arenales20@alu.edu.ar",
                 12345,
-                "contrasenia"
+                "contrasenia",
+                Carrera.SIMULTANEIDAD
             )
 
             cuatrimestreRepository.save(cuatrimestre)

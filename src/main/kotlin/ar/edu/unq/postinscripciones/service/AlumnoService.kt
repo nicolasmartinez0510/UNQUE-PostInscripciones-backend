@@ -126,7 +126,7 @@ class AlumnoService {
             alumnoRepository.findByDni(dni).orElseThrow { ExcepcionUNQUE("No existe el alumno") }
         val materiasDisponibles = materiaRepository.findMateriasDisponibles(
             alumno.materiasAprobadas(),
-            alumno.carrera!!,
+            alumno.carrera,
             cuatrimestreObtenido.anio,
             cuatrimestreObtenido.semestre
         )

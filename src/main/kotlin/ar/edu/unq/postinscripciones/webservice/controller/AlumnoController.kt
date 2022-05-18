@@ -44,7 +44,7 @@ class AlumnoController {
     }
 
     @ApiOperation("Endpoint que se usa para cargar una solicitud de comisiones a un alumno")
-    @RequestMapping(value = ["/cargar-solicitudes/{dni}"], method = [RequestMethod.PUT])
+    @RequestMapping(value = ["/solicitudes/{dni}"], method = [RequestMethod.POST])
     @ApiResponses(
         value = [
             ApiResponse(code = 200, message = "Solicitudes cargadas correctamente"),
@@ -63,7 +63,7 @@ class AlumnoController {
     }
 
     @ApiOperation("Endpoint que se usa para aprobar o rechazar una solicitud de un alumno")
-    @RequestMapping(value = ["/solicitudes/{id}/cambiar-estado"], method = [RequestMethod.PUT])
+    @RequestMapping(value = ["/solicitudes/{id}"], method = [RequestMethod.PUT])
     @ApiResponses(
         value = [
             ApiResponse(code = 200, message = "Solicitud modificada"),
@@ -100,7 +100,7 @@ class AlumnoController {
     @ApiOperation("Endpoint que se usa para obtener las materias que puede cursar un alumno")
     @RequestMapping(value = ["/materias/{dni}"], method = [RequestMethod.GET])
     fun materiasDisponibles(
-        @ApiParam(value = "Dni del alumno para cargar solicitudes", example = "12345678", required = true)
+        @ApiParam(value = "Dni del alumno", example = "12345678", required = true)
         @PathVariable
         dni: Int,
     ): ResponseEntity<*> {

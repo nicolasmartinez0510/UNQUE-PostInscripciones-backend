@@ -32,16 +32,6 @@ internal class AlumnoTest {
     }
 
     @Test
-    fun `Un alumno sin carrera no puede completar un formulario de solicitud de cupo`() {
-        val formulario = Formulario(comisionBdd.cuatrimestre, listOf())
-        val alumno = Alumno()
-
-        val excepcion = assertThrows<ExcepcionUNQUE> { alumno.guardarFormulario(formulario) }
-
-        assertThat(excepcion.message).isEqualTo("Un alumno sin carrera no puede solicitar cupos")
-    }
-
-    @Test
     fun `un alumno no puede tener dos formularios de sobrecupos del mismo cuatrimestre`() {
         val formulario = Formulario(comisionBdd.cuatrimestre)
         alumno.guardarFormulario(formulario)
