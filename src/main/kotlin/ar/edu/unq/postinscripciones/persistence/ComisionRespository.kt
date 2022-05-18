@@ -13,7 +13,11 @@ import javax.persistence.Tuple
 @Repository
 interface ComisionRespository : CrudRepository<Comision, Long> {
 
-    fun findAllByMateria(materia: Materia): List<Comision>
+    fun findAllByMateriaAndCuatrimestreAnioAndCuatrimestreSemestre(
+        materia: Materia,
+        cuatrimestre_anio: Int,
+        cuatrimestre_semestre: Semestre
+    ): List<Comision>
     fun findByCuatrimestreAnioAndCuatrimestreSemestre(anio: Int, semestre: Semestre): List<Comision>
     fun findByNumeroAndMateriaAndCuatrimestre(
         numeroComision: Int,

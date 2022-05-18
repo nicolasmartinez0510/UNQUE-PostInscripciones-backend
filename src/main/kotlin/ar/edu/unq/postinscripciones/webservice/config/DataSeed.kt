@@ -141,11 +141,11 @@ class DataSeed(
             val estrc1 = Comision(estructura, 1, cuatrimestre, estrhorarios)
 
             val jorge = Alumno(
-                12345,
+                12345678,
                 "Jorge",
                 "Arenales",
                 "jorge.arenales20@alu.edu.ar",
-                12345678,
+                12345,
                 "contrasenia"
             )
 

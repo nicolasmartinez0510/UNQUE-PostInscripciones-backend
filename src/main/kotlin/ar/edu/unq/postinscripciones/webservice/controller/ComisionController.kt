@@ -1,6 +1,5 @@
 package ar.edu.unq.postinscripciones.webservice.controller
 
-import ar.edu.unq.postinscripciones.model.cuatrimestre.Cuatrimestre
 import ar.edu.unq.postinscripciones.model.cuatrimestre.Semestre
 import ar.edu.unq.postinscripciones.service.ComisionService
 import ar.edu.unq.postinscripciones.service.dto.OfertaAcademicaDTO
@@ -40,7 +39,7 @@ class ComisionController {
     @RequestMapping(value = ["/materia/{codigoMateria}"], method = [RequestMethod.GET])
     fun materiasComision(
         @PathVariable
-        @ApiParam(value = "Codigo de la materia", example = "0", required = true)
+        @ApiParam(value = "Codigo de la materia", example = "00487", required = true)
         codigoMateria: String
     ): ResponseEntity<*> {
         return ResponseEntity(
@@ -60,7 +59,7 @@ class ComisionController {
         semestre: Semestre
     ): ResponseEntity<*> {
         return ResponseEntity(
-            comisionService.comisionesPorSolicitudes(Cuatrimestre(anio, semestre)),
+            comisionService.comisionesPorSolicitudes(),
             HttpStatus.OK
         )
     }

@@ -45,16 +45,9 @@ class CuatrimestreController {
 
     @ApiOperation("Endpoint que se usa para obtener al oferta academica de un cuatrimestre")
     @RequestMapping(value = ["/oferta"], method = [RequestMethod.GET])
-    fun ofertaAcademica(
-        @ApiParam(value = "Anio del cuatrimestre", example = "2022", required = true)
-        @RequestParam
-        anio: Int,
-        @ApiParam(value = "Semestre del cuatrimestre", example = "S1", required = true)
-        @RequestParam
-        semestre: Semestre
-    ): ResponseEntity<*> {
+    fun ofertaAcademica(): ResponseEntity<*> {
         return ResponseEntity(
-            comisionService.ofertaDelCuatrimestre(Cuatrimestre(anio, semestre)),
+            comisionService.ofertaDelCuatrimestre(),
             HttpStatus.OK
         )
     }

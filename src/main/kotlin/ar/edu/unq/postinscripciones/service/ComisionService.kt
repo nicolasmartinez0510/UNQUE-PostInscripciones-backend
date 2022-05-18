@@ -78,10 +78,12 @@ class ComisionService {
     }
 
     @Transactional
-    fun obtenerComisionesMateria(codigoMateria: String): List<ComisionDTO> {
+    fun obtenerComisionesMateria(codigoMateria: String, cuatrimestre: Cuatrimestre = Cuatrimestre.actual()): List<ComisionDTO> {
+        val cuatrimestreObtenido = cuatrimestreRepository.findByAnioAndSemestre(cuatrimestre.anio, cuatrimestre.semestre)
+            .orElseThrow { ExcepcionUNQUE("No existe el cuatrimestre") }
         val materia = materiaRepository.findById(codigoMateria)
             .orElseThrow { ExcepcionUNQUE("No se encuentra la materia") }
-        val comisiones = comisionRespository.findAllByMateria(materia)
+        val comisiones = comisionRespository.findAllByMateriaAndCuatrimestreAnioAndCuatrimestreSemestre(materia, cuatrimestreObtenido.anio, cuatrimestreObtenido.semestre)
 
         return comisiones.map { ComisionDTO.desdeModelo(it) }
     }

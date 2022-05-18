@@ -101,8 +101,8 @@ internal class AlumnoServiceTest {
         val formulario =
             alumnoService.guardarSolicitudPara(
                 alumno.dni,
-                cuatrimestre.id!!,
-                listOf(comision1Algoritmos.id!!)
+                listOf(comision1Algoritmos.id!!),
+                cuatrimestre
             )
         val comisionesDeSolicitudes = formulario.solicitudes.map { it.comisionDTO }
 
@@ -113,14 +113,14 @@ internal class AlumnoServiceTest {
     fun `Un alumno no puede registrar dos formularios para el mismo cuatrimestre`() {
         alumnoService.guardarSolicitudPara(
             alumno.dni,
-            cuatrimestre.id!!,
-            listOf(comision1Algoritmos.id!!)
+            listOf(comision1Algoritmos.id!!),
+            cuatrimestre
         )
         val exception = assertThrows<ExcepcionUNQUE> {
             alumnoService.guardarSolicitudPara(
                 alumno.dni,
-                cuatrimestre.id!!,
-                listOf()
+                listOf(),
+                cuatrimestre
             )
         }
         assertThat(exception.message).isEqualTo("Ya has solicitado materias para este cuatrimestre")
@@ -131,10 +131,10 @@ internal class AlumnoServiceTest {
         val formularioDTO =
             alumnoService.guardarSolicitudPara(
                 alumno.dni,
-                cuatrimestre.id!!,
-                listOf(comision1Algoritmos.id!!)
+                listOf(comision1Algoritmos.id!!),
+                cuatrimestre
             )
-        val formularioPersistido = alumnoService.obtenerFormulario(cuatrimestre.anio, cuatrimestre.semestre, alumno.dni)
+        val formularioPersistido = alumnoService.obtenerFormulario(alumno.dni, cuatrimestre)
 
         assertThat(formularioDTO).usingRecursiveComparison().isEqualTo(formularioPersistido)
     }
@@ -144,8 +144,8 @@ internal class AlumnoServiceTest {
         val formulario =
             alumnoService.guardarSolicitudPara(
                 alumno.dni,
-                cuatrimestre.id!!,
-                listOf(comision1Algoritmos.id!!)
+                listOf(comision1Algoritmos.id!!),
+                cuatrimestre
             )
         val solicitudPendiente = formulario.solicitudes.first()
         val solicitudAprobada = alumnoService.cambiarEstado(solicitudPendiente.id, EstadoSolicitud.APROBADO)
@@ -159,8 +159,8 @@ internal class AlumnoServiceTest {
         val formulario =
             alumnoService.guardarSolicitudPara(
                 alumno.dni,
-                cuatrimestre.id!!,
-                listOf(comision1Algoritmos.id!!)
+                listOf(comision1Algoritmos.id!!),
+                cuatrimestre
             )
         val solicitudPendiente = formulario.solicitudes.first()
         val solicitudRechazada = alumnoService.cambiarEstado(solicitudPendiente.id, EstadoSolicitud.RECHAZADO)
@@ -173,21 +173,21 @@ internal class AlumnoServiceTest {
         val formularioAntesDeCerrar =
             alumnoService.guardarSolicitudPara(
                 alumno.dni,
-                cuatrimestre.id!!,
-                listOf(comision1Algoritmos.id!!)
+                listOf(comision1Algoritmos.id!!),
+                cuatrimestre
             )
         val formulario2AntesDeCerrar =
             alumnoService.guardarSolicitudPara(
                 fede.dni,
-                cuatrimestre.id!!,
-                listOf(comision1Algoritmos.id!!)
+                listOf(comision1Algoritmos.id!!),
+                cuatrimestre
             )
 
         alumnoService.cambiarEstadoFormularios(cuatrimestre.anio, cuatrimestre.semestre)
         val formularioDespuesDeCerrar =
-            alumnoService.obtenerFormulario(cuatrimestre.anio, cuatrimestre.semestre, alumno.dni)
+            alumnoService.obtenerFormulario(alumno.dni, cuatrimestre)
         val formulario2DespuesDeCerrar =
-            alumnoService.obtenerFormulario(cuatrimestre.anio, cuatrimestre.semestre, fede.dni)
+            alumnoService.obtenerFormulario(fede.dni, cuatrimestre)
 
         assertThat(listOf(formularioAntesDeCerrar, formulario2AntesDeCerrar).map { it.estado })
             .usingRecursiveComparison()
@@ -221,7 +221,7 @@ internal class AlumnoServiceTest {
     @Test
     fun `Se puede obtener las materias disponibles de un alumno`() {
         val materiasdisponibles =
-            alumnoService.materiasDisponibles(alumno.dni, cuatrimestre.anio, cuatrimestre.semestre)
+            alumnoService.materiasDisponibles(alumno.dni, cuatrimestre)
         assertThat(materiasdisponibles).isNotEmpty
         assertThat(materiasdisponibles.first().codigo).isEqualTo(algo.codigo)
     }
@@ -230,7 +230,7 @@ internal class AlumnoServiceTest {
     fun `un alumno tiene disponible materias solo de su carrera`() {
         val logica = materiaService.crear("Lógica y Programacion", "LOG-209", mutableListOf(), Carrera.LICENCIATURA)
         val materiasdisponibles =
-            alumnoService.materiasDisponibles(alumno.dni, cuatrimestre.anio, cuatrimestre.semestre)
+            alumnoService.materiasDisponibles(alumno.dni, cuatrimestre)
         assertThat(materiasdisponibles.map { it.codigo }).doesNotContain(logica.codigo)
     }
 
@@ -238,7 +238,7 @@ internal class AlumnoServiceTest {
     fun `un alumno no tiene disponible materias de las cuales no cumple los requisitos`() {
         val logica = materiaService.crear("Lógica y Programacion", "LOG-209", mutableListOf("ALG-208"), Carrera.TPI)
         val materiasdisponibles =
-            alumnoService.materiasDisponibles(alumno.dni, cuatrimestre.anio, cuatrimestre.semestre)
+            alumnoService.materiasDisponibles(alumno.dni, cuatrimestre)
         assertThat(materiasdisponibles).hasSize(1)
         assertThat(materiasdisponibles.map { it.codigo }).contains(algo.codigo).doesNotContain(logica.codigo)
     }
@@ -272,7 +272,7 @@ internal class AlumnoServiceTest {
             Modalidad.PRESENCIAL
         )
         val comisionLogica = comisionService.crear(formularioComision)
-        val materiasdisponibles = alumnoService.materiasDisponibles(nacho.dni, cuatrimestre.anio, cuatrimestre.semestre)
+        val materiasdisponibles = alumnoService.materiasDisponibles(nacho.dni, cuatrimestre)
         assertThat(materiasdisponibles).hasSize(1)
         assertThat(materiasdisponibles.map { it.codigo }).contains(logica.codigo)
         assertThat(materiasdisponibles.first().comisiones).allMatch { it == ComisionParaAlumno.desdeModelo(comisionLogica)  }
@@ -292,7 +292,7 @@ internal class AlumnoServiceTest {
             listOf(materiaCursada)
         )
         val nacho = alumnoService.crear(formularioAlumno)
-        val materiasdisponibles = alumnoService.materiasDisponibles(nacho.dni, cuatrimestre.anio, cuatrimestre.semestre)
+        val materiasdisponibles = alumnoService.materiasDisponibles(nacho.dni, cuatrimestre)
         assertThat(materiasdisponibles.map { it.codigo }).doesNotContain(algo.codigo)
     }
 
@@ -303,8 +303,8 @@ internal class AlumnoServiceTest {
         val excepcion = assertThrows<ExcepcionUNQUE> {
             alumnoService.guardarSolicitudPara(
                 alumno.dni,
-                cuatrimestre.id!!,
                 listOf(comision1Algoritmos.id!!),
+                cuatrimestre,
                 LocalDateTime.now().plusDays(5)
             )
         }
@@ -318,8 +318,8 @@ internal class AlumnoServiceTest {
         val excepcion = assertThrows<ExcepcionUNQUE> {
             alumnoService.guardarSolicitudPara(
                 alumno.dni,
-                cuatrimestre.id!!,
                 listOf(comision1Algoritmos.id!!),
+                cuatrimestre,
                 LocalDateTime.now().minusDays(5)
             )
         }
