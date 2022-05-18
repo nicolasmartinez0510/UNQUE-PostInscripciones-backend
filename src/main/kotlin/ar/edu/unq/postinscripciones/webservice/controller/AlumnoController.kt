@@ -109,5 +109,19 @@ class AlumnoController {
             HttpStatus.OK
         )
     }
+
+
+    @ApiOperation("Endpoint que se usa para obtener el formulario y un resumen de la historia academica del alumno dado")
+    @RequestMapping(value = ["/{dni}"], method = [RequestMethod.GET])
+    fun resumenAlumno(
+            @ApiParam(value = "Dni del alumno", example = "12345678", required = true)
+            @PathVariable
+            dni: Int,
+    ): ResponseEntity<*> {
+        return ResponseEntity(
+                alumnoService.obtenerResumenAlumno(dni),
+                HttpStatus.OK
+        )
+    }
 }
 
