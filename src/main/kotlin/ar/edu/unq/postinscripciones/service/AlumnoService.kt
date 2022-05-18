@@ -3,7 +3,6 @@ package ar.edu.unq.postinscripciones.service
 import ar.edu.unq.postinscripciones.model.*
 import ar.edu.unq.postinscripciones.model.comision.Comision
 import ar.edu.unq.postinscripciones.model.cuatrimestre.Cuatrimestre
-import ar.edu.unq.postinscripciones.model.cuatrimestre.Semestre
 import ar.edu.unq.postinscripciones.model.exception.ExcepcionUNQUE
 import ar.edu.unq.postinscripciones.persistence.*
 import ar.edu.unq.postinscripciones.service.dto.*
@@ -29,10 +28,13 @@ class AlumnoService {
     private lateinit var comisionRepository: ComisionRespository
 
     @Autowired
-    private lateinit var cuatrimestreService: CuatrimestreRepository
+    private lateinit var cuatrimestreRepository: CuatrimestreRepository
 
     @Autowired
     private lateinit var solicitudSobrecupoRepository: SolicitudSobrecupoRepository
+
+    @Autowired
+    private lateinit var cuatrimestreService: CuatrimestreService
 
 //    @Autowired
 //    private lateinit var materiaCursadaRepository: MateriaCursadaRepository
@@ -59,7 +61,7 @@ class AlumnoService {
         cuatrimestre: Cuatrimestre = Cuatrimestre.actual(),
         fechaCarga: LocalDateTime = LocalDateTime.now()
     ): FormularioDTO {
-        val cuatrimestreObtenido = cuatrimestreService.findByAnioAndSemestre(cuatrimestre.anio, cuatrimestre.semestre).orElseThrow { ExcepcionUNQUE("No existe el cuatrimestre") }
+        val cuatrimestreObtenido = cuatrimestreRepository.findByAnioAndSemestre(cuatrimestre.anio, cuatrimestre.semestre).orElseThrow { ExcepcionUNQUE("No existe el cuatrimestre") }
         this.checkFecha(cuatrimestreObtenido.inicioInscripciones, cuatrimestreObtenido.finInscripciones, fechaCarga)
         val alumno = alumnoRepository.findById(dni).get()
         val solicitudesPorMateria = solicitudes.map { idComision ->
@@ -86,7 +88,7 @@ class AlumnoService {
 
     @Transactional
     fun obtenerFormulario(dni: Int, cuatrimestre: Cuatrimestre = Cuatrimestre.actual()): FormularioDTO {
-        val cuatrimestreObtenido = cuatrimestreService.findByAnioAndSemestre(cuatrimestre.anio, cuatrimestre.semestre).orElseThrow { ExcepcionUNQUE("No existe el cuatrimestre") }
+        val cuatrimestreObtenido = cuatrimestreRepository.findByAnioAndSemestre(cuatrimestre.anio, cuatrimestre.semestre).orElseThrow { ExcepcionUNQUE("No existe el cuatrimestre") }
         val alumno = alumnoRepository.findById(dni).orElseThrow { ExcepcionUNQUE("No existe el alumno") }
         return FormularioDTO.desdeModelo(alumno.obtenerFormulario(cuatrimestreObtenido.anio, cuatrimestreObtenido.semestre), alumno.dni)
     }
@@ -100,27 +102,18 @@ class AlumnoService {
     }
 
     @Transactional
-    fun cambiarEstadoFormularios(anio: Int, semestre: Semestre) {
+    fun cambiarEstadoFormularios() {
+        val cuatrimestreObtenido = cuatrimestreService.obtener()
         val alumnos = alumnoRepository.findAll()
         alumnos.forEach {
-            val formulario = it.obtenerFormulario(anio, semestre)
+            val formulario = it.obtenerFormulario(cuatrimestreObtenido.anio, cuatrimestreObtenido.semestre)
             formulario.cambiarEstado()
         }
     }
 
-//    @Transactional
-//    fun cambiarEstadoMateriaCursada(codigoMateria: String, estadoMateria: EstadoMateria): MateriaCursada {
-//        val materia = materiaRepository.findMateriaByCodigo(codigoMateria).get()
-//        val materiaCursada = materiaCursadaRepository.findByMateria(materia).get()
-//
-//        materiaCursada.cambiarEstado(estadoMateria)
-//
-//        return materiaCursadaRepository.save(materiaCursada)
-//    }
-
     @Transactional
     fun materiasDisponibles(dni: Int, cuatrimestre: Cuatrimestre = Cuatrimestre.actual()): List<MateriaComision> {
-        val cuatrimestreObtenido = cuatrimestreService.findByAnioAndSemestre(cuatrimestre.anio, cuatrimestre.semestre)
+        val cuatrimestreObtenido = cuatrimestreRepository.findByAnioAndSemestre(cuatrimestre.anio, cuatrimestre.semestre)
             .orElseThrow { ExcepcionUNQUE("No existe el cuatrimestre") }
         val alumno =
             alumnoRepository.findByDni(dni).orElseThrow { ExcepcionUNQUE("No existe el alumno") }
@@ -132,6 +125,25 @@ class AlumnoService {
         )
 
         return this.mapToMateriaComision(materiasDisponibles)
+    }
+
+    @Transactional
+    fun obtenerResumenAlumno(dni: Int): FormularioResumenAlumno {
+        val cuatrimestreObtenido = cuatrimestreService.obtener()
+        val alumno = alumnoRepository.findById(dni).orElseThrow { ExcepcionUNQUE("El Alumno no existe") }
+
+        val materiasCursadasAprobadas = alumno.materiasCursadasPorEstadoDeMateria(EstadoMateria.APROBADO)
+
+        val materiasCursadas = materiasCursadasAprobadas.map {
+            MateriaCursadaResumenDTO.desdeModelo(it, alumno.cantidadDeVecesQueCurso(it.materia))
+        }.sortedByDescending { it.fechaDeCarga }
+
+        return FormularioResumenAlumno(
+                alumno.nombre,
+                alumno.dni,
+                FormularioDTO.desdeModelo(alumno.obtenerFormulario(cuatrimestreObtenido.anio, cuatrimestreObtenido.semestre), alumno.dni),
+                materiasCursadas
+        )
     }
 
     private fun guardarAlumno(formulario: FormularioCrearAlumno): Alumno {

@@ -54,8 +54,16 @@ class Alumno(
         return formularios.any { formulario -> formulario.cuatrimestre.esElCuatrimestre(cuatrimestre) }
     }
 
+    fun materiasCursadasPorEstadoDeMateria(estadoMateria: EstadoMateria): List<MateriaCursada> {
+        return historiaAcademica.filter { it.estado == estadoMateria }
+    }
+
     fun materiasAprobadas(): List<Materia>{
-        return historiaAcademica.filter { it.estado == EstadoMateria.APROBADO }.map { it.materia }
+        return materiasCursadasPorEstadoDeMateria(EstadoMateria.APROBADO).map { it.materia }
+    }
+
+    fun cantidadDeVecesQueCurso(materia: Materia): Int {
+       return historiaAcademica.count { it.materia.esLaMateria(materia) }
     }
 
     private fun chequearSiExiste(formulario: Formulario) {

@@ -18,7 +18,27 @@ data class MateriaCursadaDTO(
             return MateriaCursadaDTO(
                     materiaCursada.materia.codigo,
                     materiaCursada.estado,
-                    materiaCursada.fechaDeCarga
+                    materiaCursada.fechaDeCarga,
+            )
+        }
+    }
+
+}
+data class MateriaCursadaResumenDTO(
+        val nombreMateria: String,
+        val codigoMateria: String,
+        val estado: EstadoMateria,
+        val fechaDeCarga: LocalDate,
+        val cantidadDeVecesCursada: Int
+) {
+    companion object {
+        fun desdeModelo(materiaCursada: MateriaCursada, cantidadDeVecesCursada: Int): MateriaCursadaResumenDTO {
+            return MateriaCursadaResumenDTO(
+                    materiaCursada.materia.nombre,
+                    materiaCursada.materia.codigo,
+                    materiaCursada.estado,
+                    materiaCursada.fechaDeCarga,
+                    cantidadDeVecesCursada
             )
         }
     }

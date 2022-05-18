@@ -12,10 +12,10 @@ data class FormularioDTO(
     val estado: EstadoFormulario
 ) {
     companion object {
-        fun desdeModelo(formulario: Formulario, legajo: Int): FormularioDTO {
+        fun desdeModelo(formulario: Formulario, dni: Int): FormularioDTO {
             return FormularioDTO(
                     formulario.id!!,
-                    legajo,
+                    dni,
                     formulario.cuatrimestre,
                     formulario.solicitudes.map { SolicitudSobrecupoDTO.desdeModelo(it) },
                     formulario.estado

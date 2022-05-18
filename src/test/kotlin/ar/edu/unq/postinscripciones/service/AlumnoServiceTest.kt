@@ -183,7 +183,7 @@ internal class AlumnoServiceTest {
                 cuatrimestre
             )
 
-        alumnoService.cambiarEstadoFormularios(cuatrimestre.anio, cuatrimestre.semestre)
+        alumnoService.cambiarEstadoFormularios()
         val formularioDespuesDeCerrar =
             alumnoService.obtenerFormulario(alumno.dni, cuatrimestre)
         val formulario2DespuesDeCerrar =
@@ -326,27 +326,36 @@ internal class AlumnoServiceTest {
         assertThat(excepcion.message).isEqualTo("El periodo para enviar solicitudes de sobrecupos no ha empezado.")
     }
 
-//    @Test
-//    fun `Se puede cambiar el estado de una materia cursada`() {
-//        val materiaCursada = MateriaCursadaDTO(funcional.codigo, EstadoMateria.APROBADO, LocalDate.of(2021, 12, 20))
-//        val formularioAlumno = FormularioCrearAlumno(
-//                1234567,
-//                "Pepe",
-//                "Sanchez",
-//                "pepe.sanchez@unq.edu.ar",
-//                44556,
-//                "1234",
-//                Carrera.TPI,
-//                listOf(materiaCursada)
-//        )
-//
-//        alumnoService.crear(formularioAlumno);
-//
-//        val materiaCursadaNuevoEstado = alumnoService
-//                .cambiarEstadoMateriaCursada(funcional.codigo, EstadoMateria.APROBADO)
-//
-//        assertThat(materiaCursadaNuevoEstado.estado).isEqualTo(EstadoMateria.APROBADO)
-//    }
+    @Test
+    fun `se puede pedir el resumen de estado de un alumno`() {
+        val materiaCursada = MateriaCursadaDTO(algo.codigo, EstadoMateria.APROBADO, LocalDate.of(2021, 12, 20))
+        val materiaCursada2 = MateriaCursadaDTO(funcional.codigo, EstadoMateria.DESAPROBADO, LocalDate.of(2020, 12, 20))
+        val materiaCursada3 = MateriaCursadaDTO(funcional.codigo, EstadoMateria.APROBADO, LocalDate.of(2021, 7, 20))
+
+        val formularioAlumno = FormularioCrearAlumno(
+                123456712,
+                "Pepe",
+                "Sanchez",
+                "pepe.sanchez@unq.edu.ar",
+                44556,
+                "1234",
+                Carrera.TPI,
+                listOf(materiaCursada, materiaCursada2, materiaCursada3)
+        )
+        val nacho = alumnoService.crear(formularioAlumno)
+
+        val formulario = alumnoService.guardarSolicitudPara(
+                        nacho.dni,
+                        listOf(comision1Algoritmos.id!!)
+                )
+
+        val resumen = alumnoService.obtenerResumenAlumno(nacho.dni)
+
+        assertThat(resumen.nombre).isEqualTo(nacho.nombre)
+        assertThat(resumen.dni).isEqualTo(nacho.dni)
+        assertThat(resumen.formulario).usingRecursiveComparison().isEqualTo(formulario)
+        assertThat(resumen.resumenCursadas.map{ it.nombreMateria }).usingRecursiveComparison().isEqualTo(listOf(algo.nombre, funcional.nombre))
+    }
 
     @AfterEach
     fun tearDown() {
