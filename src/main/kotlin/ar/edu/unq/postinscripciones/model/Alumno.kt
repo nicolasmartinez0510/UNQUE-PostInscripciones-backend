@@ -31,16 +31,9 @@ class Alumno(
     }
 
     fun cargarHistoriaAcademica(materiaCursada: MateriaCursada) {
-        if(cargoMateriaCursada(materiaCursada.materia)) {
-            throw ExcepcionUNQUE("La materia ya fue cargada en la historia academica")
-        }
         historiaAcademica.add(materiaCursada)
+        historiaAcademica.sortByDescending { it.fechaDeCarga }
     }
-
-    fun cargoMateriaCursada(materia: Materia): Boolean {
-        return historiaAcademica.any{ it.materia.esLaMateria(materia) }
-    }
-
 
     fun obtenerFormulario(anio: Int, semestre: Semestre): Formulario {
         val formulario = formularios.find { it.cuatrimestre.esElCuatrimestre(anio, semestre) }

@@ -6,6 +6,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.time.LocalDate
 
 internal class AlumnoTest {
     lateinit var alumno: Alumno
@@ -128,15 +129,16 @@ internal class AlumnoTest {
     }
 
     @Test
-    fun `No se puede agregar otra vez la misma materia aprobada`() {
+    fun `La historia academica se encuentra ordenada por fecha de carga descendente`() {
         val intro = Materia("int-102", "Intro", mutableListOf())
-        val materiaCursada1 = MateriaCursada(intro)
-        val materiaCursada2 = MateriaCursada(intro)
+        val materiaCursada1 = MateriaCursada(intro, LocalDate.of(2021, 7, 20))
+        val materiaCursada2 = MateriaCursada(intro, LocalDate.of(2021, 12, 20))
 
         alumno.cargarHistoriaAcademica(materiaCursada1)
-        val excepcion = assertThrows<ExcepcionUNQUE> { alumno.cargarHistoriaAcademica(materiaCursada2) }
+        alumno.cargarHistoriaAcademica(materiaCursada2)
 
-        assertThat(excepcion.message).isEqualTo("La materia ya fue cargada en la historia academica")
+
+        assertThat(alumno.historiaAcademica).usingRecursiveComparison().isEqualTo(listOf(materiaCursada2, materiaCursada1))
     }
 
     @Test
