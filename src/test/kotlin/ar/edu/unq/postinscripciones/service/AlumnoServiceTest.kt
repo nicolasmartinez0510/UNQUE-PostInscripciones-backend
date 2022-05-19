@@ -127,6 +127,33 @@ internal class AlumnoServiceTest {
     }
 
     @Test
+    fun `Un alumno no puede registrar un formulario para una materia que no tiene disponible`() {
+        val logica = materiaService.crear("Lógica y Programacion", "LOG-209", mutableListOf(algo.codigo), Carrera.TPI)
+        val formularioComision = FormularioComision(
+                1,
+                logica.codigo,
+                cuatrimestre.anio,
+                cuatrimestre.semestre,
+                35,
+                5,
+                listOf(
+                        HorarioDTO(Dia.LUNES, "18:00", "20:00"),
+                        HorarioDTO(Dia.JUEVES, "09:00", "11:00")
+                ),
+                Modalidad.PRESENCIAL
+        )
+        val comisionLogica = comisionService.crear(formularioComision)
+        val exception = assertThrows<ExcepcionUNQUE> {
+            alumnoService.guardarSolicitudPara(
+                    alumno.dni,
+                    listOf(comisionLogica.id!!),
+                    cuatrimestre
+            )
+        }
+        assertThat(exception.message).isEqualTo("El alumno no puede cursar las materias solicitadas")
+    }
+
+    @Test
     fun `Se puede obtener el formulario`() {
         val formularioDTO =
             alumnoService.guardarSolicitudPara(
@@ -335,7 +362,19 @@ internal class AlumnoServiceTest {
         val materiaCursada = MateriaCursadaDTO(algo.codigo, EstadoMateria.APROBADO, LocalDate.of(2021, 12, 20))
         val materiaCursada2 = MateriaCursadaDTO(funcional.codigo, EstadoMateria.DESAPROBADO, LocalDate.of(2020, 12, 20))
         val materiaCursada3 = MateriaCursadaDTO(funcional.codigo, EstadoMateria.APROBADO, LocalDate.of(2021, 7, 20))
+        val intro = materiaService.crear("Intro", "INT-205", mutableListOf(), Carrera.SIMULTANEIDAD)
 
+        val formularioComision2 = FormularioComision(
+                1,
+                intro.codigo,
+                2022,
+                Semestre.S1,
+                35,
+                5,
+                listOf(),
+                Modalidad.PRESENCIAL
+        )
+        val comisionIntro = comisionService.crear(formularioComision2)
         val formularioAlumno = FormularioCrearAlumno(
             123456712,
             "Pepe",
@@ -343,14 +382,14 @@ internal class AlumnoServiceTest {
             "pepe.sanchez@unq.edu.ar",
             44556,
             "1234",
-            Carrera.TPI,
+            Carrera.SIMULTANEIDAD,
             listOf(materiaCursada, materiaCursada2, materiaCursada3)
         )
         val nacho = alumnoService.crear(formularioAlumno)
 
         val formulario = alumnoService.guardarSolicitudPara(
             nacho.dni,
-            listOf(comision1Algoritmos.id!!)
+            listOf(comisionIntro.id!!)
         )
 
         val resumen = alumnoService.obtenerResumenAlumno(nacho.dni)

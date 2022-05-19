@@ -69,6 +69,10 @@ class Alumno(
         return historiaAcademica.count { it.materia.esLaMateria(materia) }
     }
 
+    fun puedeCursar(solicitudes : List<Materia>, materiasDisponibles: List<String>) : Boolean {
+        return solicitudes.all { materiasDisponibles.contains(it.codigo) }
+    }
+
     private fun chequearSiExiste(formulario: Formulario) {
         if (llenoElFormularioDelCuatrimestre(formulario.cuatrimestre)) {
             throw ExcepcionUNQUE("Ya has solicitado materias para este cuatrimestre")

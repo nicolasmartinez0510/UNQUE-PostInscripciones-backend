@@ -70,6 +70,8 @@ class AlumnoService {
             val comision = comisionRepository.findById(idComision)
             SolicitudSobrecupo(comision.get())
         }
+        val materiasDisponibles = this.materiasDisponibles(alumno.dni,cuatrimestreObtenido)
+        this.checkPuedeCursar(alumno, solicitudesPorMateria, materiasDisponibles)
         val formulario = formularioRepository.save(Formulario(cuatrimestreObtenido, solicitudesPorMateria))
 
         alumno.guardarFormulario(formulario)
@@ -222,5 +224,11 @@ class AlumnoService {
             throw ExcepcionUNQUE("El periodo para enviar solicitudes de sobrecupos ya ha pasado.")
         }
     }
+
+    private fun checkPuedeCursar(alumno : Alumno, solicitudesPorMateria: List<SolicitudSobrecupo>, materiasDisponibles: List<MateriaComision>) {
+        if (!alumno.puedeCursar( solicitudesPorMateria.map { it.comision.materia }, materiasDisponibles.map { it.codigo })) throw ExcepcionUNQUE("El alumno no puede cursar las materias solicitadas")
+
+    }
+
 
 }
