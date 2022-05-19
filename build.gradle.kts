@@ -64,6 +64,7 @@ tasks.jacocoTestReport {
 			include("ar/edu/unq/postinscripciones/model/**")
 			include("ar/edu/unq/postinscripciones/persistence/**")
 			include("ar/edu/unq/postinscripciones/service/**")
+			exclude("ar/edu/unq/postinscripciones/service/dto/**")
 		}
 	)
 }
