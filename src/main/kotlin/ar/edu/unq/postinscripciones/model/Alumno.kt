@@ -16,6 +16,7 @@ class Alumno(
     @Column(unique = true)
     val legajo: Int = 4,
     val contrasenia: String = "",
+    @Enumerated(EnumType.STRING)
     val carrera: Carrera = Carrera.SIMULTANEIDAD,
 ) {
     @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
@@ -25,7 +26,6 @@ class Alumno(
     val historiaAcademica: MutableList<MateriaCursada> = mutableListOf()
 
     fun guardarFormulario(formulario: Formulario) {
-        carrera
         chequearSiExiste(formulario)
         formularios.add(formulario)
     }
@@ -40,14 +40,15 @@ class Alumno(
         return formulario ?: throw ExcepcionUNQUE("No se encontró ningun formulario para el cuatrimestre dado")
     }
 
+    fun obtenerFormularioYSolicitud(comision: Comision): Pair<Formulario, SolicitudSobrecupo> {
+        val formulario = formularios.firstOrNull { it.tieneLaComision(comision) } ?: throw ExcepcionUNQUE("No se encontró ningun formulario que tenga la comision dada")
+        val solicitud = formulario.solicitudes.first { it.solicitaLaComision(comision) }
+
+        return Pair(formulario, solicitud)
+    }
+
     fun haSolicitado(unaComision: Comision): Boolean {
-        return formularios
-            .filter { formulario -> formulario.cuatrimestre.esElCuatrimestre(unaComision.cuatrimestre) }
-            .any { formulario ->
-                formulario
-                    .solicitudes
-                    .any { solicitudSobrecupo -> solicitudSobrecupo.comision.esLaComision(unaComision) }
-            }
+        return formularios.any { formulario -> formulario.tieneLaComision(unaComision) }
     }
 
     fun llenoElFormularioDelCuatrimestre(cuatrimestre: Cuatrimestre): Boolean {
@@ -58,12 +59,14 @@ class Alumno(
         return historiaAcademica.filter { it.estado == estadoMateria }
     }
 
-    fun materiasAprobadas(): List<Materia>{
+    fun materiasAprobadas(): List<Materia> {
         return materiasCursadasPorEstadoDeMateria(EstadoMateria.APROBADO).map { it.materia }
     }
 
+    fun cantidadAprobadas() = historiaAcademica.count { it.estado == EstadoMateria.APROBADO }
+
     fun cantidadDeVecesQueCurso(materia: Materia): Int {
-       return historiaAcademica.count { it.materia.esLaMateria(materia) }
+        return historiaAcademica.count { it.materia.esLaMateria(materia) }
     }
 
     private fun chequearSiExiste(formulario: Formulario) {

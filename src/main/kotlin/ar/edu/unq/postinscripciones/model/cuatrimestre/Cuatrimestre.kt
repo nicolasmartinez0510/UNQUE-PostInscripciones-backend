@@ -2,7 +2,9 @@ package ar.edu.unq.postinscripciones.model.cuatrimestre
 
 import ar.edu.unq.postinscripciones.model.exception.ExcepcionUNQUE
 import java.io.Serializable
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.Year
 import javax.persistence.*
 
@@ -12,8 +14,8 @@ class Cuatrimestre(
     val anio: Int = 2020,
     @Enumerated(EnumType.STRING)
     val semestre: Semestre = Semestre.S1,
-    var inicioInscripciones: LocalDateTime = LocalDateTime.now(),
-    var finInscripciones: LocalDateTime = LocalDateTime.now().plusDays(14)
+    var inicioInscripciones: LocalDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(8,0)),
+    var finInscripciones: LocalDateTime = inicioInscripciones.plusDays(14).plusHours(12)
 ) : Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

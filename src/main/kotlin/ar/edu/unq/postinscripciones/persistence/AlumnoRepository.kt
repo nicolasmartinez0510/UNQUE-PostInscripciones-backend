@@ -6,7 +6,8 @@ import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
-interface AlumnoRepository: CrudRepository<Alumno, Int> {
-    fun findByDniOrLegajo(dni: Int, legajo:Int): Optional<Alumno>
+interface AlumnoRepository : CrudRepository<Alumno, Int> {
+    fun findByDniOrLegajo(dni: Int, legajo: Int): Optional<Alumno>
     fun findByDni(dni: Int): Optional<Alumno>
+    fun findByFormulariosSolicitudesComisionId(idComision: Long): List<Alumno>
 }

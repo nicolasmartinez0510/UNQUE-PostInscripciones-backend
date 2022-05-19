@@ -275,7 +275,11 @@ internal class AlumnoServiceTest {
         val materiasdisponibles = alumnoService.materiasDisponibles(nacho.dni, cuatrimestre)
         assertThat(materiasdisponibles).hasSize(1)
         assertThat(materiasdisponibles.map { it.codigo }).contains(logica.codigo)
-        assertThat(materiasdisponibles.first().comisiones).allMatch { it == ComisionParaAlumno.desdeModelo(comisionLogica)  }
+        assertThat(materiasdisponibles.first().comisiones).allMatch {
+            it == ComisionParaAlumno.desdeModelo(
+                comisionLogica
+            )
+        }
     }
 
     @Test
@@ -333,28 +337,79 @@ internal class AlumnoServiceTest {
         val materiaCursada3 = MateriaCursadaDTO(funcional.codigo, EstadoMateria.APROBADO, LocalDate.of(2021, 7, 20))
 
         val formularioAlumno = FormularioCrearAlumno(
-                123456712,
-                "Pepe",
-                "Sanchez",
-                "pepe.sanchez@unq.edu.ar",
-                44556,
-                "1234",
-                Carrera.TPI,
-                listOf(materiaCursada, materiaCursada2, materiaCursada3)
+            123456712,
+            "Pepe",
+            "Sanchez",
+            "pepe.sanchez@unq.edu.ar",
+            44556,
+            "1234",
+            Carrera.TPI,
+            listOf(materiaCursada, materiaCursada2, materiaCursada3)
         )
         val nacho = alumnoService.crear(formularioAlumno)
 
         val formulario = alumnoService.guardarSolicitudPara(
-                        nacho.dni,
-                        listOf(comision1Algoritmos.id!!)
-                )
+            nacho.dni,
+            listOf(comision1Algoritmos.id!!)
+        )
 
         val resumen = alumnoService.obtenerResumenAlumno(nacho.dni)
 
         assertThat(resumen.nombre).isEqualTo(nacho.nombre)
         assertThat(resumen.dni).isEqualTo(nacho.dni)
         assertThat(resumen.formulario).usingRecursiveComparison().isEqualTo(formulario)
-        assertThat(resumen.resumenCursadas.map{ it.nombreMateria }).usingRecursiveComparison().isEqualTo(listOf(algo.nombre, funcional.nombre))
+        assertThat(resumen.resumenCursadas.map { it.nombreMateria }).usingRecursiveComparison()
+            .isEqualTo(listOf(algo.nombre, funcional.nombre))
+    }
+
+    @Test
+    fun `se pueden obtener los alumnos que pidieron una comision`() {
+        val formularioAlumno = alumnoService.guardarSolicitudPara(alumno.dni, listOf(comision1Algoritmos.id!!))
+        val formularioFede = alumnoService.guardarSolicitudPara(fede.dni, listOf(comision1Algoritmos.id!!))
+
+        val alumnos = alumnoService.alumnosQueSolicitaron(comision1Algoritmos.id!!)
+
+        val alumnosEsperados: List<AlumnoSolicitaComision> =
+            listOf(
+                AlumnoSolicitaComision(alumno.dni, "${alumno.nombre} ${alumno.apellido}", alumno.cantidadAprobadas(), formularioAlumno.id, formularioAlumno.solicitudes.first().id),
+                AlumnoSolicitaComision(fede.dni, "${fede.nombre} ${fede.apellido}", fede.cantidadAprobadas(), formularioFede.id, formularioFede.solicitudes.first().id)
+            )
+        assertThat(alumnos).hasSize(2)
+        assertThat(alumnos).usingRecursiveComparison().isEqualTo(alumnosEsperados)
+    }
+
+    @Test
+    fun `se pueden obtener los alumnos que pidieron una comision con el id del formulario`() {
+        val formularioAlumno = alumnoService.guardarSolicitudPara(alumno.dni, listOf(comision1Algoritmos.id!!))
+        val formularioFede = alumnoService.guardarSolicitudPara(fede.dni, listOf(comision1Algoritmos.id!!))
+
+        val alumnos = alumnoService.alumnosQueSolicitaron(comision1Algoritmos.id!!)
+
+        assertThat(alumnos.first().idFormulario).isEqualTo(formularioAlumno.id)
+        assertThat(alumnos.last().idFormulario).isEqualTo(formularioFede.id)
+    }
+
+    @Test
+    fun `se pueden obtener los alumnos que pidieron una comision ordenados descendentemente por cantidad de materias aprobadas`() {
+        val materiaCursada = MateriaCursadaDTO(funcional.codigo, EstadoMateria.APROBADO, LocalDate.of(2021, 12, 20))
+        val formularioAlumno = FormularioCrearAlumno(
+            123456712,
+            "Pepe",
+            "Sanchez",
+            "pepe.sanchez@unq.edu.ar",
+            4455611,
+            "1234",
+            Carrera.TPI,
+            listOf(materiaCursada)
+        )
+        val nacho = alumnoService.crear(formularioAlumno)
+
+        alumnoService.guardarSolicitudPara(alumno.dni, listOf(comision1Algoritmos.id!!))
+        alumnoService.guardarSolicitudPara(nacho.dni, listOf(comision1Algoritmos.id!!))
+
+        val alumnos = alumnoService.alumnosQueSolicitaron(comision1Algoritmos.id!!)
+        assertThat(alumnos.first().cantidadDeAprobadas).isEqualTo(alumnos.maxOf { it.cantidadDeAprobadas })
+        assertThat(alumnos.last().cantidadDeAprobadas).isEqualTo(alumnos.minOf { it.cantidadDeAprobadas })
     }
 
     @AfterEach

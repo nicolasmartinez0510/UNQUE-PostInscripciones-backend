@@ -43,7 +43,7 @@ class CuatrimestreController {
         )
     }
 
-    @ApiOperation("Endpoint que se usa para obtener al oferta academica de un cuatrimestre")
+    @ApiOperation("Endpoint que se usa para obtener la oferta academica de un cuatrimestre")
     @RequestMapping(value = ["/oferta"], method = [RequestMethod.GET])
     fun ofertaAcademica(
         @ApiParam(value = "Anio del cuatrimestre", example = "2022", required = true)

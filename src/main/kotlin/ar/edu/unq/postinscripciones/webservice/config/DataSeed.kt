@@ -12,6 +12,7 @@ import ar.edu.unq.postinscripciones.persistence.AlumnoRepository
 import ar.edu.unq.postinscripciones.persistence.ComisionRespository
 import ar.edu.unq.postinscripciones.persistence.CuatrimestreRepository
 import ar.edu.unq.postinscripciones.persistence.MateriaRepository
+import ar.edu.unq.postinscripciones.service.AlumnoService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
 import org.springframework.context.annotation.Profile
@@ -24,7 +25,8 @@ class DataSeed(
     @Autowired private val materiaRepository: MateriaRepository,
     @Autowired private val cuatrimestreRepository: CuatrimestreRepository,
     @Autowired private val comisionRespository: ComisionRespository,
-    @Autowired private val alumnoRepository: AlumnoRepository
+    @Autowired private val alumnoRepository: AlumnoRepository,
+    @Autowired private val alumnoService: AlumnoService
 ) : CommandLineRunner {
 
     @Throws(Exception::class)
@@ -150,6 +152,16 @@ class DataSeed(
                 Carrera.SIMULTANEIDAD
             )
 
+            val bartolo = Alumno(
+                12345677,
+                "Bartolo",
+                "Gutierrez",
+                "bartolito@alu.edu.ar",
+                45555,
+                "contrasenia",
+                Carrera.SIMULTANEIDAD
+            )
+
             cuatrimestreRepository.save(cuatrimestre)
             materiaRepository.saveAll(listOf(epyl, lea, ttu, tti, matematica, ingles1, ingles2, bdd, intro, orga,mate1, estructura, objetos1, objetos2, redes
                                             , sistemasoperativos, concurrente, mate2, elementosdeingeneria, interfaces, persistencia, funcional, desarrollo, labo, bdd2
@@ -158,7 +170,9 @@ class DataSeed(
                                             , teoria, arquitectura1, distribuidos, caracteristicas, arquitectura2, arquitecturaDeComputadoras, parseo, aspectosLegales, seminarioFinal, seminarioCapacitacion
                                             , seguridadTec, tv, streaming, cloud, bajo, semantica, seminarios, calidad, funcionalAvanzada, progCuantica, ciudadana, ludificacion, cdDatos))
             comisionRespository.saveAll(listOf(bddc1, bddc2, matec1, estrc1))
-            alumnoRepository.save(jorge)
+            alumnoRepository.saveAll(listOf(jorge,bartolo))
+
+            alumnoService.guardarSolicitudPara(bartolo.dni, listOf(bddc1.id!!, bddc2.id!!))
 
             val cantMaterias = materiaRepository.count()
             val cantComisiones = comisionRespository.count()

@@ -3,10 +3,14 @@ package ar.edu.unq.postinscripciones.service.dto
 import ar.edu.unq.postinscripciones.model.EstadoFormulario
 import ar.edu.unq.postinscripciones.model.Formulario
 import ar.edu.unq.postinscripciones.model.cuatrimestre.Cuatrimestre
+import io.swagger.annotations.ApiModelProperty
 
 data class FormularioDTO(
+    @ApiModelProperty(example = "123")
     val id: Long,
+    @ApiModelProperty(example = "12345677")
     val dniAlumno: Int,
+    @ApiModelProperty(example = "12345677")
     val cuatrimestre: Cuatrimestre,
     val solicitudes: List<SolicitudSobrecupoDTO>,
     val estado: EstadoFormulario

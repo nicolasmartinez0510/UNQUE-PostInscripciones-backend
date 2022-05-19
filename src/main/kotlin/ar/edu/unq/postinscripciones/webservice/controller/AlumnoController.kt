@@ -3,6 +3,7 @@ package ar.edu.unq.postinscripciones.webservice.controller
 import ar.edu.unq.postinscripciones.model.EstadoSolicitud
 import ar.edu.unq.postinscripciones.service.AlumnoService
 import ar.edu.unq.postinscripciones.service.dto.FormularioCrearAlumno
+import ar.edu.unq.postinscripciones.service.dto.ResumenAlumno
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiParam
 import io.swagger.annotations.ApiResponse
@@ -34,16 +35,7 @@ class AlumnoController {
         )
     }
 
-    @ApiOperation("Endpoint que se usa para obtener todos los alumnos registrados")
-    @RequestMapping(value = [""], method = [RequestMethod.GET])
-    fun todos(): ResponseEntity<*> {
-        return ResponseEntity(
-            alumnoService.todos(),
-            HttpStatus.OK
-        )
-    }
-
-    @ApiOperation("Endpoint que se usa para cargar una solicitud de comisiones a un alumno")
+    @ApiOperation("Endpoint que se usa para cargar una solicitud de comisiones a un alumno.")
     @RequestMapping(value = ["/solicitudes/{dni}"], method = [RequestMethod.POST])
     @ApiResponses(
         value = [
@@ -54,6 +46,7 @@ class AlumnoController {
     fun cargarSolicitudes(
         @ApiParam(value = "Dni del alumno para cargar solicitudes", example = "12345678", required = true)
         @PathVariable dni: Int,
+        @ApiParam(value = "Lista de id de comisiones solicitadas. Ejemplo: [1,2]", required = true)
         @RequestBody comisiones: List<Long>
     ): ResponseEntity<*> {
         return ResponseEntity(
@@ -97,17 +90,22 @@ class AlumnoController {
         )
     }
 
-
-    @ApiOperation("Endpoint que se usa para obtener el formulario y un resumen de la historia academica del alumno dado")
+    @ApiOperation("#### Endpoint que se usa para obtener el formulario y un resumen de la historia academica del alumno dado ####")
     @RequestMapping(value = ["/{dni}"], method = [RequestMethod.GET])
+    @ApiResponses(
+        value = [
+            ApiResponse(code = 200, message = "OK", response = ResumenAlumno::class, responseContainer = "List"),
+            ApiResponse(code = 400, message = "Algo salio mal")
+        ]
+    )
     fun resumenAlumno(
-            @ApiParam(value = "Dni del alumno", example = "12345678", required = true)
-            @PathVariable
-            dni: Int,
+        @ApiParam(value = "Dni del alumno", example = "12345677", required = true)
+        @PathVariable
+        dni: Int,
     ): ResponseEntity<*> {
         return ResponseEntity(
-                alumnoService.obtenerResumenAlumno(dni),
-                HttpStatus.OK
+            alumnoService.obtenerResumenAlumno(dni),
+            HttpStatus.OK
         )
     }
 }

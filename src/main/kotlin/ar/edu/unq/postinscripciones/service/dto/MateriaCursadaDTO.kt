@@ -10,35 +10,41 @@ data class MateriaCursadaDTO(
     val codigoMateria: String,
     @ApiModelProperty(example = "DESAPROBADO", required = true)
     val estado: EstadoMateria,
-    @ApiModelProperty(example = "2022-07-30T23:59", required = true)
+    @ApiModelProperty(example = "2022-07-30", required = true)
     val fechaDeCarga: LocalDate
 ) {
     companion object {
         fun desdeModelo(materiaCursada: MateriaCursada): MateriaCursadaDTO {
             return MateriaCursadaDTO(
-                    materiaCursada.materia.codigo,
-                    materiaCursada.estado,
-                    materiaCursada.fechaDeCarga,
+                materiaCursada.materia.codigo,
+                materiaCursada.estado,
+                materiaCursada.fechaDeCarga,
             )
         }
     }
 
 }
+
 data class MateriaCursadaResumenDTO(
-        val nombreMateria: String,
-        val codigoMateria: String,
-        val estado: EstadoMateria,
-        val fechaDeCarga: LocalDate,
-        val cantidadDeVecesCursada: Int
+    @ApiModelProperty(example = "Introduccion a la Programacion")
+    val nombreMateria: String,
+    @ApiModelProperty(example = "01307")
+    val codigoMateria: String,
+    @ApiModelProperty(example = "DESAPROBADO")
+    val estado: EstadoMateria,
+    @ApiModelProperty(example = "2020/10/15")
+    val fechaDeCarga: LocalDate,
+    @ApiModelProperty(example = "2")
+    val cantidadDeVecesCursada: Int
 ) {
     companion object {
         fun desdeModelo(materiaCursada: MateriaCursada, cantidadDeVecesCursada: Int): MateriaCursadaResumenDTO {
             return MateriaCursadaResumenDTO(
-                    materiaCursada.materia.nombre,
-                    materiaCursada.materia.codigo,
-                    materiaCursada.estado,
-                    materiaCursada.fechaDeCarga,
-                    cantidadDeVecesCursada
+                materiaCursada.materia.nombre,
+                materiaCursada.materia.codigo,
+                materiaCursada.estado,
+                materiaCursada.fechaDeCarga,
+                cantidadDeVecesCursada
             )
         }
     }
