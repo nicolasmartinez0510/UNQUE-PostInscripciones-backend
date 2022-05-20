@@ -5,7 +5,6 @@ import ar.edu.unq.postinscripciones.model.EstadoMateria
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
-import java.time.LocalDate
 import java.util.*
 import javax.persistence.Tuple
 
@@ -15,20 +14,39 @@ interface AlumnoRepository : CrudRepository<Alumno, Int> {
     fun findByDni(dni: Int): Optional<Alumno>
 
     @Query(
-            "SELECT cursada.MATERIA_CODIGO, CURSADA.ESTADO, INFO.FECHA, INFO.INTENTOS " +
-            "FROM MATERIA_CURSADA AS CURSADA " +
-            "JOIN " +
-            "(SELECT ALUMNO_DNI, MATERIA_CODIGO, MAX(FECHA_DE_CARGA) as FECHA, COUNT(*) AS INTENTOS " +
-            "FROM MATERIA_CURSADA\n" +
-            "JOIN ALUMNO_HISTORIA_ACADEMICA " +
-            "ON HISTORIA_ACADEMICA_ID = ID " +
-            "WHERE ALUMNO_DNI = ?1 " +
-            "GROUP BY ALUMNO_DNI, MATERIA_CODIGO) AS INFO " +
-            "ON info.MATERIA_CODIGO = cursada.MATERIA_CODIGO " +
-            "WHERE INFO.FECHA= CURSADA.FECHA_DE_CARGA",
+        "SELECT alu.dni, afs.formulario_id, afs.solicitudes_id, count(aha.historia_academica_id) AS aprobadas\n" +
+                "FROM alumno AS alu\n" +
+                "JOIN (SELECT alu.dni, fs.*\n" +
+                "                FROM alumno AS alu\n" +
+                "                JOIN alumno_formularios AS af\n" +
+                "                ON alu.dni = af.alumno_dni\n" +
+                "                JOIN formulario_solicitudes AS fs\n" +
+                "                ON fs.formulario_id = af.formularios_id\n" +
+                "                JOIN solicitud_sobrecupo AS ss\n" +
+                "                ON ss.id = fs.solicitudes_id AND ss.comision_id = :idComision) AS afs\n" +
+                "ON afs.dni = alu.dni\n" +
+                "LEFT JOIN alumno_historia_academica AS aha\n" +
+                "ON aha.alumno_dni = alu.dni\n" +
+                "LEFT JOIN materia_cursada AS mc\n" +
+                "ON mc.id = aha.historia_academica_id AND mc.estado = :estadoMateria\n" +
+                "GROUP BY alu.dni\n" +
+                "ORDER BY aprobadas DESC", nativeQuery = true
+    )
+    fun findBySolicitaComisionIdOrderByCantidadAprobadas(idComision: Long, estadoMateria: String = EstadoMateria.APROBADO.toString()): List<Tuple>
 
-            nativeQuery = true
+    @Query(
+        "SELECT cursada.materia_codigo, cursada.estado, info.fecha, info.intentos " +
+        "FROM materia_cursada AS cursada " +
+        "JOIN " +
+            "(SELECT alumno_dni, materia_codigo, max(fecha_de_carga) as fecha, count(*) AS intentos " +
+            "FROM materia_cursada " +
+            "JOIN alumno_historia_academica " +
+            "ON historia_academica_id = id " +
+            "WHERE alumno_dni = ?1 " +
+            "GROUP BY alumno_dni, materia_codigo) AS info " +
+        "ON info.materia_codigo = cursada.materia_codigo " +
+        "WHERE info.fecha = cursada.fecha_de_carga",
+        nativeQuery = true
     )
     fun findResumenHistoriaAcademica(dni: Int): List<Tuple>
-    fun findByFormulariosSolicitudesComisionId(idComision: Long): List<Alumno>
 }

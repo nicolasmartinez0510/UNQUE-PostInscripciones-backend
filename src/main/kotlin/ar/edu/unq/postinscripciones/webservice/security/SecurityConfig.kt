@@ -28,6 +28,8 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
             .and()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
+            .headers().frameOptions().sameOrigin()
+            .and()
             .csrf().disable()
     }
 

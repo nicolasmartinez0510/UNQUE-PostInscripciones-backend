@@ -410,8 +410,8 @@ internal class AlumnoServiceTest {
 
         val alumnosEsperados: List<AlumnoSolicitaComision> =
             listOf(
-                AlumnoSolicitaComision(alumno.dni, "${alumno.nombre} ${alumno.apellido}", alumno.cantidadAprobadas(), formularioAlumno.id, formularioAlumno.solicitudes.first().id),
-                AlumnoSolicitaComision(fede.dni, "${fede.nombre} ${fede.apellido}", fede.cantidadAprobadas(), formularioFede.id, formularioFede.solicitudes.first().id)
+                AlumnoSolicitaComision(alumno.dni, alumno.cantidadAprobadas(), formularioAlumno.id, formularioAlumno.solicitudes.first().id),
+                AlumnoSolicitaComision(fede.dni,  fede.cantidadAprobadas(), formularioFede.id, formularioFede.solicitudes.first().id)
             )
         assertThat(alumnos).hasSize(2)
         assertThat(alumnos).usingRecursiveComparison().isEqualTo(alumnosEsperados)

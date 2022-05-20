@@ -170,12 +170,10 @@ class AlumnoService {
 
     @Transactional
     fun alumnosQueSolicitaron(idComision: Long): List<AlumnoSolicitaComision> {
-        val comision = comisionRepository.findById(idComision).orElseThrow { ExcepcionUNQUE("No existe la comision") }
-        val alumnos = alumnoRepository.findByFormulariosSolicitudesComisionId(idComision)
+        comisionRepository.findById(idComision).orElseThrow { ExcepcionUNQUE("No existe la comision") }
+        val alumnos = alumnoRepository.findBySolicitaComisionIdOrderByCantidadAprobadas(idComision)
 
-        return alumnos
-            .map { AlumnoSolicitaComision.desdeModelo(it, comision) }
-            .sortedByDescending { it.cantidadDeAprobadas }
+        return alumnos.map { AlumnoSolicitaComision.desdeTupla(it) }
     }
 
     private fun guardarAlumno(formulario: FormularioCrearAlumno): Alumno {

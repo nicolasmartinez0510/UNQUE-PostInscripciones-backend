@@ -1,14 +1,12 @@
 package ar.edu.unq.postinscripciones.service.dto
 
-import ar.edu.unq.postinscripciones.model.Alumno
-import ar.edu.unq.postinscripciones.model.comision.Comision
 import io.swagger.annotations.ApiModelProperty
+import java.math.BigInteger
+import javax.persistence.Tuple
 
 data class AlumnoSolicitaComision(
     @ApiModelProperty(example = "1234577")
     val dni: Int,
-    @ApiModelProperty(example = "Humberto Prim")
-    val nyAp: String,
     @ApiModelProperty(example = "15")
     val cantidadDeAprobadas: Int,
     @ApiModelProperty(example = "1201")
@@ -17,14 +15,12 @@ data class AlumnoSolicitaComision(
     val idSolicitud: Long
 ) {
     companion object {
-        fun desdeModelo(alu: Alumno, comision: Comision): AlumnoSolicitaComision {
-            val formularioYSolicitud = alu.obtenerFormularioYSolicitud(comision)
+        fun desdeTupla(tupla: Tuple): AlumnoSolicitaComision {
             return AlumnoSolicitaComision(
-                alu.dni,
-                "${alu.nombre} ${alu.apellido}",
-                alu.cantidadAprobadas(),
-                formularioYSolicitud.first.id!!,
-                formularioYSolicitud.second.id!!,
+                tupla.get(0) as Int,
+                (tupla.get(3) as BigInteger).toInt(),
+                (tupla.get(1) as BigInteger).toLong(),
+                (tupla.get(2) as BigInteger).toLong(),
             )
         }
     }

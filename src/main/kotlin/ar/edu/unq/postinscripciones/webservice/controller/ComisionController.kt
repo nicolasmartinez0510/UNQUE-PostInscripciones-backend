@@ -24,7 +24,7 @@ class ComisionController {
     @Autowired
     private lateinit var alumnoService: AlumnoService
 
-    @ApiOperation("Endpoint que se usa para registrar nuevas comisiones en el sistema o bien actualizar las fechas para recibir formularios")
+    @ApiOperation("Endpoint que se usa para registrar nuevas comisiones en el sistema o bien actualizar las fechas para recibir formularios de sobrecupos.")
     @RequestMapping(value = [""], method = [RequestMethod.POST])
     fun actualizarOfertaAcademica(
         @RequestBody oferta: OfertaAcademicaDTO,
