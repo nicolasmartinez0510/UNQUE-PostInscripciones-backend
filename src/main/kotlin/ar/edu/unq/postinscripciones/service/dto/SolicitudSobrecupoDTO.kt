@@ -5,18 +5,18 @@ import ar.edu.unq.postinscripciones.model.SolicitudSobrecupo
 import io.swagger.annotations.ApiModelProperty
 
 data class SolicitudSobrecupoDTO(
-    @ApiModelProperty(example = "3332")
-    val id: Long,
-    @ApiModelProperty(example = "PENDIENTE")
-    val estado: EstadoSolicitud,
-    val comisionDTO: ComisionDTO
+        @ApiModelProperty(example = "3332")
+        val id: Long,
+        @ApiModelProperty(example = "PENDIENTE")
+        val estado: EstadoSolicitud,
+        val comisionId: Long
 ) {
     companion object {
         fun desdeModelo(solicitudSobrecupo: SolicitudSobrecupo): SolicitudSobrecupoDTO {
             return SolicitudSobrecupoDTO(
-                solicitudSobrecupo.id!!,
-                solicitudSobrecupo.estado,
-                ComisionDTO.desdeModelo(solicitudSobrecupo.comision)
+                    solicitudSobrecupo.id!!,
+                    solicitudSobrecupo.estado,
+                    solicitudSobrecupo.comision.id!!
             )
         }
     }

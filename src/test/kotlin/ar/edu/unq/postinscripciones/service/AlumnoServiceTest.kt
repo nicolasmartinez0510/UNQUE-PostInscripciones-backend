@@ -104,9 +104,9 @@ internal class AlumnoServiceTest {
                 listOf(comision1Algoritmos.id!!),
                 cuatrimestre
             )
-        val comisionesDeSolicitudes = formulario.solicitudes.map { it.comisionDTO }
+        val comisionesDeSolicitudes = formulario.solicitudes.map { it.comisionId }
 
-        assertThat(comisionesDeSolicitudes).contains(ComisionDTO.desdeModelo(comision1Algoritmos))
+        assertThat(comisionesDeSolicitudes).contains(ComisionDTO.desdeModelo(comision1Algoritmos).id)
     }
 
     @Test

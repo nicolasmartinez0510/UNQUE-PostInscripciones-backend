@@ -8,6 +8,7 @@ import ar.edu.unq.postinscripciones.persistence.*
 import ar.edu.unq.postinscripciones.service.dto.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import java.math.BigInteger
 import java.time.LocalDateTime
 import javax.persistence.Tuple
 import javax.transaction.Transactional
@@ -143,11 +144,16 @@ class AlumnoService {
     fun obtenerResumenAlumno(dni: Int): ResumenAlumno {
         val cuatrimestreObtenido = cuatrimestreService.obtener()
         val alumno = alumnoRepository.findById(dni).orElseThrow { ExcepcionUNQUE("El Alumno no existe") }
-        val materiasCursadasAprobadas = alumno.materiasCursadasPorEstadoDeMateria(EstadoMateria.APROBADO)
+        val materiasCursadas = alumnoRepository.findResumenHistoriaAcademica(dni)
+                .map {
+                    val materia = materiaRepository.findMateriaByCodigo(it.get(0) as String)
+                            .orElseThrow{ ExcepcionUNQUE("Materia no encontrada") }
+                    val fecha = (it.get(2) as java.sql.Date).toLocalDate()
+                    val estado = EstadoMateria.getByValue(it.get(1) as Int)
+                    val intentos = (it.get(3) as BigInteger).toInt()
 
-        val materiasCursadas = materiasCursadasAprobadas.map {
-            MateriaCursadaResumenDTO.desdeModelo(it, alumno.cantidadDeVecesQueCurso(it.materia))
-        }.sortedByDescending { it.fechaDeCarga }
+                    MateriaCursadaResumenDTO(materia.nombre, materia.codigo, estado!!, fecha, intentos)
+                }
 
         return ResumenAlumno(
             alumno.nombre,
