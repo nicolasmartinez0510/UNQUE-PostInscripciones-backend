@@ -4,7 +4,7 @@ enum class EstadoMateria {
     APROBADO, DESAPROBADO, PA;
 
     companion object {
-        fun getByValue(value: Int) = EstadoMateria.values().find { it.ordinal == value }
+        fun desdeString(estadoString: String) = valueOf(estadoString)
     }
 
 }

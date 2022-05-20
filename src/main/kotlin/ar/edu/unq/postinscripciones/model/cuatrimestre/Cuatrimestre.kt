@@ -14,7 +14,7 @@ class Cuatrimestre(
     val anio: Int = 2020,
     @Enumerated(EnumType.STRING)
     val semestre: Semestre = Semestre.S1,
-    var inicioInscripciones: LocalDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(8,0)),
+    var inicioInscripciones: LocalDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(0,0)),
     var finInscripciones: LocalDateTime = inicioInscripciones.plusDays(14).plusHours(12)
 ) : Serializable {
     @Id

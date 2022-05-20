@@ -13,8 +13,8 @@ class MateriaCursada(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
 
+    @Enumerated(EnumType.STRING)
     var estado: EstadoMateria = EstadoMateria.PA
-
 
     fun cambiarEstado(nuevoEstado: EstadoMateria) {
         estado = nuevoEstado

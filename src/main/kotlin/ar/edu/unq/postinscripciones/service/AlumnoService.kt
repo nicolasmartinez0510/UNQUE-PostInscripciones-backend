@@ -149,10 +149,10 @@ class AlumnoService {
                     val materia = materiaRepository.findMateriaByCodigo(it.get(0) as String)
                             .orElseThrow{ ExcepcionUNQUE("Materia no encontrada") }
                     val fecha = (it.get(2) as java.sql.Date).toLocalDate()
-                    val estado = EstadoMateria.getByValue(it.get(1) as Int)
+                    val estado = EstadoMateria.desdeString(it.get(1) as String)
                     val intentos = (it.get(3) as BigInteger).toInt()
 
-                    MateriaCursadaResumenDTO(materia.nombre, materia.codigo, estado!!, fecha, intentos)
+                    MateriaCursadaResumenDTO(materia.nombre, materia.codigo, estado, fecha, intentos)
                 }
 
         return ResumenAlumno(
