@@ -70,10 +70,3 @@ tasks.jacocoTestReport {
 		}
 	)
 }
-
-flyway {
-	url="jdbc:mysql://localhost:3306/unque"
-	user="root"
-	password="boquita"
-	schemas=arrayOf("unque")
-}
