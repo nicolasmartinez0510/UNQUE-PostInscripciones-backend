@@ -1,5 +1,6 @@
 package ar.edu.unq.postinscripciones.service
 
+import ar.edu.unq.postinscripciones.model.Carrera
 import ar.edu.unq.postinscripciones.model.Materia
 import ar.edu.unq.postinscripciones.model.exception.ExcepcionUNQUE
 import org.assertj.core.api.Assertions.assertThat
@@ -23,34 +24,45 @@ internal class MateriaServiceTest {
 
     @BeforeEach
     fun setUp() {
-        bdd = materiaService.crear("Base de datos", "BD-096")
-        algo = materiaService.crear("Algoritmos", "AA-208")
+        bdd = materiaService.crear("Base de datos", "BD-096", mutableListOf(), Carrera.SIMULTANEIDAD)
+        algo = materiaService.crear("Algoritmos", "AA-208", mutableListOf(), Carrera.SIMULTANEIDAD)
     }
 
     @Test
     fun `Se puede crear una materia`() {
-        val materia = materiaService.crear("Intro", "IP-102")
+        val materia = materiaService.crear("Intro", "IP-102", mutableListOf(), Carrera.SIMULTANEIDAD)
         assertThat(materia).isNotNull
     }
 
     @Test
     fun `no se puede crear una materia con un nombre existente`() {
-        val materia = materiaService.crear("Intro", "IP-102")
+        val materia = materiaService.crear("Intro", "IP-102", mutableListOf(), Carrera.SIMULTANEIDAD)
         assertThat(materia).isNotNull
     }
 
     @Test
     fun `no se puede crear una materia con un codigo o nombre existente`() {
-        val materia = materiaService.crear("Intro", "IP-102")
+        val materia = materiaService.crear("Intro", "IP-102", mutableListOf(), Carrera.SIMULTANEIDAD)
         val nombreConflictivo = materia.nombre.lowercase()
         val codigoConflictivo = materia.codigo.lowercase()
-        val excepcion = assertThrows<ExcepcionUNQUE> { materiaService.crear(nombreConflictivo, codigoConflictivo) }
+        val excepcion = assertThrows<ExcepcionUNQUE> { materiaService.crear(nombreConflictivo, codigoConflictivo, mutableListOf(), Carrera.SIMULTANEIDAD) }
 
         assertThat(excepcion.message).isEqualTo(
             "La materia que desea crear con nombre $nombreConflictivo " +
                     "y codigo $codigoConflictivo, " +
                     "genera conflicto con la materia: ${materia.nombre}, codigo: ${materia.codigo}"
         )
+    }
+    @Test
+    fun `se puede crear una materia con una correlativa`() {
+        val materia = materiaService.crear("Orga", "ORGA-101", mutableListOf("BD-096"), Carrera.SIMULTANEIDAD)
+        assertThat(materia.correlativas.first()).usingRecursiveComparison().isEqualTo(bdd)
+    }
+    @Test
+    fun `no se puede crear una materia con una correlativa inexistente`() {
+        val excepcion = assertThrows<ExcepcionUNQUE> { materiaService.crear("Orga", "ORGA-101", mutableListOf("EPYL-103"), Carrera.SIMULTANEIDAD) }
+
+        assertThat(excepcion.message).isEqualTo("No existe la materia con codigo: EPYL-103")
     }
 
     @Test
@@ -63,6 +75,7 @@ internal class MateriaServiceTest {
     @Test
     fun `Se puede obtener una materia especifica`() {
         val materiaEncontrada = materiaService.obtener(bdd.codigo)
+        bdd.correlativas.size
         assertThat(materiaEncontrada).usingRecursiveComparison().isEqualTo(bdd)
     }
 

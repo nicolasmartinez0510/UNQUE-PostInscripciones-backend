@@ -1,9 +1,9 @@
 package ar.edu.unq.postinscripciones.webservice.controller
 
 import ar.edu.unq.postinscripciones.model.EstadoSolicitud
-import ar.edu.unq.postinscripciones.model.cuatrimestre.Semestre
 import ar.edu.unq.postinscripciones.service.AlumnoService
 import ar.edu.unq.postinscripciones.service.dto.FormularioCrearAlumno
+import ar.edu.unq.postinscripciones.service.dto.ResumenAlumno
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiParam
 import io.swagger.annotations.ApiResponse
@@ -21,7 +21,7 @@ class AlumnoController {
     private lateinit var alumnoService: AlumnoService
 
     @ApiOperation("Endpoint que se usa para registrar una lista de alumnos en el sistema")
-    @RequestMapping(value = ["/registrar"], method = [RequestMethod.POST])
+    @RequestMapping(value = [""], method = [RequestMethod.POST])
     @ApiResponses(
         value = [
             ApiResponse(code = 201, message = "Alumnos registrados correctamente"),
@@ -35,17 +35,8 @@ class AlumnoController {
         )
     }
 
-    @ApiOperation("Endpoint que se usa para obtener todos los alumnos registrados")
-    @RequestMapping(value = ["/todos"], method = [RequestMethod.GET])
-    fun todos(): ResponseEntity<*> {
-        return ResponseEntity(
-            alumnoService.todos(),
-            HttpStatus.OK
-        )
-    }
-
-    @ApiOperation("Endpoint que se usa para cargar una solicitud de comisiones a un alumno")
-    @RequestMapping(value = ["/cargar-solicitudes/{legajo}"], method = [RequestMethod.PUT])
+    @ApiOperation("Endpoint que se usa para cargar una solicitud de comisiones a un alumno.")
+    @RequestMapping(value = ["/solicitudes/{dni}"], method = [RequestMethod.POST])
     @ApiResponses(
         value = [
             ApiResponse(code = 200, message = "Solicitudes cargadas correctamente"),
@@ -53,21 +44,19 @@ class AlumnoController {
         ]
     )
     fun cargarSolicitudes(
-        @ApiParam(value = "Legajo del alumno para cargar solicitudes", example = "12345", required = true)
-        @PathVariable legajo: Int,
-        @ApiParam(value = "Id del cuatrimestre actual", example = "1", required = true)
-        @RequestParam
-        idCuatrimestre: Long,
+        @ApiParam(value = "Dni del alumno para cargar solicitudes", example = "12345678", required = true)
+        @PathVariable dni: Int,
+        @ApiParam(value = "Lista de id de comisiones solicitadas. Ejemplo: [1,2]", required = true)
         @RequestBody comisiones: List<Long>
     ): ResponseEntity<*> {
         return ResponseEntity(
-            alumnoService.guardarSolicitudPara(legajo, idCuatrimestre, comisiones),
+            alumnoService.guardarSolicitudPara(dni, comisiones),
             HttpStatus.OK
         )
     }
 
     @ApiOperation("Endpoint que se usa para aprobar o rechazar una solicitud de un alumno")
-    @RequestMapping(value = ["/solicitudes/{id}/cambiar-estado"], method = [RequestMethod.PUT])
+    @RequestMapping(value = ["/solicitudes/{id}"], method = [RequestMethod.PUT])
     @ApiResponses(
         value = [
             ApiResponse(code = 200, message = "Solicitud modificada"),
@@ -88,21 +77,34 @@ class AlumnoController {
         )
     }
 
-    @ApiOperation("Endpoint que se usa para obtener un formulario de solicitudes de un alumno")
-    @RequestMapping(value = ["/solicitudes/{legajo}"], method = [RequestMethod.GET])
-    fun obtenerFormulario(
-        @ApiParam(value = "Legajo del alumno para cargar solicitudes", example = "1", required = true)
+    @ApiOperation("Endpoint que se usa para obtener las materias que puede cursar un alumno")
+    @RequestMapping(value = ["/materias/{dni}"], method = [RequestMethod.GET])
+    fun materiasDisponibles(
+        @ApiParam(value = "Dni del alumno", example = "12345678", required = true)
         @PathVariable
-        legajo: Int,
-        @ApiParam(value = "Anio del cuatrimestre", example = "2022", required = true)
-        @RequestParam
-        anio: Int,
-        @ApiParam(value = "Semestre del cuatrimestre", example = "S1", required = true)
-        @RequestParam
-        semestre: Semestre
+        dni: Int,
     ): ResponseEntity<*> {
         return ResponseEntity(
-            alumnoService.obtenerFormulario(anio, semestre, legajo),
+            alumnoService.materiasDisponibles(dni),
+            HttpStatus.OK
+        )
+    }
+
+    @ApiOperation("#### Endpoint que se usa para obtener el formulario y un resumen de la historia academica del alumno dado ####")
+    @RequestMapping(value = ["/{dni}"], method = [RequestMethod.GET])
+    @ApiResponses(
+        value = [
+            ApiResponse(code = 200, message = "OK", response = ResumenAlumno::class, responseContainer = "List"),
+            ApiResponse(code = 400, message = "Algo salio mal")
+        ]
+    )
+    fun resumenAlumno(
+        @ApiParam(value = "Dni del alumno", example = "12345677", required = true)
+        @PathVariable
+        dni: Int,
+    ): ResponseEntity<*> {
+        return ResponseEntity(
+            alumnoService.obtenerResumenAlumno(dni),
             HttpStatus.OK
         )
     }
