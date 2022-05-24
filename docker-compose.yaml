@@ -20,10 +20,19 @@ services:
         "spring.jpa.database-platform": "${SPRING_DATABASE_PLATFORM-org.hibernate.dialect.H2Dialect}",
         "spring.jpa.properties.hibernate.show_sql": true,
         "spring.jpa.generate-ddl": true,
-        "server.port": ${SPRING_DOCKER_PORT-8080},
+        "server.port": "${SPRING_DOCKER_PORT-8080}",
         "spring.security.user.password": "${SPRING_SECURITY_PASSWORD-root}",
         "spring.security.user.name":"${SPRING_SECURITY_USER-root}",
-        "spring.security.user.roles": "admin" }'
+        "spring.security.user.roles": "admin", 
+        "spring.liquibase.enabled":false,
+        "spring.flyway.enabled":true,
+        "spring.flyway.baselineOnMigrate":true,
+        "spring.flyway.url":"${SPRING_DATABASE_URL-jdbc:h2:mem:testdb}",
+        "spring.flyway.user":"${MYSQLDB_USER-root}",
+        "spring.flyway.password":"${MYSQLDB_ROOT_PASSWORD-root}",
+        "spring.flyway.schemas[0]":"${MYSQLDB_DATABASE-unque}",
+        "spring.flyway.create-schemas":true,
+        "spring.flyway.locations":"classpath:/db/migrations" }'
   mysql:
     image: "mysql:8.0"
     restart: always

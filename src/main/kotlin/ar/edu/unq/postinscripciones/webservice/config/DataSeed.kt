@@ -7,7 +7,6 @@ import ar.edu.unq.postinscripciones.model.comision.Comision
 import ar.edu.unq.postinscripciones.model.comision.Dia
 import ar.edu.unq.postinscripciones.model.comision.Horario
 import ar.edu.unq.postinscripciones.model.cuatrimestre.Cuatrimestre
-import ar.edu.unq.postinscripciones.model.cuatrimestre.Semestre
 import ar.edu.unq.postinscripciones.persistence.AlumnoRepository
 import ar.edu.unq.postinscripciones.persistence.ComisionRespository
 import ar.edu.unq.postinscripciones.persistence.CuatrimestreRepository
@@ -135,7 +134,7 @@ class DataSeed(
             )
 
 
-            val cuatrimestre = Cuatrimestre(2022, Semestre.S1)
+            val cuatrimestre = Cuatrimestre.actual()
 
             val bddc1 = Comision(bdd, 1, cuatrimestre, bddhorariosc1)
             val bddc2 = Comision(bdd, 2, cuatrimestre, bddhorariosc2)
@@ -172,7 +171,7 @@ class DataSeed(
             comisionRespository.saveAll(listOf(bddc1, bddc2, matec1, estrc1))
             alumnoRepository.saveAll(listOf(jorge,bartolo))
 
-            alumnoService.guardarSolicitudPara(bartolo.dni, listOf(bddc1.id!!, bddc2.id!!))
+            alumnoService.guardarSolicitudPara(bartolo.dni, listOf(bddc1.id!!, bddc2.id!!), cuatrimestre)
 
             val cantMaterias = materiaRepository.count()
             val cantComisiones = comisionRespository.count()
