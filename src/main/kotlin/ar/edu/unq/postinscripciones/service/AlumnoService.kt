@@ -71,7 +71,7 @@ class AlumnoService {
             val comision = comisionRepository.findById(idComision)
             SolicitudSobrecupo(comision.get())
         }
-        val materiasDisponibles = this.materiasDisponibles(alumno.dni,cuatrimestreObtenido)
+        val materiasDisponibles = this.materiasDisponibles(alumno.dni, cuatrimestreObtenido)
         this.checkPuedeCursar(alumno, solicitudesPorMateria, materiasDisponibles)
         val formulario = formularioRepository.save(Formulario(cuatrimestreObtenido, solicitudesPorMateria))
 
@@ -129,7 +129,7 @@ class AlumnoService {
             cuatrimestreRepository.findByAnioAndSemestre(cuatrimestre.anio, cuatrimestre.semestre)
                 .orElseThrow { ExcepcionUNQUE("No existe el cuatrimestre") }
         val alumno =
-            alumnoRepository.findByDni(dni).orElseThrow { ExcepcionUNQUE("No existe el alumno") }
+            alumnoRepository.findById(dni).orElseThrow { ExcepcionUNQUE("No existe el alumno") }
         val materiasDisponibles = materiaRepository.findMateriasDisponibles(
             alumno.materiasAprobadas(),
             alumno.carrera,
@@ -231,7 +231,6 @@ class AlumnoService {
 
     private fun checkPuedeCursar(alumno : Alumno, solicitudesPorMateria: List<SolicitudSobrecupo>, materiasDisponibles: List<MateriaComision>) {
         if (!alumno.puedeCursar( solicitudesPorMateria.map { it.comision.materia }, materiasDisponibles.map { it.codigo })) throw ExcepcionUNQUE("El alumno no puede cursar las materias solicitadas")
-
     }
 
 
