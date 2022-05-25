@@ -61,7 +61,7 @@ class AlumnoService {
             materiaCursada.fechaDeCarga = it.fechaDeCarga
             materiaCursada}
 
-        historiaAcademica.forEach { alumno.cargarHistoriaAcademica(it) }
+        alumno.actualizarHistoriaAcademica(historiaAcademica)
 
         return AlumnoDTO.desdeModelo(alumnoRepository.save(alumno))
     }

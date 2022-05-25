@@ -23,7 +23,7 @@ class Alumno(
     private val formularios: MutableList<Formulario> = mutableListOf()
 
     @OneToMany(fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
-    val historiaAcademica: MutableList<MateriaCursada> = mutableListOf()
+    var historiaAcademica: MutableList<MateriaCursada> = mutableListOf()
 
     fun guardarFormulario(formulario: Formulario) {
         chequearSiExiste(formulario)
@@ -33,6 +33,10 @@ class Alumno(
     fun cargarHistoriaAcademica(materiaCursada: MateriaCursada) {
         historiaAcademica.add(materiaCursada)
         historiaAcademica.sortByDescending { it.fechaDeCarga }
+    }
+
+    fun actualizarHistoriaAcademica(historia: List<MateriaCursada>) {
+        historiaAcademica = historia.toMutableList()
     }
 
     fun obtenerFormulario(anio: Int, semestre: Semestre): Formulario {
