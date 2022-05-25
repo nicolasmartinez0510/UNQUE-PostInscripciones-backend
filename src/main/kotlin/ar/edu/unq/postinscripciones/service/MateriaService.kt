@@ -5,6 +5,7 @@ import ar.edu.unq.postinscripciones.model.Materia
 import ar.edu.unq.postinscripciones.model.exception.ExcepcionUNQUE
 import ar.edu.unq.postinscripciones.model.exception.MateriaNoEncontradaExcepcion
 import ar.edu.unq.postinscripciones.persistence.MateriaRepository
+import ar.edu.unq.postinscripciones.service.dto.MateriaDTO
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import javax.transaction.Transactional
@@ -16,7 +17,7 @@ class MateriaService {
 
 
     @Transactional
-    fun crear(nombre: String, codigo: String, correlativas : List<String>, carrera: Carrera): Materia {
+    fun crear(nombre: String, codigo: String, correlativas : List<String>, carrera: Carrera): MateriaDTO {
         val existeConNombreOCodigo = materiaRepository.findByNombreIgnoringCaseOrCodigoIgnoringCase(nombre, codigo)
         if (existeConNombreOCodigo.isPresent) {
             throw ExcepcionUNQUE("La materia que desea crear con nombre $nombre " +
@@ -26,16 +27,16 @@ class MateriaService {
             val materiaInexistente = correlativas.find { !materiasCorrelativas.map { c -> c.codigo }.contains(it) }
             if (materiaInexistente != null) throw ExcepcionUNQUE("No existe la materia con codigo: $materiaInexistente")
             val materia = materiaRepository.save(Materia(codigo, nombre, materiasCorrelativas.toMutableList(), carrera))
-            materia.correlativas.forEach { it.correlativas.size }
-            return materia
+
+            return MateriaDTO.desdeModelo(materia)
         }
     }
 
     @Transactional
-    fun todas(): List<Materia> {
+    fun todas(): List<MateriaDTO> {
         val materias = materiaRepository.findAll().toList()
         materias.forEach { it.correlativas.size }
-        return materias
+        return materias.map { MateriaDTO.desdeModelo(it) }
     }
 
     @Transactional

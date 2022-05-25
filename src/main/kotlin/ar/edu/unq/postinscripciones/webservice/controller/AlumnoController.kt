@@ -2,8 +2,7 @@ package ar.edu.unq.postinscripciones.webservice.controller
 
 import ar.edu.unq.postinscripciones.model.EstadoSolicitud
 import ar.edu.unq.postinscripciones.service.AlumnoService
-import ar.edu.unq.postinscripciones.service.dto.FormularioCrearAlumno
-import ar.edu.unq.postinscripciones.service.dto.ResumenAlumno
+import ar.edu.unq.postinscripciones.service.dto.*
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiParam
 import io.swagger.annotations.ApiResponse
@@ -24,7 +23,7 @@ class AlumnoController {
     @RequestMapping(value = [""], method = [RequestMethod.POST])
     @ApiResponses(
         value = [
-            ApiResponse(code = 201, message = "Alumnos registrados correctamente"),
+            ApiResponse(code = 201, message = "OK", response = ConflictoAlumnoDTO::class, responseContainer = "List"),
             ApiResponse(code = 400, message = "Algo salio mal")
         ]
     )
@@ -39,7 +38,7 @@ class AlumnoController {
     @RequestMapping(value = ["/solicitudes/{dni}"], method = [RequestMethod.POST])
     @ApiResponses(
         value = [
-            ApiResponse(code = 200, message = "Solicitudes cargadas correctamente"),
+            ApiResponse(code = 200, message = "Solicitudes cargadas correctamente", response = FormularioDTO::class),
             ApiResponse(code = 400, message = "Algo salio mal")
         ]
     )
@@ -59,7 +58,7 @@ class AlumnoController {
     @RequestMapping(value = ["/solicitudes/{id}"], method = [RequestMethod.PUT])
     @ApiResponses(
         value = [
-            ApiResponse(code = 200, message = "Solicitud modificada"),
+            ApiResponse(code = 200, message = "Solicitud modificada", response = SolicitudSobrecupoDTO::class),
             ApiResponse(code = 400, message = "Algo salio mal")
         ]
     )
@@ -78,6 +77,12 @@ class AlumnoController {
     }
 
     @ApiOperation("Endpoint que se usa para obtener las materias que puede cursar un alumno")
+    @ApiResponses(
+        value = [
+            ApiResponse(code = 200, message = "OK", response = MateriaComision::class, responseContainer = "List"),
+            ApiResponse(code = 400, message = "Algo salio mal")
+        ]
+    )
     @RequestMapping(value = ["/materias/{dni}"], method = [RequestMethod.GET])
     fun materiasDisponibles(
         @ApiParam(value = "Dni del alumno", example = "12345678", required = true)

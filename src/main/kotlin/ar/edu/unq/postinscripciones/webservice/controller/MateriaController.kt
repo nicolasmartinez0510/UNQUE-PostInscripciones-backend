@@ -2,6 +2,7 @@ package ar.edu.unq.postinscripciones.webservice.controller
 
 import ar.edu.unq.postinscripciones.service.MateriaService
 import ar.edu.unq.postinscripciones.service.dto.FormularioMateria
+import ar.edu.unq.postinscripciones.service.dto.MateriaDTO
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiResponse
 import io.swagger.annotations.ApiResponses
@@ -22,7 +23,7 @@ class MateriaController {
     @RequestMapping(value = [""], method = [RequestMethod.POST])
     @ApiResponses(
         value = [
-            ApiResponse(code = 201, message = "Materia creada"),
+            ApiResponse(code = 201, message = "Materia creada", response = MateriaDTO::class),
             ApiResponse(code = 400, message = "Algo salio mal")
         ]
     )
@@ -39,6 +40,12 @@ class MateriaController {
     }
 
     @ApiOperation(value = "Endpoint usado para listar todas las materias disponibles")
+    @ApiResponses(
+        value = [
+            ApiResponse(code = 200, message = "OK", response = MateriaDTO::class, responseContainer = "List"),
+            ApiResponse(code = 400, message = "Algo salio mal")
+        ]
+    )
     @RequestMapping(value = [""], method = [RequestMethod.GET])
     fun todas(): ResponseEntity<*> {
         return ResponseEntity(

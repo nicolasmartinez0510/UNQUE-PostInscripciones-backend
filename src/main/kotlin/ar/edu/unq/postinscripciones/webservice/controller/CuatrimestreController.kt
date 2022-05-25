@@ -4,6 +4,8 @@ import ar.edu.unq.postinscripciones.model.cuatrimestre.Cuatrimestre
 import ar.edu.unq.postinscripciones.model.cuatrimestre.Semestre
 import ar.edu.unq.postinscripciones.service.ComisionService
 import ar.edu.unq.postinscripciones.service.CuatrimestreService
+import ar.edu.unq.postinscripciones.service.dto.ComisionDTO
+import ar.edu.unq.postinscripciones.service.dto.CuatrimestreDTO
 import ar.edu.unq.postinscripciones.service.dto.FormularioCuatrimestre
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiParam
@@ -32,7 +34,7 @@ class CuatrimestreController {
     @RequestMapping(value = [""], method = [RequestMethod.POST])
     @ApiResponses(
         value = [
-            ApiResponse(code = 201, message = "Cuatrimestre creado"),
+            ApiResponse(code = 201, message = "Cuatrimestre creado", response = CuatrimestreDTO::class),
             ApiResponse(code = 400, message = "Algo salio mal")
         ]
     )
@@ -44,6 +46,12 @@ class CuatrimestreController {
     }
 
     @ApiOperation("Endpoint que se usa para obtener la oferta academica de un cuatrimestre")
+    @ApiResponses(
+        value = [
+            ApiResponse(code = 200, message = "OK", response = ComisionDTO::class, responseContainer = "List"),
+            ApiResponse(code = 400, message = "Algo salio mal")
+        ]
+    )
     @RequestMapping(value = ["/oferta"], method = [RequestMethod.GET])
     fun ofertaAcademica(
         @ApiParam(value = "Anio del cuatrimestre", example = "2022", required = true)

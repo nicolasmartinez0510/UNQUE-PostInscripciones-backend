@@ -3,9 +3,7 @@ package ar.edu.unq.postinscripciones.webservice.controller
 import ar.edu.unq.postinscripciones.model.cuatrimestre.Semestre
 import ar.edu.unq.postinscripciones.service.AlumnoService
 import ar.edu.unq.postinscripciones.service.ComisionService
-import ar.edu.unq.postinscripciones.service.dto.AlumnoSolicitaComision
-import ar.edu.unq.postinscripciones.service.dto.ComisionPorSolicitudes
-import ar.edu.unq.postinscripciones.service.dto.OfertaAcademicaDTO
+import ar.edu.unq.postinscripciones.service.dto.*
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiParam
 import io.swagger.annotations.ApiResponse
@@ -25,6 +23,12 @@ class ComisionController {
     private lateinit var alumnoService: AlumnoService
 
     @ApiOperation("Endpoint que se usa para registrar nuevas comisiones en el sistema o bien actualizar las fechas para recibir formularios de sobrecupos.")
+    @ApiResponses(
+        value = [
+            ApiResponse(code = 200, message = "OK", response = ConflictoComision::class, responseContainer = "List"),
+            ApiResponse(code = 400, message = "Algo salio mal")
+        ]
+    )
     @RequestMapping(value = [""], method = [RequestMethod.POST])
     fun actualizarOfertaAcademica(
         @RequestBody oferta: OfertaAcademicaDTO,
@@ -40,6 +44,12 @@ class ComisionController {
     }
 
     @ApiOperation(value = "Endpoint usado para listar todas las comisiones del cuatrimestre actual de una materia especifica")
+    @ApiResponses(
+        value = [
+            ApiResponse(code = 200, message = "OK", response = ComisionDTO::class, responseContainer = "List"),
+            ApiResponse(code = 400, message = "Algo salio mal")
+        ]
+    )
     @RequestMapping(value = ["/materia/{codigoMateria}"], method = [RequestMethod.GET])
     fun materiasComision(
         @PathVariable

@@ -34,12 +34,6 @@ class AlumnoService {
     @Autowired
     private lateinit var solicitudSobrecupoRepository: SolicitudSobrecupoRepository
 
-    @Autowired
-    private lateinit var cuatrimestreService: CuatrimestreService
-
-//    @Autowired
-//    private lateinit var materiaCursadaRepository: MateriaCursadaRepository
-
     @Transactional
     fun registrarAlumnos(planillaAlumnos: List<FormularioCrearAlumno>): List<ConflictoAlumnoDTO> {
         val alumnosConflictivos: MutableList<ConflictoAlumnoDTO> = mutableListOf()
@@ -115,7 +109,7 @@ class AlumnoService {
 
     @Transactional
     fun cambiarEstadoFormularios() {
-        val cuatrimestreObtenido = cuatrimestreService.obtener()
+        val cuatrimestreObtenido = Cuatrimestre.actual()
         val alumnos = alumnoRepository.findAll()
         alumnos.forEach {
             val formulario = it.obtenerFormulario(cuatrimestreObtenido.anio, cuatrimestreObtenido.semestre)
@@ -142,7 +136,7 @@ class AlumnoService {
 
     @Transactional
     fun obtenerResumenAlumno(dni: Int): ResumenAlumno {
-        val cuatrimestreObtenido = cuatrimestreService.obtener()
+        val cuatrimestreObtenido = Cuatrimestre.actual()
         val alumno = alumnoRepository.findById(dni).orElseThrow { ExcepcionUNQUE("El Alumno no existe") }
         val materiasCursadas = alumnoRepository.findResumenHistoriaAcademica(dni)
                 .map {

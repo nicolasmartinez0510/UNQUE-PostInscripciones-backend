@@ -1,7 +1,6 @@
 package ar.edu.unq.postinscripciones.service
 
 import ar.edu.unq.postinscripciones.model.Carrera
-import ar.edu.unq.postinscripciones.model.Materia
 import ar.edu.unq.postinscripciones.model.comision.Comision
 import ar.edu.unq.postinscripciones.model.comision.Dia
 import ar.edu.unq.postinscripciones.model.comision.Modalidad
@@ -35,7 +34,7 @@ internal class ComisionServiceTest {
     @Autowired
     private lateinit var dataService: DataService
 
-    private lateinit var bdd: Materia
+    private lateinit var bdd: MateriaDTO
     private lateinit var cuatrimestre: Cuatrimestre
     private lateinit var horarios: List<HorarioDTO>
     private lateinit var comision: Comision

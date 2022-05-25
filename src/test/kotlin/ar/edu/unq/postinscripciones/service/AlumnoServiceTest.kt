@@ -39,8 +39,8 @@ internal class AlumnoServiceTest {
     private lateinit var fede: Alumno
     private lateinit var cuatrimestre: Cuatrimestre
     private lateinit var comision1Algoritmos: Comision
-    private lateinit var algo: Materia
-    private lateinit var funcional: Materia
+    private lateinit var algo: MateriaDTO
+    private lateinit var funcional: MateriaDTO
 
     @BeforeEach
     fun setUp() {
@@ -103,7 +103,7 @@ internal class AlumnoServiceTest {
                 listOf(comision1Algoritmos.id!!),
                 cuatrimestre
             )
-        val comisionesDeSolicitudes = formulario.solicitudes.map { it.comisionId }
+        val comisionesDeSolicitudes = formulario.solicitudes.map { it.comision.id }
 
         assertThat(comisionesDeSolicitudes).contains(ComisionDTO.desdeModelo(comision1Algoritmos).id)
     }
