@@ -16,7 +16,8 @@ data class ComisionDTO(
     @ApiModelProperty(example = "10")
     val sobreCuposTotales: Int,
     @ApiModelProperty(example = "12")
-    val cuposDisponibles: Int
+    val cuposDisponibles: Int,
+    val horarios: List<HorarioDTO>
 ) {
 
     companion object {
@@ -27,7 +28,8 @@ data class ComisionDTO(
                 comision.materia.nombre,
                 comision.cuposTotales,
                 comision.sobrecuposTotales,
-                comision.sobrecuposDisponibles()
+                comision.sobrecuposDisponibles(),
+                comision.horarios.map { HorarioDTO.desdeModelo(it) }
             )
         }
     }

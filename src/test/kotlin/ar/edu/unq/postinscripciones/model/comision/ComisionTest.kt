@@ -49,6 +49,16 @@ internal class ComisionTest {
     }
 
     @Test
+    fun `una comision sabe modificar sus horarios`() {
+        val nuevosHorarios = listOf(
+                Horario(Dia.MARTES, LocalTime.of(10, 0), LocalTime.of(12, 0)),
+                Horario(Dia.JUEVES, LocalTime.of(10, 0), LocalTime.of(12, 0)))
+        comisionUnoBdd.modificarHorarios(nuevosHorarios)
+
+        assertThat(comisionUnoBdd.horarios).usingRecursiveComparison().isEqualTo(nuevosHorarios)
+    }
+
+    @Test
     fun `una comision conoce sus sobrecupos totales`() {
         assertThat(comisionUnoBdd.sobrecuposTotales).isEqualTo(15)
     }

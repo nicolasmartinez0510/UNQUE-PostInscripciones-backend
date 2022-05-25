@@ -112,4 +112,33 @@ class ComisionController {
             HttpStatus.OK
         )
     }
+
+
+
+    @ApiOperation("Endpoint que se usa para modificar los horarios de una comision ya creada")
+    @RequestMapping(value = ["/horarios/{comisionId}"], method = [RequestMethod.PUT])
+    @ApiResponses(
+            value = [
+                ApiResponse(
+                        code = 200,
+                        message = "OK",
+                        response = ComisionDTO::class,
+                        responseContainer = "List"
+                ),
+                ApiResponse(code = 400, message = "Algo salio mal")
+            ]
+    )
+    fun modificarHorarios(
+            @ApiParam(value = "Id de la comision", example = "1", required = true)
+            @PathVariable
+            comisionId: Long,
+            @RequestBody
+            nuevosHorarios: List<HorarioDTO>
+    ): ResponseEntity<*> {
+        return ResponseEntity(
+                comisionService.modificarHorarios(comisionId, nuevosHorarios),
+                HttpStatus.OK
+        )
+    }
+
 }

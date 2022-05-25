@@ -112,6 +112,16 @@ class ComisionService {
         return comisionesConflictivas
     }
 
+    @Transactional
+    fun modificarHorarios(comisionId: Long, nuevosHorarios: List<HorarioDTO>): ComisionDTO {
+        val comision = comisionRespository
+                .findById(comisionId)
+                .orElseThrow { ExcepcionUNQUE("No se encontro la comision") }
+
+        comision.modificarHorarios(nuevosHorarios.map { HorarioDTO.aModelo(it) })
+        return ComisionDTO.desdeModelo(comisionRespository.save(comision))
+    }
+
     private fun actualizarCuatrimestre(
         cuatrimestre: Cuatrimestre,
         inicioInscripciones: LocalDateTime?,
