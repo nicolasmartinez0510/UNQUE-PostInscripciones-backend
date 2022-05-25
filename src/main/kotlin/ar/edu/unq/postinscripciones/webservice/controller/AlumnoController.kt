@@ -34,6 +34,25 @@ class AlumnoController {
         )
     }
 
+    @ApiOperation("Endpoint que se usa para actualizar la historia academica de un alumno registrado en el sistema")
+    @RequestMapping(value = ["/historia-academica/{alumnoDni}"], method = [RequestMethod.PUT])
+    @ApiResponses(
+            value = [
+                ApiResponse(code = 200, message = "OK", response = AlumnoDTO::class, responseContainer = "List"),
+                ApiResponse(code = 400, message = "Algo salio mal")
+            ]
+    )
+    fun actualizarHistoriaAcademica(
+            @ApiParam(value = "Dni del alumno para cargar historia academica", example = "12345677", required = true)
+            @PathVariable alumnoDni: Int,
+            @RequestBody historiaAcademica: List<MateriaCursadaDTO>
+    ): ResponseEntity<*> {
+        return ResponseEntity(
+                alumnoService.actualizarHistoriaAcademica(alumnoDni, historiaAcademica),
+                HttpStatus.CREATED
+        )
+    }
+
     @ApiOperation("Endpoint que se usa para cargar una solicitud de comisiones a un alumno.")
     @RequestMapping(value = ["/solicitudes/{dni}"], method = [RequestMethod.POST])
     @ApiResponses(
