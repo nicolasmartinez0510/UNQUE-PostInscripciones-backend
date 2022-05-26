@@ -5,7 +5,7 @@ import javax.persistence.*
 
 @Entity
 class SolicitudSobrecupo(
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     val comision: Comision = Comision()
 ) {
     @Id
@@ -14,6 +14,12 @@ class SolicitudSobrecupo(
 
     @Enumerated(EnumType.STRING)
     var estado: EstadoSolicitud = EstadoSolicitud.PENDIENTE
+
+    fun cambiarEstado(estado: EstadoSolicitud){
+        this.estado = estado
+    }
+
+    fun solicitaLaComision(comision: Comision) = this.comision.esLaComision(comision)
 }
 
 enum class EstadoSolicitud {

@@ -3,7 +3,7 @@
 # UNQUE-PostInscripciones
 
 Aplicación para facilitar la asignación de sobre cupos de las materias de una carrera en forma práctica, intuitiva y equitativa entre los alumnos que se quedaron sin cupo en el momento de la inscripción. 🎓
-
+ - Trello: https://trello.com/b/3lTIKdYu/unque-backend
 ## Requerimientos
   - [Java 1.8](https://www.java.com/es/download/help/java8_es.html) ☕
   - [Docker](https://docs.docker.com/get-docker/) 🐳
@@ -40,6 +40,5 @@ Aplicación para facilitar la asignación de sobre cupos de las materias de una 
     ```
     La aplicación se encontrara ejecutandose en el puerto indicado en ```SPRING_LOCAL_PORT:```
     
-## Diagrama de relaciones
- 
+## Diagrama de relaciones 
 ![Relaciones](imagenes/relaciones_1.4.jpg)
