@@ -9,9 +9,13 @@ class Materia(
     @Column(unique=true)
     val nombre: String = "",
     @ManyToMany(fetch = FetchType.LAZY)
-    val correlativas: MutableList<Materia> = mutableListOf(),
+    var correlativas: MutableList<Materia> = mutableListOf(),
     @Enumerated(EnumType.STRING)
     val carrera: Carrera = Carrera.SIMULTANEIDAD
 ) {
     fun esLaMateria(materia: Materia) = this.codigo == materia.codigo
+
+    fun actualizarCorrelativas(correlativasDadas: MutableList<Materia>) {
+        correlativas = correlativasDadas
+    }
 }

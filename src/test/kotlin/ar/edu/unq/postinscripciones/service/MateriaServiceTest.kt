@@ -102,6 +102,19 @@ internal class MateriaServiceTest {
         assertThat(exception.message).isEqualTo("No se encuentra la materia")
     }
 
+    @Test
+    fun `Se puede actualizar las materias correlativas de una materia`() {
+        val materia = materiaService.crear("Orga", "ORGA-101", mutableListOf("BD-096"), Carrera.SIMULTANEIDAD)
+        val correlativasAntes = materia.correlativas
+
+        val materiaDespuesDeActualizarCorrelativas =
+                materiaService.actualizarCorrelativas(materia.codigo, listOf(algo.codigo))
+
+        assertThat(correlativasAntes).isNotEqualTo(materiaDespuesDeActualizarCorrelativas.correlativas)
+        assertThat(materiaDespuesDeActualizarCorrelativas.correlativas.first()).isEqualTo(algo.nombre)
+
+    }
+
     @AfterEach
     fun tearDown() {
         dataService.clearDataSet()

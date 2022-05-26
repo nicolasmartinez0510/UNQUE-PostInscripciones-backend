@@ -30,6 +30,15 @@ internal class MateriaTest {
     }
 
     @Test
+    fun `se pueden actualizar las correlativas de una materia`() {
+        val mate = Materia("MA-102","Matematicas")
+
+        bdd.actualizarCorrelativas(mutableListOf(mate))
+
+        assertThat(bdd.correlativas.first()).isEqualTo(mate)
+    }
+
+    @Test
     fun `una materia tiene carrera`() {
         assertThat(bdd.carrera).isEqualTo(Carrera.LICENCIATURA)
     }

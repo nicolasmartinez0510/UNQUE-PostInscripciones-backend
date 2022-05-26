@@ -40,6 +40,19 @@ class MateriaService {
     }
 
     @Transactional
+    fun actualizarCorrelativas(codigo: String, correlativas: List<String>): MateriaDTO {
+        val materia = materiaRepository.findMateriaByCodigo(codigo).orElseThrow{ MateriaNoEncontradaExcepcion() }
+
+        val materiasCorrelativas = correlativas.map { codigoCorrelativa ->
+            materiaRepository.findMateriaByCodigo(codigoCorrelativa).orElseThrow{ MateriaNoEncontradaExcepcion() }
+        }
+
+        materia.actualizarCorrelativas(materiasCorrelativas.toMutableList())
+
+        return MateriaDTO.desdeModelo(materiaRepository.save(materia))
+    }
+
+    @Transactional
     fun obtener(codigo: String): Materia {
         val materia = materiaRepository.findMateriaByCodigo(codigo).orElseThrow{ MateriaNoEncontradaExcepcion() }
         materia.correlativas.size
